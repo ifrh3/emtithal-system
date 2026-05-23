@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إمتثال | فريق المشروع</title>
+  <meta name="description" content="صفحة تعريفية بمشروع إمتثال وفريق مشروع التخرج من تخصص تفاعل الإنسان مع الحاسب في جامعة أم القرى.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/emtithal_public_components.js" defer></script>
+  <style>
+    :root {
+      --brand-50:#F3FCF6;
+      --brand-100:#E0F5EA;
+      --brand-500:#1B8354;
+      --brand-600:#15683F;
+      --brand-700:#067647;
+      --neutral-0:#FFFFFF;
+      --neutral-25:#FCFCFD;
+      --neutral-50:#F9FAFB;
+      --neutral-100:#F3F4F6;
+      --neutral-200:#E5E7EB;
+      --neutral-300:#D2D6DB;
+      --neutral-400:#9DA4AE;
+      --neutral-500:#6C737F;
+      --neutral-600:#4D5761;
+      --neutral-700:#384250;
+      --neutral-800:#1F2A37;
+      --neutral-900:#161616;
+      --foundation:#E5E500;
+      --templates:#E49EDD;
+      --elements:#94DCF8;
+      --experience:#9DA6F3;
+      --font:'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --radius-sm:4px;
+      --radius-md:8px;
+      --radius-lg:12px;
+      --radius-xl:16px;
+      --shadow-sm:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.10);
+      --shadow-md:0 2px 4px rgba(16,24,40,.06),0 8px 16px rgba(16,24,40,.08);
+      --ring:0 0 0 4px rgba(27,131,84,.16);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      font-family:var(--font);
+      background:var(--neutral-25);
+      color:var(--neutral-900);
+      line-height:1.8;
+      -webkit-font-smoothing:antialiased;
+    }
+    a { color:inherit; text-decoration:none; }
+    h1, h2, h3, p { margin:0; }
+    .container { width:min(100% - 40px, 1180px); margin-inline:auto; }
+
+    .topbar {
+      background:rgba(255,255,255,.96);
+      border-bottom:1px solid var(--neutral-200);
+      backdrop-filter:blur(10px);
+    }
+    .topbar-row {
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex:none;
+    }
+    .brand-mark {
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
+      border-radius:var(--radius-md);
+      border:1px solid var(--neutral-200);
+      background:var(--brand-50);
+      color:var(--brand-700);
+      font-weight:700;
+      font-size:22px;
+      box-shadow:var(--shadow-sm);
+    }
+    .brand strong { display:block; font-size:16px; line-height:1.4; }
+    .brand span span { display:block; color:var(--neutral-500); font-size:12px; margin-top:2px; }
+    .page-note {
+      display:inline-flex;
+      align-items:center;
+      min-height:32px;
+      padding:0 10px;
+      border:1px solid var(--neutral-200);
+      border-radius:999px;
+      background:var(--neutral-50);
+      color:var(--neutral-600);
+      font-size:12px;
+      font-weight:500;
+      white-space:nowrap;
+    }
+
+    .hero {
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      padding:72px 0 56px;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(27,131,84,.14), transparent 30%),
+        linear-gradient(180deg, #FFFFFF 0%, #F3FCF6 100%);
+      border-bottom:1px solid var(--neutral-200);
+    }
+    .hero::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background-image:url("emtithal-logo.png");
+      background-repeat:no-repeat;
+      background-position:left 7% center;
+      background-size:min(520px, 52vw) auto;
+      opacity:.08;
+    }
+    .hero-grid {
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:36px;
+      align-items:center;
+    }
+    .eyebrow {
+      width:max-content;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:5px 12px;
+      border-radius:999px;
+      background:var(--brand-100);
+      color:var(--brand-700);
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:18px;
+    }
+    .eyebrow::before {
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--brand-500);
+    }
+    h1 {
+      font-size:clamp(42px, 6vw, 72px);
+      line-height:1.15;
+      letter-spacing:-.04em;
+      color:var(--neutral-900);
+    }
+    .lead {
+      max-width:790px;
+      margin-top:18px;
+      color:var(--neutral-600);
+      font-size:18px;
+      line-height:2;
+    }
+    .hero-card {
+      background:var(--neutral-0);
+      border:1px solid var(--neutral-200);
+      border-radius:var(--radius-xl);
+      padding:24px;
+      box-shadow:var(--shadow-md);
+    }
+    .hero-card h2 { font-size:24px; line-height:1.5; margin-bottom:12px; }
+    .hero-card p { color:var(--neutral-600); font-size:15px; }
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:22px;
+    }
+    .stat {
+      padding:16px 12px;
+      border-radius:var(--radius-lg);
+      background:var(--neutral-50);
+      border:1px solid var(--neutral-200);
+      text-align:center;
+    }
+    .stat strong { display:block; color:var(--brand-700); font-size:23px; line-height:1.2; }
+    .stat-logo { display:flex; align-items:center; justify-content:center; min-height:28px; }
+    .stat-logo img { width:108px; max-width:100%; height:auto; display:block; }
+    .inline-dga-logo { display:inline-flex; align-items:center; vertical-align:middle; margin-inline:6px; transform:translateY(2px); }
+    .inline-dga-logo img { width:126px; max-width:38vw; height:auto; display:block; }
+    .stat span { display:block; color:var(--neutral-500); font-size:12px; margin-top:5px; }
+
+    .page-layout {
+      display:grid;
+      grid-template-columns:236px minmax(0,1fr);
+      gap:28px;
+      align-items:start;
+      padding:48px 0 72px;
+    }
+    .secondary-nav-card {
+      position:sticky;
+      top:24px;
+      background:var(--neutral-0);
+      border:1px solid var(--neutral-200);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);
+      padding:16px;
+    }
+    .secondary-nav-label {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--neutral-500);
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .secondary-nav-label::before {
+      content:"";
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--neutral-300);
+    }
+    .secondary-links {
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .secondary-links a {
+      min-height:40px;
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      border-radius:var(--radius-md);
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--neutral-700);
+      font-size:14px;
+      font-weight:500;
+      transition:.15s ease;
+    }
+    .secondary-links a:hover,
+    .secondary-links a.active {
+      background:var(--brand-50);
+      color:var(--brand-700);
+      border-color:var(--brand-100);
+    }
+    .content-stack { min-width:0; }
+
+    .section { padding:0 0 58px; scroll-margin-top:28px; }
+    .section:last-child { padding-bottom:0; }
+    .section-head {
+      max-width:840px;
+      margin-bottom:28px;
+    }
+    .section-head .tag {
+      color:var(--brand-700);
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .section-head h2 {
+      font-size:clamp(26px, 3vw, 36px);
+      line-height:1.45;
+      letter-spacing:-.02em;
+      color:var(--neutral-900);
+    }
+    .section-head p {
+      margin-top:10px;
+      color:var(--neutral-600);
+      font-size:16px;
+    }
+    .about-box,
+    .values-grid {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    .text-card,
+    .value-card,
+    .team-card,
+    .contact-card {
+      background:var(--neutral-0);
+      border:1px solid var(--neutral-200);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);
+    }
+    .text-card { padding:24px; }
+    .text-card h3 { font-size:20px; margin-bottom:8px; }
+    .text-card p { color:var(--neutral-600); font-size:15px; }
+
+    .value-card { padding:22px; }
+    .value-icon {
+      width:42px;
+      height:42px;
+      border-radius:var(--radius-md);
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      margin-bottom:14px;
+      color:var(--neutral-0);
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .value-card:nth-child(1) .value-icon { background:var(--brand-500); }
+    .value-card:nth-child(2) .value-icon { background:var(--brand-500); }
+    .value-card:nth-child(3) .value-icon { background:var(--brand-500); }
+    .value-card h3 { font-size:18px; margin-bottom:6px; }
+    .value-card p { color:var(--neutral-600); font-size:14px; }
+
+    .team-grid {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    .team-card {
+      padding:20px;
+      transition:.15s ease;
+    }
+    .team-card:hover {
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-md);
+      border-color:var(--brand-100);
+    }
+    .member-head {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .avatar {
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:22px;
+      font-weight:700;
+      color:var(--neutral-900);
+      border:1px solid rgba(0,0,0,.08);
+      flex:none;
+    }
+    .avatar.green { background:var(--brand-100); color:var(--brand-700); }
+    .avatar.blue { background:var(--elements); }
+    .avatar.purple { background:var(--experience); }
+    .avatar.yellow { background:var(--foundation); }
+    .avatar.pink { background:var(--templates); }
+    .member-head h3 { font-size:18px; line-height:1.4; }
+    .member-head span { color:var(--neutral-500); font-size:13px; }
+    .team-card p { color:var(--neutral-600); font-size:14px; margin-bottom:14px; }
+    .member-email {
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      margin-bottom:14px;
+      padding:0 10px;
+      border-radius:999px;
+      background:var(--neutral-50);
+      border:1px solid var(--neutral-200);
+      color:var(--brand-700);
+      font-size:12px;
+      font-weight:600;
+      direction:ltr;
+      unicode-bidi:embed;
+    }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip {
+      display:inline-flex;
+      align-items:center;
+      min-height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      background:var(--neutral-50);
+      border:1px solid var(--neutral-200);
+      color:var(--neutral-700);
+      font-size:12px;
+      font-weight:500;
+    }
+
+    .contact-card {
+      padding:30px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:24px;
+      align-items:center;
+    }
+    .contact-card h2 { font-size:26px; line-height:1.45; margin-bottom:8px; }
+    .contact-card p { color:var(--neutral-600); max-width:760px; }
+    .contact-email {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:0 16px;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--brand-500);
+      background:var(--brand-500);
+      color:var(--neutral-0);
+      font-size:14px;
+      font-weight:600;
+      direction:ltr;
+      unicode-bidi:embed;
+      white-space:nowrap;
+    }
+    .contact-email:focus-visible,
+    .secondary-links a:focus-visible,
+    .member-email:focus-visible {
+      outline:none;
+      box-shadow:var(--ring);
+    }
+
+    .footer {
+      padding:28px 0;
+      background:var(--neutral-0);
+      border-top:1px solid var(--neutral-200);
+      color:var(--neutral-500);
+      font-size:13px;
+    }
+    .footer-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    @media (max-width: 1060px) {
+      .page-layout { grid-template-columns:1fr; }
+      .secondary-nav-card {
+        position:relative;
+        top:auto;
+        order:-1;
+      }
+      .secondary-links {
+        display:grid;
+        grid-template-columns:repeat(4, 1fr);
+      }
+    }
+    @media (max-width: 960px) {
+      .hero-grid,
+      .contact-card { grid-template-columns:1fr; }
+      .about-box,
+      .values-grid,
+      .team-grid { grid-template-columns:repeat(2, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .container { width:min(100% - 28px, 1180px); }
+      .topbar-row { min-height:64px; }
+      .page-note { display:none; }
+      .hero { padding:48px 0 40px; }
+      .lead { font-size:16px; }
+      .stats,
+      .about-box,
+      .values-grid,
+      .team-grid,
+      .secondary-links { grid-template-columns:1fr; }
+      .page-layout { padding:32px 0 48px; }
+      .section { padding-bottom:46px; }
+      .contact-card { padding:24px; }
+    }
+  
+</style>
+</head>
+<body>
+  <div id="emtithal-header"></div>
+
+
+
+  <main>
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div>
+          <h1>إمتثال</h1>
+          <p class="lead">إمتثال مشروع تخرج أكاديمي من تنفيذ طالبات تخصص تفاعل الإنسان مع الحاسب في جامعة أم القرى، كأول دفعة في التخصص على مستوى الشرق الأوسط.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="container page-layout">
+      <aside class="secondary-nav-card" aria-label="تنقل ثانوي داخل الصفحة">
+        <p class="secondary-nav-label">في هذه الصفحة</p>
+        <nav class="secondary-links" aria-label="أقسام الصفحة">
+          <a href="#intro" class="active">عن المشروع</a>
+          <a href="#method">آلية العمل</a>
+          <a href="#team">الفريق</a>
+          <a href="#contact">التواصل</a>
+        </nav>
+      </aside>
+
+      <div class="content-stack">
+        <section class="section" id="intro">
+          <div class="section-head">
+            <p class="tag">عن المشروع</p>
+            <h2>أداة أكاديمية تساعد على تقييم الامتثال لكود المنصات السعودي بطريقة أوضح وأسرع.</h2>
+            <p>تم تطوير إمتثال لمعالجة تحدٍ عملي في تقييم المواقع الحكومية، حيث تتطلب عملية التحقق من الالتزام بالمعايير وقتًا وجهدًا عند تنفيذها يدويًا. لذلك يركز المشروع على تسهيل التقييم وتسهيل عملية الامتثال لنظام التصميم الموحد «كود المنصات السعودي» دون الاستغناء عن المراجعة البشرية عند الحاجة.</p>
+          </div>
+          <div class="about-box">
+            <article class="text-card">
+              <h3>الهدف</h3>
+              <p>اختصار وقت التقييم ومساعدة فرق العمل على فهم حالة الامتثال بشكل منظم، بدل الاعتماد الكامل على مراجعة يدوية طويلة ومتكررة.</p>
+            </article>
+            <article class="text-card">
+              <h3>مرجعية البناء</h3>
+              <p>بُنيت فكرة المشروع على دراسات مع موظفي هيئة الحكومة الرقمية لفهم واقع التقييم الحالي، والتحديات المرتبطة بتطبيق معايير كود المنصات السعودي.</p>
+            </article>
+            <article class="text-card">
+              <h3>المخرجات</h3>
+              <p>يوفر المشروع نتائج وتقارير تساعد على توضيح نقاط الالتزام ونقاط التحسين، بما يدعم دقة القرار ويجعل المتابعة أسهل على أصحاب العلاقة.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="method">
+          <div class="section-head">
+            <p class="tag">آلية العمل</p>
+            <h2>منهجية تربط معايير التصميم الموحد بالفحص الآلي والتقرير النهائي.</h2>
+          </div>
+          <div class="values-grid">
+            <article class="value-card">
+              <div class="value-icon">01</div>
+              <h3>تحليل المعايير</h3>
+              <p>ترتيب معايير كود المنصات السعودي وتحويل ما يمكن منها إلى عناصر قابلة للفحص داخل صفحة الويب.</p>
+            </article>
+            <article class="value-card">
+              <div class="value-icon">02</div>
+              <h3>فحص الصفحة</h3>
+              <p>استخدام إضافات مخصصة لفحص عناصر الصفحة أوتوماتيكيًا، وتقليل الجهد المتكرر في عملية المراجعة اليدوية.</p>
+            </article>
+            <article class="value-card">
+              <div class="value-icon">03</div>
+              <h3>عرض النتائج</h3>
+              <p>توليد تقرير واضح يوضح حالة الامتثال، ويساعد على تحديد الجوانب التي تحتاج مراجعة أو تحسين.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="team">
+          <div class="section-head">
+            <p class="tag">الفريق</p>
+            <h2>أدوار متكاملة بين الإدارة، التصميم، التطوير، البيانات، وضمان الجودة.</h2>
+            <p>يعرض هذا القسم مساهمات عضوات المشروع بصورة تعريفية هادئة، مع بيانات تواصل وهمية مخصصة للنموذج.</p>
+          </div>
+          <div class="team-grid">
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar green">ت</div>
+                <div><h3>تسنيم الزهراني</h3><span>قائدة المشروع</span></div>
+              </div>
+              <p>تتابع خطة العمل، تنسق بين المسارات، وتضمن بقاء مخرجات المشروع مرتبطة بهدفه الأكاديمي ومتطلبات التسليم.</p>
+              <a class="member-email" href="mailto:tasneem.alzahrani@imtithal.example">tasneem.alzahrani@imtithal.example</a>
+              <div class="chips"><span class="chip">إدارة المشروع</span><span class="chip">تنسيق الفريق</span></div>
+            </article>
+
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar blue">أ</div>
+                <div><h3>اسماء الجفري</h3><span>مطورة واجهات (Frontend)</span></div>
+              </div>
+              <p>تعمل على بناء الواجهات وتنظيم تفاعل المستخدم مع عناصر الصفحة، مع المحافظة على الاتساق البصري وسهولة الاستخدام.</p>
+              <a class="member-email" href="mailto:asma.aljafri@imtithal.example">asma.aljafri@imtithal.example</a>
+              <div class="chips"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JavaScript</span></div>
+            </article>
+
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar purple">ر</div>
+                <div><h3>ريماس الفهمي</h3><span>مصممة UX</span></div>
+              </div>
+              <p>تركز على فهم احتياج المستخدم وترتيب رحلة التقييم، بحيث تكون المعلومات واضحة وقابلة للمراجعة من أول استخدام.</p>
+              <a class="member-email" href="mailto:remas.alfahmi@imtithal.example">remas.alfahmi@imtithal.example</a>
+              <div class="chips"><span class="chip">رحلة المستخدم</span><span class="chip">تصميم التجربة</span></div>
+            </article>
+
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar yellow">و</div>
+                <div><h3>ود الزهراني</h3><span>محللة بيانات</span></div>
+              </div>
+              <p>تراجع بيانات الفحص والمؤشرات الناتجة من التقارير، وتحوّلها إلى ملاحظات تساعد على تحسين دقة المخرجات.</p>
+              <a class="member-email" href="mailto:wed.alzahrani@imtithal.example">wed.alzahrani@imtithal.example</a>
+              <div class="chips"><span class="chip">تحليل البيانات</span><span class="chip">مؤشرات النتائج</span></div>
+            </article>
+
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar pink">ف</div>
+                <div><h3>فرح البقمي</h3><span>مطورة Backend</span></div>
+              </div>
+              <p>تهتم بتنظيم منطق الفحص وإدارة البيانات التي تدعم استقرار النتائج وتكامل التقارير مع واجهة المشروع.</p>
+              <a class="member-email" href="mailto:farah.albogami@imtithal.example">farah.albogami@imtithal.example</a>
+              <div class="chips"><span class="chip">Backend</span><span class="chip">API</span><span class="chip">تنظيم البيانات</span></div>
+            </article>
+
+            <article class="team-card">
+              <div class="member-head">
+                <div class="avatar green">أ</div>
+                <div><h3>اسيل الفهمي</h3><span>مختبرة جودة (QA)</span></div>
+              </div>
+              <p>تختبر السيناريوهات، تراجع دقة النتائج، وتوثق الملاحظات لضمان أن تعمل الواجهة والإضافات كما هو متوقع.</p>
+              <a class="member-email" href="mailto:aseel.alfahmi@imtithal.example">aseel.alfahmi@imtithal.example</a>
+              <div class="chips"><span class="chip">اختبار الجودة</span><span class="chip">توثيق الملاحظات</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="contact">
+          <div class="contact-card">
+            <div>
+              <h2>التواصل مع فريق المشروع</h2>
+              <p>للاستفسارات الأكاديمية أو متابعة فكرة المشروع، يمكن استخدام البريد التجريبي العام للفريق أو الإيميلات الموضحة في بطاقات العضوات.</p>
+            </div>
+            <a class="contact-email" href="mailto:team@imtithal.example">team@imtithal.example</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="emtithal-footer"></div>
+
+<script>
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.secondary-links a'));
+
+    const setActiveLink = (id) => {
+      navLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (visible) setActiveLink(visible.target.id);
+    }, { rootMargin:'-20% 0px -55% 0px', threshold:[0.1, 0.3, 0.6] });
+
+    sections.forEach((section) => observer.observe(section));
+  </script>
+
+
+</body>
+</html>

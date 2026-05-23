@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إمتثال | الصفحة الرئيسية</title>
+  <meta name="description" content="منصة إمتثال لفحص امتثال المواقع الحكومية لكود المنصات الموحد.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/emtithal_public_components.js"></script>
+  <style>
+    /*
+      Emtithal public home — aligned with Platforms Code Design System.
+      Core UI tokens are mapped to PC 1.0 foundations: Saudi green primary,
+      neutral surfaces, IBM Plex Sans Arabic, 4px spacing rhythm, 4px controls,
+      8px cards, restrained elevation, and RTL-first layout.
+    */
+    :root {
+      /* Brand / Primary */
+      --pc-brand-50:  #F3FCF6;
+      --pc-brand-100: #E0F5EA;
+      --pc-brand-200: #B8E6CB;
+      --pc-brand-300: #84C08A;
+      --pc-brand-400: #54C08A;
+      --pc-brand-500: #1B8354;
+      --pc-brand-600: #15683F;
+      --pc-brand-700: #067647;
+      --pc-brand-800: #14573A;
+      --pc-brand-900: #074D31;
+      --pc-brand-950: #104631;
+
+      /* Indigo / Purple accent from Emtithal logo and PC secondary ramp */
+      --pc-indigo-50:  #F5F3FA;
+      --pc-indigo-100: #ECE8F4;
+      --pc-indigo-200: #D6CDE5;
+      --pc-indigo-300: #B7A8D0;
+      --pc-indigo-400: #8A77B5;
+      --pc-indigo-500: #4E3B86;
+      --pc-indigo-600: #3E3F8F;
+      --pc-indigo-700: #303074;
+      --pc-indigo-800: #232358;
+      --pc-indigo-900: #181842;
+      --pc-indigo-950: #0F0D2A;
+
+      /* Neutrals */
+      --pc-neutral-0:    #FFFFFF;
+      --pc-neutral-25:   #FCFCFD;
+      --pc-neutral-50:   #F9FAFB;
+      --pc-neutral-100:  #F3F4F6;
+      --pc-neutral-200:  #E5E7EB;
+      --pc-neutral-300:  #D2D6DB;
+      --pc-neutral-400:  #9DA4AE;
+      --pc-neutral-500:  #6C737F;
+      --pc-neutral-600:  #4D5761;
+      --pc-neutral-700:  #384250;
+      --pc-neutral-800:  #1F2A37;
+      --pc-neutral-900:  #161616;
+      --pc-neutral-950:  #0D121C;
+
+      /* Status */
+      --pc-danger-50:  #FEF3F2;
+      --pc-danger-100: #FECDCA;
+      --pc-danger-500: #D92D20;
+      --pc-danger-600: #B42318;
+      --pc-danger-700: #912018;
+      --pc-warning-50:  #FFFAEB;
+      --pc-warning-100: #FEF0C7;
+      --pc-warning-200: #FEDF89;
+      --pc-warning-500: #F79009;
+      --pc-warning-600: #DBA102;
+      --pc-warning-700: #B54708;
+      --pc-success-50:  #F3FCF6;
+      --pc-success-100: #DCFAE6;
+      --pc-success-200: #ABEFC6;
+      --pc-success-500: #1B8354;
+      --pc-success-600: #067647;
+      --pc-success-700: #14573A;
+      --pc-info-50:  #F4EBFF;
+      --pc-info-100: #E9D7FE;
+      --pc-info-500: #9747FF;
+      --pc-info-600: #7F2EE6;
+      --pc-info-700: #5C16C5;
+
+      /* Semantic */
+      --pc-text-default: var(--pc-neutral-900);
+      --pc-text-strong: var(--pc-neutral-950);
+      --pc-text-muted: var(--pc-neutral-700);
+      --pc-text-subtle: var(--pc-neutral-500);
+      --pc-text-disabled: var(--pc-neutral-400);
+      --pc-text-on-brand: var(--pc-neutral-0);
+      --pc-text-on-dark: var(--pc-neutral-0);
+      --pc-text-link: var(--pc-brand-600);
+      --pc-text-link-hover: var(--pc-brand-700);
+      --pc-surface-app: var(--pc-neutral-25);
+      --pc-surface-raised: var(--pc-neutral-0);
+      --pc-surface-muted: var(--pc-neutral-100);
+      --pc-surface-sunken: var(--pc-neutral-50);
+      --pc-surface-inverse: var(--pc-neutral-950);
+      --pc-surface-brand: var(--pc-brand-500);
+      --pc-surface-brand-tint: var(--pc-brand-50);
+      --pc-border-default: var(--pc-neutral-300);
+      --pc-border-subtle: var(--pc-neutral-200);
+      --pc-border-brand: var(--pc-brand-500);
+      --pc-ring-focus: 0 0 0 4px rgba(27, 131, 84, 0.16);
+
+      /* Category colors — preserved as requested */
+      --cat-foundations: #E5E500;
+      --cat-foundations-soft: #FBFBC8;
+      --cat-foundations-ink: #514F00;
+      --cat-templates: #E49EDD;
+      --cat-templates-soft: #F7DDF4;
+      --cat-templates-ink: #6F2266;
+      --cat-components: #94DCF8;
+      --cat-components-soft: #DDF4FD;
+      --cat-components-ink: #0E4E68;
+      --cat-experience: #9DA6F3;
+      --cat-experience-soft: #E6E9FF;
+      --cat-experience-ink: #2C347E;
+
+      /* Typography */
+      --pc-font-display: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --pc-font-body: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --pc-font-mono: 'Roboto Mono', 'SF Mono', Menlo, Consolas, monospace;
+      --pc-text-xs: 10px;
+      --pc-text-sm: 12px;
+      --pc-text-md: 14px;
+      --pc-text-base: 16px;
+      --pc-text-lg: 18px;
+      --pc-text-xl: 20px;
+      --pc-text-2xl: 24px;
+      --pc-text-3xl: 30px;
+      --pc-text-4xl: 36px;
+      --pc-text-5xl: 48px;
+      --pc-text-6xl: 60px;
+      --pc-leading-sm: 18px;
+      --pc-leading-md: 20px;
+      --pc-leading-base: 24px;
+      --pc-leading-lg: 28px;
+      --pc-leading-xl: 30px;
+      --pc-leading-2xl: 32px;
+      --pc-leading-3xl: 38px;
+      --pc-leading-4xl: 44px;
+      --pc-leading-5xl: 60px;
+      --pc-leading-6xl: 72px;
+      --pc-weight-regular: 400;
+      --pc-weight-medium: 500;
+      --pc-weight-semibold: 600;
+      --pc-weight-bold: 700;
+
+      /* Spacing */
+      --pc-space-1: 4px;
+      --pc-space-2: 8px;
+      --pc-space-3: 12px;
+      --pc-space-4: 16px;
+      --pc-space-5: 20px;
+      --pc-space-6: 24px;
+      --pc-space-8: 32px;
+      --pc-space-10: 40px;
+      --pc-space-12: 48px;
+      --pc-space-14: 56px;
+      --pc-space-16: 64px;
+      --pc-space-20: 80px;
+
+      /* Radius & elevation */
+      --pc-radius-xs: 2px;
+      --pc-radius-sm: 4px;
+      --pc-radius-md: 8px;
+      --pc-radius-lg: 12px;
+      --pc-radius-xl: 16px;
+      --pc-radius-pill: 9999px;
+      --pc-shadow-xs: 0 1px 2px rgba(16,24,40,0.06);
+      --pc-shadow-sm: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.10);
+      --pc-shadow-md: 0 2px 4px rgba(16,24,40,0.06), 0 4px 8px rgba(16,24,40,0.10);
+      --pc-shadow-lg: 0 4px 6px rgba(16,24,40,0.03), 0 12px 16px rgba(16,24,40,0.08);
+      --pc-ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --pc-duration-fast: 150ms;
+      --pc-duration-base: 200ms;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--pc-font-body);
+      background: var(--pc-surface-app);
+      color: var(--pc-text-default);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    body.menu-open { overflow: hidden; }
+    h1, h2, h3, p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    svg { display: block; }
+    .container { width: min(100% - var(--pc-space-8), 1280px); margin-inline: auto; }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+
+
+    /* Hero */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background-color: var(--pc-surface-inverse);
+      background-image:
+        linear-gradient(90deg, rgba(13,18,28,.62) 0%, rgba(13,18,28,.78) 42%, rgba(13,18,28,.98) 100%),
+        radial-gradient(circle at 18% 50%, rgba(78,59,134,.20) 0%, rgba(78,59,134,.08) 34%, transparent 58%),
+        url("assets/emtithal-logo-nav.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%, 100% 100%, clamp(420px, 58vw, 780px) auto;
+      background-position: center, center, left 6% center;
+      color: var(--pc-text-on-dark);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border-radius: var(--pc-radius-pill);
+      opacity: .22;
+    }
+    .hero::before {
+      width: 360px;
+      height: 360px;
+      top: -160px;
+      inset-inline-start: -120px;
+      background: var(--pc-indigo-500);
+    }
+    .hero::after {
+      width: 250px;
+      height: 250px;
+      bottom: -120px;
+      inset-inline-end: 8%;
+      background: var(--pc-brand-500);
+    }
+    .hero-inner {
+      min-height: 448px;
+      display: flex;
+      align-items: center;
+      padding-block: var(--pc-space-20);
+      position: relative;
+      z-index: 1;
+    }
+    .hero-content { max-width: 780px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--pc-space-2);
+      min-height: 30px;
+      padding: 4px 12px;
+      border-radius: var(--pc-radius-pill);
+      background: rgba(27,131,84,.14);
+      color: #ABEFC6;
+      border: 1px solid rgba(171,239,198,.28);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-semibold);
+      margin-bottom: var(--pc-space-5);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-indigo-300);
+      box-shadow: 0 0 0 3px rgba(183,168,208,.15);
+      flex: 0 0 auto;
+    }
+    .hero-title {
+      font-family: var(--pc-font-display);
+      font-size: clamp(36px, 5vw, 60px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      font-weight: var(--pc-weight-bold);
+      color: var(--pc-neutral-0);
+    }
+    .hero-title span {
+      display: block;
+      color: #ABEFC6;
+    }
+    .hero-lead {
+      margin-top: var(--pc-space-5);
+      max-width: 760px;
+      color: rgba(255,255,255,.78);
+      font-size: var(--pc-text-lg);
+      line-height: 32px;
+      font-weight: var(--pc-weight-regular);
+    }
+    .hero-actions {
+      margin-top: var(--pc-space-8);
+      display: flex;
+      align-items: center;
+      gap: var(--pc-space-3);
+      flex-wrap: wrap;
+    }
+    .hero-actions .btn-secondary {
+      color: var(--pc-neutral-950);
+      border-color: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.94);
+    }
+    .hero-actions .btn-secondary:hover { background: var(--pc-neutral-0); }
+
+    /* Main Layout */
+    .main {
+      padding-block: var(--pc-space-16) var(--pc-space-20);
+      display: grid;
+      gap: var(--pc-space-16);
+    }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--pc-space-5);
+      margin-bottom: var(--pc-space-6);
+    }
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--pc-space-2);
+      margin-bottom: var(--pc-space-2);
+      color: var(--pc-brand-700);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-bold);
+    }
+    .section-kicker::before {
+      content: "";
+      width: 6px;
+      height: 18px;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-indigo-500);
+    }
+    .section-title {
+      color: var(--pc-text-strong);
+      font-size: clamp(24px, 2.8vw, 36px);
+      line-height: 1.35;
+      font-weight: var(--pc-weight-bold);
+      letter-spacing: -0.02em;
+    }
+    .section-desc {
+      margin-top: var(--pc-space-2);
+      max-width: 720px;
+      color: var(--pc-text-subtle);
+      font-size: var(--pc-text-md);
+      line-height: 26px;
+    }
+
+    /* Tags / Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 26px;
+      padding: 3px 10px;
+      border-radius: var(--pc-radius-pill);
+      border: 1px solid transparent;
+      background: var(--pc-surface-muted);
+      color: var(--pc-text-muted);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-semibold);
+      white-space: nowrap;
+    }
+    .badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: var(--pc-radius-pill);
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+    .badge.success { background: var(--pc-success-50); color: var(--pc-success-600); border-color: var(--pc-success-200); }
+    .badge.warning { background: var(--pc-warning-50); color: var(--pc-warning-700); border-color: var(--pc-warning-200); }
+    .badge.danger  { background: var(--pc-danger-50); color: var(--pc-danger-600); border-color: var(--pc-danger-100); }
+    .badge.foundation { background: var(--cat-foundations-soft); color: var(--cat-foundations-ink); border-color: var(--cat-foundations); }
+    .badge.template { background: var(--cat-templates-soft); color: var(--cat-templates-ink); border-color: var(--cat-templates); }
+    .badge.component { background: var(--cat-components-soft); color: var(--cat-components-ink); border-color: var(--cat-components); }
+    .badge.experience { background: var(--cat-experience-soft); color: var(--cat-experience-ink); border-color: var(--cat-experience); }
+    .extension-version::before,
+    .platform-count-bar::before { display: none; }
+
+    /* Cards */
+    .card {
+      background: var(--pc-surface-raised);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      box-shadow: var(--pc-shadow-xs);
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-5);
+      border-bottom: 1px solid var(--pc-border-subtle);
+    }
+    .card-title {
+      color: var(--pc-text-strong);
+      font-size: var(--pc-text-base);
+      line-height: var(--pc-leading-base);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .card-subtitle {
+      margin-top: var(--pc-space-1);
+      color: var(--pc-text-subtle);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+    }
+
+    /* Ranking */
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: var(--pc-space-4);
+    }
+    .rank-list { display: grid; gap: 0; padding: var(--pc-space-2); }
+    .rank-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 42px minmax(0,1fr) auto;
+      align-items: center;
+      gap: var(--pc-space-3);
+      min-height: 64px;
+      padding: 10px 12px;
+      border: 0;
+      border-radius: var(--pc-radius-sm);
+      background: transparent;
+      color: inherit;
+      text-align: right;
+      transition: background var(--pc-duration-fast) var(--pc-ease), transform var(--pc-duration-fast) var(--pc-ease);
+    }
+    .rank-item:hover { background: var(--pc-surface-sunken); }
+    .rank-item:focus-visible { outline: none; box-shadow: var(--pc-ring-focus); }
+    .rank-number {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-indigo-50);
+      color: var(--pc-indigo-700);
+      border: 1px solid var(--pc-indigo-100);
+      font-family: var(--pc-font-mono);
+      font-size: 13px;
+      font-weight: var(--pc-weight-bold);
+      direction: ltr;
+    }
+    .rank-name {
+      color: var(--pc-text-strong);
+      font-size: 15px;
+      line-height: 24px;
+      font-weight: var(--pc-weight-semibold);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rank-meta { color: var(--pc-text-subtle); font-size: var(--pc-text-sm); line-height: var(--pc-leading-sm); }
+
+    /* Extensions */
+    .extension-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: var(--pc-space-4);
+    }
+    .extension-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-5);
+      min-height: 264px;
+      background: var(--pc-surface-raised);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      box-shadow: var(--pc-shadow-xs);
+      transition: transform var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease);
+    }
+    .extension-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--pc-shadow-sm);
+      border-color: var(--pc-neutral-300);
+    }
+    .extension-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--pc-space-3);
+    }
+    .extension-card h3 {
+      color: var(--pc-text-strong);
+      font-size: var(--pc-text-base);
+      line-height: var(--pc-leading-base);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .extension-version {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-indigo-50);
+      color: var(--pc-indigo-700);
+      border: 1px solid var(--pc-indigo-100);
+      font-family: var(--pc-font-mono);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      direction: ltr;
+    }
+    .extension-card p { margin-top: var(--pc-space-2); color: var(--pc-text-muted); font-size: var(--pc-text-md); line-height: 26px; }
+    .download-row {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--pc-space-3);
+      padding-top: var(--pc-space-4);
+      border-top: 1px solid var(--pc-border-subtle);
+    }
+    .download-count {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--pc-text-subtle);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-semibold);
+      white-space: nowrap;
+    }
+    .download-count svg { width: 16px; height: 16px; color: var(--pc-indigo-500); }
+
+    /* Platform directory */
+    .platform-card { overflow: hidden; }
+    .platform-tools {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-5);
+      border-bottom: 1px solid var(--pc-border-subtle);
+      background: var(--pc-surface-raised);
+    }
+    .search-box { position: relative; width: 100%; max-width: 560px; }
+    .search-box svg {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--pc-text-subtle);
+      pointer-events: none;
+    }
+    .input {
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 42px 8px 12px;
+      border: 1px solid var(--pc-border-default);
+      border-radius: var(--pc-radius-sm);
+      background: var(--pc-surface-raised);
+      color: var(--pc-text-default);
+      outline: none;
+      font-size: var(--pc-text-md);
+      line-height: var(--pc-leading-md);
+      transition: border-color var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease), background var(--pc-duration-fast) var(--pc-ease);
+    }
+    .input::placeholder { color: var(--pc-text-disabled); }
+    .input:hover { border-color: var(--pc-neutral-400); }
+    .input:focus { border-color: var(--pc-border-brand); box-shadow: var(--pc-ring-focus); }
+    .chips { display: flex; align-items: stretch; gap: var(--pc-space-2); flex-wrap: wrap; }
+    .chip {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-surface-muted);
+      color: var(--pc-text-default);
+      font-size: 13px;
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-medium);
+      transition: background var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease), color var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease);
+      white-space: nowrap;
+    }
+    .chip:hover { background: var(--pc-neutral-200); }
+    .chip.active {
+      background: var(--pc-brand-50);
+      color: var(--pc-brand-700);
+      border-color: var(--pc-brand-500);
+    }
+    .chip:focus-visible { outline: none; box-shadow: var(--pc-ring-focus); }
+    .chip-check { display: none; width: 14px; height: 14px; flex: 0 0 auto; }
+    .chip.active .chip-check { display: block; }
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%;
+      min-width: 800px;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 13px;
+    }
+    thead {
+      background: var(--pc-surface-sunken);
+      color: var(--pc-text-muted);
+      border-bottom: 1px solid var(--pc-border-subtle);
+    }
+    th, td {
+      padding: 12px 14px;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--pc-surface-muted);
+    }
+    th {
+      text-align: right;
+      font-weight: var(--pc-weight-semibold);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      white-space: nowrap;
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(249,250,251,.85); }
+    .platform-cell { display: flex; align-items: center; gap: var(--pc-space-3); min-width: 200px; }
+    .platform-avatar {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-indigo-50);
+      color: var(--pc-indigo-700);
+      border: 1px solid var(--pc-indigo-100);
+      font-weight: var(--pc-weight-semibold);
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+    .platform-name { color: var(--pc-text-strong); font-weight: var(--pc-weight-semibold); line-height: 22px; }
+    .agency-text { color: var(--pc-text-muted); line-height: 22px; }
+    .score-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 180px;
+      direction: ltr;
+      justify-content: flex-end;
+    }
+    .progress {
+      width: 104px;
+      height: 8px;
+      overflow: hidden;
+      border-radius: var(--pc-radius-pill);
+      background: var(--pc-surface-muted);
+      direction: ltr;
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--pc-brand-500);
+    }
+    .progress.warning span { background: var(--pc-warning-500); }
+    .report-action { text-align: left; white-space: nowrap; }
+    .empty-state { display: none; padding: var(--pc-space-14) var(--pc-space-5); text-align: center; color: var(--pc-text-muted); }
+    .empty-state.show { display: block; }
+    .empty-state strong { display: block; margin-bottom: var(--pc-space-1); color: var(--pc-text-strong); font-size: var(--pc-text-lg); line-height: var(--pc-leading-lg); }
+    .show-more-row { cursor: pointer; }
+    .show-more-row td {
+      background: var(--pc-surface-sunken);
+      border-bottom: 0;
+      border-top: 1px solid var(--pc-border-subtle);
+      text-align: center;
+      padding: var(--pc-space-5);
+      color: var(--pc-brand-700);
+      font-size: var(--pc-text-md);
+      line-height: var(--pc-leading-md);
+      font-weight: var(--pc-weight-semibold);
+      transition: background var(--pc-duration-fast) var(--pc-ease), color var(--pc-duration-fast) var(--pc-ease);
+    }
+    .show-more-row:hover td { background: var(--pc-brand-50); color: var(--pc-brand-700); }
+    .show-more-inner { display: inline-flex; align-items: center; gap: var(--pc-space-2); }
+    .show-more-inner svg { width: 16px; height: 16px; }
+
+    /* Responsive styling for homepage specific content */
+    @media (max-width: 1080px) {
+      .extension-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 860px) {
+      .hero { background-size: 100% 100%, 100% 100%, min(86vw, 620px) auto; background-position: center, center, left -72px center; }
+      .hero-inner { padding-block: var(--pc-space-14); min-height: 400px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .rank-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero { background-size: 100% 100%, 100% 100%, 460px auto; background-position: center, center, left -180px center; }
+      .hero-title { font-size: 36px; }
+      .hero-lead { font-size: var(--pc-text-base); line-height: 30px; }
+      .hero-actions { align-items: stretch; flex-direction: column; }
+      .hero-actions .btn { width: 100%; }
+      .extension-grid { grid-template-columns: 1fr; }
+      .main { padding-block: var(--pc-space-10) var(--pc-space-14); gap: var(--pc-space-12); }
+      .download-row { align-items: flex-start; flex-direction: column; }
+      .download-row .btn { width: 100%; }
+      .chips { gap: 6px; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+  <div id="emtithal-header"></div>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <span class="eyebrow">منصة إمتثال لتقييم كود المنصات</span>
+          <h1 class="hero-title" id="hero-title">
+            نظام التصميم الموحد
+            <span>كود المنصات</span>
+          </h1>
+          <p class="hero-lead">
+            كود المنصات هو المرجع الوطني الشامل لضمان توحيد تجربة المستخدم في جميع القنوات الرقمية الحكومية. يهدف إلى رفع جودة الخدمات وتعزيز الثقة من خلال معايير بصرية ووظيفية مدروسة تواكب طموحات المملكة الرقمية.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-secondary" href="https://design.dga.gov.sa/" target="_blank" rel="noopener noreferrer">
+              زيارة موقع هيئة الحكومة الرقمية
+              <svg aria-hidden="true"><use href="#i-external"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container main">
+      <section aria-labelledby="ranking-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">مؤشرات الامتثال</span>
+            <h2 class="section-title" id="ranking-title">ترتيب المنصات حسب الامتثال</h2>
+            <p class="section-desc">أعلى وأقل المنصات امتثالًا لمعايير كود المنصات — اضغط على أي منصة للانتقال مباشرة إلى تقريرها.</p>
+          </div>
+        </div>
+        <div class="rank-grid">
+          <article class="card">
+            <header class="card-header">
+              <div>
+                <h3 class="card-title">أعلى 5 منصات امتثالًا</h3>
+                <p class="card-subtitle">المنصات الأعلى في نتائج الفحص.</p>
+              </div>
+              <span class="badge success">أداء مرتفع</span>
+            </header>
+            <div class="rank-list" id="topRankings"></div>
+          </article>
+          <article class="card">
+            <header class="card-header">
+              <div>
+                <h3 class="card-title">أقل 5 منصات امتثالًا</h3>
+                <p class="card-subtitle">منصات تحتاج إلى تحسينات أولوية.</p>
+              </div>
+              <span class="badge warning">تحتاج متابعة</span>
+            </header>
+            <div class="rank-list" id="lowRankings"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="extensions" aria-labelledby="extensions-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">الإضافات</span>
+            <h2 class="section-title" id="extensions-title">الإضافات الأكثر استخدامًا وتحميلًا</h2>
+            <p class="section-desc">إضافات تساعد على فحص عناصر محددة من كود المنصات بسهولة ودقة.</p>
+          </div>
+          <a class="btn btn-secondary" href="Extentions%20page.html">
+            المزيد من الإضافات
+            <svg aria-hidden="true"><use href="#i-arrow-left"/></svg>
+          </a>
+        </div>
+        <div class="extension-grid" id="extensionsGrid"></div>
+      </section>
+
+      <section id="platforms" aria-labelledby="platforms-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">المنصات الحكومية</span>
+            <h2 class="section-title" id="platforms-title">دليل المنصات والجهات الحكومية الشامل</h2>
+            <p class="section-desc">ابحث أو صفّح المنصات حسب تصنيف الجهة، ثم انتقل مباشرة إلى تقرير الامتثال لأي منصة.</p>
+          </div>
+        </div>
+
+        <article class="card platform-card">
+          <div class="platform-tools">
+            <div class="search-box">
+              <svg aria-hidden="true"><use href="#i-search"/></svg>
+              <label class="visually-hidden" for="platformSearch">ابحث عن منصة محددة</label>
+              <input class="input" type="search" id="platformSearch" placeholder="ابحث عن منصة محددة..." autocomplete="off">
+            </div>
+            <div class="chips" id="categoryChips" role="group" aria-label="فلاتر تصنيف المنصات"></div>
+          </div>
+
+          <div class="table-scroll" id="platformTableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم المنصة</th>
+                  <th>الجهة التابعة</th>
+                  <th>نسبة الامتثال</th>
+                  <th class="report-action">التقرير</th>
+                </tr>
+              </thead>
+              <tbody id="platformRows"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            <strong>لا توجد منصات مطابقة</strong>
+            <span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div id="emtithal-footer"></div>
+
+  <script>
+    let topPlatforms = [];
+    let lowPlatforms = [];
+    let platforms = [];
+    let activeFilters = new Set(['الكل']);
+
+    const extensions = [
+      {
+        title: 'إضافة معيار 2',
+        category: 'أساسيات',
+        categoryClass: 'foundation',
+        downloads: '15,000+',
+        desc: 'تفحص الإضافة النصوص والخطوط والأوزان المستخدمة في صفحة الويب، وتتأكد من توافقها مع معايير وشروط كود المنصات.'
+      },
+      {
+        title: 'إضافة معيار 13',
+        category: 'عناصر',
+        categoryClass: 'component',
+        downloads: '12,000+',
+        desc: 'تفحص توافق عنصر القائمة المنسدلة مع معايير التصميم الموحد، وتساعد على اكتشاف أخطاء الاستخدام والوضوح.'
+      },
+      {
+        title: 'إضافة معيار 10',
+        category: 'قوالب',
+        categoryClass: 'template',
+        downloads: '8,000+',
+        desc: 'تفحص تطبيق قالب البحث وفعالية وكفاءة وظيفة البحث، بما في ذلك ملاءمة نتائج البحث وسرعتها.'
+      }
+    ];
+
+    const categoryLabels = [
+      'الكل',
+      'الوزارات',
+      'إمارات المناطق',
+      'الهيئات والمنظمات الحكومية',
+      'الجامعات والمؤسسات التعليمية',
+      'المؤسسات العامة والصناديق',
+      'الأمانات والبلديات',
+      'القطاعات العسكرية والأمنية',
+      'الصناديق والمساهمات الحكومية'
+    ];
+
+    function iconUse(id) {
+      return `<svg aria-hidden="true"><use href="#${id}"></use></svg>`;
+    }
+
+    function scoreBadge(score) {
+      if (score >= 90) return 'success';
+      if (score >= 70) return 'warning';
+      return 'danger';
+    }
+
+    function renderRankList(targetId, list) {
+      const target = document.getElementById(targetId);
+      target.innerHTML = list.map((item, i) => `
+        <button class="rank-item" type="button" data-name="${item.name}"
+          onclick="window.location.href='report_page.html?id=${item.report_id}'">
+          <span class="rank-number">${i + 1}</span>
+          <span>
+            <span class="rank-name">${item.name}</span>
+            <span class="rank-meta">نسبة الامتثال حسب الفحص</span>
+          </span>
+          <span class="badge ${scoreBadge(item.score)}">${item.score}%</span>
+        </button>
+      `).join('');
+    }
+
+    function renderExtensions() {
+      document.getElementById('extensionsGrid').innerHTML = extensions.map(ext => `
+        <article class="extension-card">
+          <div class="extension-top">
+            <span class="badge ${ext.categoryClass}">${ext.category}</span>
+            <span class="extension-version">v1.2.0</span>
+          </div>
+          <div>
+            <h3>${ext.title}</h3>
+            <p>${ext.desc}</p>
+          </div>
+          <div class="download-row">
+            <span class="download-count">
+              ${iconUse('i-download')}
+              ${ext.downloads} تحميلة
+            </span>
+            <a class="btn btn-dark" href="Extentions%20page.html">
+              تحميل الإضافة
+              ${iconUse('i-download')}
+            </a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderCategoryChips() {
+      const container = document.getElementById('categoryChips');
+      container.innerHTML = categoryLabels.map(label => {
+        const isActive = activeFilters.has(label);
+        return `
+          <button class="chip ${isActive ? 'active' : ''}"
+            type="button" data-category="${label}" aria-pressed="${isActive}">
+            <svg class="chip-check" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2.5 7l3.5 3.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            ${label}
+          </button>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const cat = chip.dataset.category;
+          if (cat === 'الكل') {
+            activeFilters = new Set(['الكل']);
+          } else {
+            activeFilters.delete('الكل');
+            if (activeFilters.has(cat)) {
+              activeFilters.delete(cat);
+              if (activeFilters.size === 0) activeFilters = new Set(['الكل']);
+            } else {
+              activeFilters.add(cat);
+            }
+          }
+          renderCategoryChips();
+          renderPlatformRows();
+        });
+      });
+    }
+
+    function filteredPlatforms() {
+      const query = document.getElementById('platformSearch').value.trim().toLowerCase();
+      return platforms.filter(p => {
+        const matchQuery = !query || p.name.toLowerCase().includes(query) || p.agency.toLowerCase().includes(query);
+        const matchCat = activeFilters.has('الكل') || activeFilters.has(p.agency);
+        return matchQuery && matchCat;
+      });
+    }
+
+    function renderPlatformRows() {
+      const list = filteredPlatforms();
+      const tbody = document.getElementById('platformRows');
+      const wrap = document.getElementById('platformTableWrap');
+      const empty = document.getElementById('emptyState');
+
+      tbody.innerHTML = list.map(p => `
+        <tr>
+          <td>
+            <div class="platform-cell">
+              <span class="platform-avatar">${p.short}</span>
+              <span class="platform-name">${p.name}</span>
+            </div>
+          </td>
+          <td><span class="agency-text">${p.agency}</span></td>
+          <td>
+            <div class="score-cell">
+              <span class="badge ${scoreBadge(p.score)}">${p.score}%</span>
+              <span class="progress ${p.score < 80 ? 'warning' : ''}">
+                <span style="width:${p.score}%"></span>
+              </span>
+            </div>
+          </td>
+          <td class="report-action">
+            <a class="btn btn-secondary" href="report_page.html?id=${p.report_id}">
+              عرض تقرير المنصة
+              ${iconUse('i-arrow-left')}
+            </a>
+          </td>
+        </tr>
+      `).join('') + `
+        <tr class="show-more-row" id="showMoreRow">
+          <td colspan="4">
+            <span class="show-more-inner">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              عرض المزيد من المنصات
+            </span>
+          </td>
+        </tr>
+      `;
+
+      document.getElementById('showMoreRow')?.addEventListener('click', () => {
+        showToast('سيتم إظهار منصات إضافية عند إدراج المزيد في قاعدة البيانات.');
+      });
+
+      wrap.style.display = list.length ? 'block' : 'none';
+      
+      // If there is a specific error message stored, show it in the empty state
+      if (window._platformError) {
+        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:red;direction:ltr;display:inline-block;">${window._platformError}</span>`;
+        empty.classList.add('show');
+      } else {
+        empty.innerHTML = `<strong>لا توجد منصات مطابقة</strong><span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>`;
+        empty.classList.toggle('show', list.length === 0);
+      }
+    }
+
+    async function loadPlatformsData() {
+      const empty = document.getElementById('emptyState');
+      if (!window.db) {
+        window._platformError = 'Supabase client not initialized (window.db is undefined).';
+        renderPlatformRows();
+        return;
+      }
+      try {
+        const { data, error } = await window.db
+          .from('reports_summary')
+          .select('id, overall_compliance, platforms(name, entities(name))')
+          .order('overall_compliance', { ascending: false });
+          
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          window._platformError = 'لا توجد أي تقارير مسجلة في قاعدة البيانات.';
+          renderPlatformRows();
+          return;
+        }
+
+        platforms = data.map(rpt => {
+          let agencyType = 'الهيئات والمنظمات الحكومية';
+          const platformObj = rpt.platforms || {};
+          const entityObj = platformObj.entities || {};
+          const entName = entityObj.name || '';
+          
+          if(entName.includes('وزارة')) agencyType = 'الوزارات';
+          else if(entName.includes('جامعة')) agencyType = 'الجامعات والمؤسسات التعليمية';
+          else if(entName.includes('أمانة') || entName.includes('بلدية')) agencyType = 'الأمانات والبلديات';
+          else if(entName.includes('صندوق')) agencyType = 'الصناديق والمساهمات الحكومية';
+
+          const platName = platformObj.name || 'بدون اسم';
+          return {
+            name: platName,
+            agency: agencyType,
+            score: Math.round(rpt.overall_compliance) || 0,
+            short: platName.replace('منصة', '').trim().substring(0, 2),
+            report_id: rpt.id
+          };
+        });
+
+        // Calculate Rankings
+        const sorted = [...platforms].sort((a,b) => b.score - a.score);
+        topPlatforms = sorted.slice(0, 5);
+        lowPlatforms = sorted.slice(-5).reverse();
+
+        // Render UI
+        window._platformError = null;
+        renderRankList('topRankings', topPlatforms);
+        renderRankList('lowRankings', lowPlatforms);
+        renderPlatformRows();
+
+      } catch (err) {
+        console.error('Error fetching platforms:', err);
+        window._platformError = err.message || JSON.stringify(err);
+        renderPlatformRows();
+      }
+    }
+
+    renderExtensions();
+    renderCategoryChips();
+    
+    document.getElementById('platformSearch').addEventListener('input', renderPlatformRows);
+    
+    // Fetch dynamic data immediately
+    setTimeout(loadPlatformsData, 100);
+
+  </script>
+</body>
+</html>
