@@ -242,6 +242,13 @@ body{margin:0;}
 .tab[aria-selected="true"] .count{background:var(--pc-brand-50);color:var(--pc-brand-700);}
 
 /* ===== Criteria table ===== */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll-inner {
+  min-width: 960px;
+}
 .table-head{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:12px 20px;background:var(--pc-surface-sunken);border-bottom:1px solid var(--pc-border-default);font-size:var(--pc-text-sm);font-weight:600;color:var(--pc-text-muted);text-transform:uppercase;letter-spacing:.04em;}
 .table-row{border-bottom:1px solid var(--pc-border-subtle);transition:background var(--pc-duration-fast) var(--pc-ease);}
 .table-cells{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:16px 20px;align-items:center;min-height:72px;}
@@ -319,52 +326,70 @@ body{margin:0;}
 .toast.show{opacity:1;transform:translateY(0);}
 .toast svg{width:18px;height:18px;flex-shrink:0;}
 
-/* ===== Responsive ===== */
-@media(max-width:1180px){
-  .stats{grid-template-columns:repeat(3,minmax(0,1fr));}
-  .hero{grid-template-columns:1fr;}
-  .hero-r{border-inline-start:0;border-top:1px solid var(--pc-border-subtle);}
-  .charts{grid-template-columns:1fr;}
-  .meta-strip{flex-wrap:wrap;gap:12px;}
+/* ===== Mobile-First Base Overrides ===== */
+.stats { grid-template-columns: 1fr 1fr; }
+.hero { grid-template-columns: 1fr; }
+.charts { grid-template-columns: 1fr; }
+.hero-l { padding: 20px; }
+.hero-r { padding: 20px; border-inline-start: 0; border-top: 1px solid var(--pc-border-subtle); }
+.donut-wrap { flex-direction: column; }
+.result-head { align-items: flex-start; }
+.result-body { display: flex; align-items: center; justify-content: center; }
+.result-stats { width: 100%; max-width: 280px; gap: 12px; }
+.result-stat-line { grid-template-columns: 1fr 40px; }
+.result-legend { align-items: flex-start; }
+.result-donut-svg { width: 200px; height: 200px; }
+.pad-x { padding-inline: 16px; }
+.page-header { padding: 16px; }
+.bar-row { grid-template-columns: 100px 1fr 50px; }
+.detail-grid { grid-template-columns: 1fr; }
+.det-grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.ext-head, .ext-row { grid-template-columns: minmax(0,1fr) 120px; }
+.ext-head > *:nth-child(3), .ext-head > *:nth-child(4), .ext-row > *:nth-child(3), .ext-row > *:nth-child(4) { display: none; }
+.extension-card { align-items: flex-start; flex-direction: column; }
+.filters { flex-direction: column; align-items: stretch; }
+.search-wrap { min-width: auto; }
+.title-row { flex-direction: column; align-items: flex-start; }
+.meta-strip { display: none; flex-wrap: wrap; gap: 12px; }
+.scroll-fab { bottom: 16px; inset-inline-end: 16px; }
+
+/* Desktop scaling */
+@media (min-width: 600px) {
+  .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .donut-wrap { flex-direction: row; }
 }
 
-@media(max-width:1180px){
-  .result-body{display:flex;align-items:center;justify-content:center;}
+@media (min-width: 768px) {
+  .stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .result-head { align-items: center; }
+  .result-stats { width: auto; max-width: none; gap: 22px; }
+  .result-stat-line { grid-template-columns: 46px 32px; }
+  .result-legend { align-items: stretch; }
+  .result-donut-svg { width: 220px; height: 220px; }
 }
-@media(max-width:760px){
-  .result-head{align-items:flex-start;}
-  .result-body{display:flex;align-items:center;justify-content:center;}
-  .result-stats{width:100%;max-width:280px;gap:12px;}
-  .result-stat-line{grid-template-columns:1fr 40px;}
-  .result-legend{align-items:flex-start;}
-  .result-donut-svg{width:200px;height:200px;}
+
+@media (min-width: 900px) {
+  .pad-x { padding-inline: 32px; }
+  .page-header { padding: 20px 32px 24px; }
+  .bar-row { grid-template-columns: 130px 1fr 60px; }
+  .detail-grid { grid-template-columns: 1fr 1fr; }
+  .det-grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .ext-head, .ext-row { grid-template-columns: 180px minmax(0,1fr) 100px 100px; }
+  .ext-head > *:nth-child(3), .ext-head > *:nth-child(4), .ext-row > *:nth-child(3), .ext-row > *:nth-child(4) { display: block; }
+  .extension-card { align-items: center; flex-direction: row; }
+  .filters { flex-direction: row; align-items: flex-end; }
+  .search-wrap { min-width: 280px; }
+  .title-row { flex-direction: row; align-items: flex-end; }
+  .meta-strip { display: flex; }
 }
-@media(max-width:900px){
-  .table-head{display:none;}
-  .table-cells{grid-template-columns:1fr;gap:10px;padding:16px;}
-  .table-cells>*{all:revert;display:flex;align-items:center;gap:8px;}
-  .table-cells .crit-num{font-variant-numeric:tabular-nums;font-weight:700;}
-  .table-cells .actions-cell{justify-content:flex-start;}
-  .pad-x{padding-inline:16px;}
-  .page-header{padding:16px;}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .bar-row{grid-template-columns:100px 1fr 50px;}
-  .detail-grid{grid-template-columns:1fr;}
-  .det-grid-3{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .ext-head,.ext-row{grid-template-columns:minmax(0,1fr) 120px;}
-  .ext-head>*:nth-child(3),.ext-head>*:nth-child(4),.ext-row>*:nth-child(3),.ext-row>*:nth-child(4){display:none;}
-  .extension-card{align-items:flex-start;flex-direction:column;}
-  .filters{flex-direction:column;align-items:stretch;}
-  .search-wrap{min-width:auto;}
-  .title-row{flex-direction:column;align-items:flex-start;}
-  .meta-strip{display:none;}
-}
-@media(max-width:600px){
-  .stats{grid-template-columns:1fr 1fr;}
-  .donut-wrap{flex-direction:column;}
-  .hero-l{padding:20px;}
-  .hero-r{padding:20px;}
-  .scroll-fab{bottom:16px;inset-inline-end:16px;}
+
+@media (min-width: 1180px) {
+  .stats { grid-template-columns: repeat(6, minmax(0,1fr)); }
+  .hero { grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); }
+  .hero-l { padding: 28px 32px; }
+  .hero-r { padding: 28px 32px; border-inline-start: 1px solid var(--pc-border-subtle); border-top: 0; }
+  .charts { grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); }
+  .meta-strip { flex-wrap: nowrap; gap: 24px; }
 }
 </style>
 </head>
@@ -703,6 +728,9 @@ body{margin:0;}
 <button aria-selected="false" class="tab" data-tab-cat="templates" role="tab">القوالب<span class="count">4</span></button>
 <button aria-selected="false" class="tab" data-tab-cat="components" role="tab">المكونات<span class="count">30</span></button>
 </div>
+<!-- Table wrapper for horizontal scrolling on mobile -->
+<div class="table-scroll-wrapper">
+<div class="table-scroll-inner">
 <!-- Table head -->
 <div class="table-head" role="row">
 <div role="columnheader">#</div>
@@ -717,7 +745,12 @@ body{margin:0;}
 <div id="rowsVisible" role="rowgroup"></div>
 <!-- Show More accordion -->
 <div aria-expanded="false" class="show-more" id="showMore">
-<button aria-controls="showMoreBody" aria-expanded="false" class="show-more-trigger" id="showMoreBtn" type="button">
+<div class="show-more-body" id="showMoreBody" role="rowgroup"></div>
+</div>
+</div>
+</div>
+
+<button aria-controls="showMoreBody" aria-expanded="false" class="show-more-trigger" id="showMoreBtn" type="button" style="margin-top: 16px;">
 <span style="display:flex;align-items:center;gap:10px;">
 <span class="lbl-closed">عرض المزيد من المعايير</span>
 <span class="lbl-open">عرض أقل من المعايير</span>
@@ -725,8 +758,6 @@ body{margin:0;}
 </span>
 <svg aria-hidden="true" class="chev"><use href="#i-chev-down"></use></svg>
 </button>
-<div class="show-more-body" id="showMoreBody" role="rowgroup"></div>
-</div>
 <!-- Empty state -->
 <div class="empty-state" id="emptyState" style="display:none;">
 <svg aria-hidden="true"><use href="#i-filter"></use></svg>
@@ -1234,7 +1265,8 @@ async function loadReportData() {
       notes_en: 'Not inspected yet.'
     }));
 
-    let report;
+    let reports = [];
+    let report = null;
 
     if (reportId) {
       const { data, error } = await db
@@ -1243,20 +1275,39 @@ async function loadReportData() {
         .eq('id', reportId)
         .single();
       if (error) throw error;
-      report = data;
-    } else {
-      // Fallback: load the latest report if no ID provided in URL
-      const { data, error } = await db
+      
+      const { data: allData, error: allError } = await db
         .from('reports_summary')
         .select('*, api_keys(name)')
+        .eq('platform_url', data.platform_url)
+        .order('report_date', { ascending: false });
+      if (allError) throw allError;
+      reports = allData || [];
+      report = data;
+    } else {
+      // Fallback: load the latest report's platform
+      const { data: latest, error: errLatest } = await db
+        .from('reports_summary')
+        .select('platform_url')
         .order('report_date', { ascending: false })
         .limit(1)
         .single();
-      if (error) throw error;
-      report = data;
+      
+      if (errLatest && errLatest.code !== 'PGRST116') throw errLatest;
+      
+      if (latest && latest.platform_url) {
+        const { data: allData, error: allError } = await db
+          .from('reports_summary')
+          .select('*, api_keys(name)')
+          .eq('platform_url', latest.platform_url)
+          .order('report_date', { ascending: false });
+        if (allError) throw allError;
+        reports = allData || [];
+        if (reports.length > 0) report = reports[0];
+      }
     }
 
-    if (!report) {
+    if (!report || reports.length === 0) {
       render();
       updateFab();
       return;
@@ -1294,8 +1345,14 @@ async function loadReportData() {
     document.getElementById('heroEntityName').textContent = entName;
     document.getElementById('heroPlatformName').textContent = platName;
     
-    const pagesScanned = report.pages_scanned || (report.raw_report_data?.pageUrl ? [report.raw_report_data.pageUrl] : [report.platform_url]);
-    window._reportPagesScanned = pagesScanned;
+    // Collect all pages scanned across all reports for this platform
+    const pagesScanned = new Set();
+    reports.forEach(r => {
+      if (r.pages_scanned && Array.isArray(r.pages_scanned)) r.pages_scanned.forEach(p => pagesScanned.add(p));
+      if (r.raw_report_data?.pageUrl) pagesScanned.add(r.raw_report_data.pageUrl);
+      if (r.platform_url) pagesScanned.add(r.platform_url);
+    });
+    window._reportPagesScanned = Array.from(pagesScanned);
     
     const urlElem = document.getElementById('heroPlatformUrl');
     if(urlElem) {
@@ -1332,22 +1389,26 @@ async function loadReportData() {
       c.notes_ar = 'لم يتم فحص هذا المعيار حتى الآن.';
     });
 
-    const raw = report.raw_report_data || {};
-    if (raw.criterion || raw.number) {
-      const index = CRITERIA.findIndex(c => String(c.n) === String(raw.number || raw.criterion));
+    const seenCriteria = new Set();
+
+    for (const r of reports) {
+      const raw = r.raw_report_data || {};
+      const critNum = String(raw.number || raw.criterion);
+      if (!critNum || critNum === 'undefined') continue;
+      
+      if (seenCriteria.has(critNum)) continue; // Keep the newest report for each criterion
+      seenCriteria.add(critNum);
+      
+      const index = CRITERIA.findIndex(c => String(c.n) === critNum);
       if (index !== -1) {
         let st = 'not-implemented';
-        if (report.score === 100) st = 'implemented';
-        else if (report.score > 0) st = 'partial';
+        if (r.score === 100) st = 'implemented';
+        else if (r.score > 0) st = 'partial';
 
         CRITERIA[index].st = st;
-        CRITERIA[index].page = raw.pageUrl || report.platform_url || '';
+        CRITERIA[index].page = raw.pageUrl || r.platform_url || '';
         CRITERIA[index].notes_ar = 'تم الفحص آلياً عبر الإضافة.';
-        let extName = report.api_keys?.name || 'إضافة امتثال الرسمية';
-        if (String(raw.number || raw.criterion) === '4') {
-          CRITERIA[index].ref = 'https://design.dga.gov.sa/guidelines/foundations/layout-and-spacing';
-        }
-
+        let extName = r.api_keys?.name || 'إضافة امتثال الرسمية';
         CRITERIA[index].ext = {
           n: extName,
           a: extName.substring(0, 2)
@@ -1355,8 +1416,8 @@ async function loadReportData() {
       }
     }
 
-    // 4. Update Summary Stats DOM
-    updateSummaryStats(report.score || 0);
+    // 4. Update Summary Stats DOM dynamically based on ALL merged criteria
+    updateSummaryStats(null);
 
     // 5. Render standard table
     render();
@@ -1382,11 +1443,17 @@ function updateSummaryStats(dbCompliance) {
   const notImplemented = CRITERIA.filter(c => c.st === 'not-implemented').length;
   const notInspected = CRITERIA.filter(c => c.st === 'not-inspected').length;
   const total = CRITERIA.length;
+  const totalInspected = implemented + partial + notImplemented;
   
+  // Calculate compliance based ONLY on inspected criteria
+  let calcCompliance = 0;
+  if (totalInspected > 0) {
+    calcCompliance = Math.round(((implemented + partial * 0.5) / totalInspected) * 100);
+  }
+
   // Use DB compliance if available, otherwise calculate
   const compliance = dbCompliance !== undefined && dbCompliance !== null ? 
-                     Math.round(dbCompliance) : 
-                     Math.round(((implemented + partial * 0.5) / total) * 100) || 0;
+                     Math.round(dbCompliance) : calcCompliance;
 
   // Update counts
   const elImp = document.getElementById('cnt-implemented');
@@ -1411,13 +1478,19 @@ function updateSummaryStats(dbCompliance) {
   const statusPills = document.querySelectorAll('.result-status-pill');
   
   if(heroLabel) {
-    if(compliance >= 90) heroLabel.textContent = 'ممتثل';
-    else if(compliance >= 60) heroLabel.textContent = 'ممتثل جزئيًا';
-    else heroLabel.textContent = 'غير ممتثل';
+    if (totalInspected === 0) {
+      heroLabel.textContent = 'لم يتم الفحص';
+    } else if(compliance >= 90) {
+      heroLabel.textContent = 'ممتثل';
+    } else if(compliance >= 60) {
+      heroLabel.textContent = 'ممتثل جزئيًا';
+    } else {
+      heroLabel.textContent = 'غير ممتثل';
+    }
   }
   
   if(heroSub) {
-    heroSub.textContent = `${implemented} من أصل ${total} معيارًا مطبَّقة بالكامل`;
+    heroSub.textContent = `${implemented} معيار مطبق بالكامل من أصل ${totalInspected} معيار تم فحصه`;
   }
   
   // Update hardcoded total numbers in HTML
@@ -1431,7 +1504,7 @@ function updateSummaryStats(dbCompliance) {
   
   const chartFootnote = document.querySelector('.charts article:nth-child(1) .footnote span');
   if(chartFootnote) {
-    chartFootnote.textContent = `ملخّص نصي: ${implemented} من أصل ${total} معيارًا مطبَّقة بالكامل، و${partial} مطبَّقة جزئيًا، و${notImplemented} غير مطبَّق، و${notInspected} لم يُفحص بعد.`;
+    chartFootnote.textContent = `ملخّص نصي: تم فحص ${totalInspected} معيار من أصل ${total}. (${implemented} مطبَّق بالكامل، ${partial} مطبَّق جزئيًا، ${notImplemented} غير مطبَّق).`;
   }
   
   // Dynamic update of SVG Donut Charts

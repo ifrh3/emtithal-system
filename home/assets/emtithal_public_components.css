@@ -55,10 +55,7 @@ body.menu-open {
 }
 
 .nav-links {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
+  display: none; /* Hidden on mobile by default */
   align-items: center;
   justify-content: center;
   gap: var(--pc-space-1, 4px);
@@ -102,9 +99,9 @@ body.menu-open {
 }
 
 .menu-toggle {
-  display: none;
-  width: 40px;
-  height: 40px;
+  display: inline-flex; /* Visible on mobile by default */
+  width: 48px; /* HCI Touch Target minimum */
+  height: 48px;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--pc-border-default, var(--pc-neutral-300, #D2D6DB));
@@ -137,7 +134,7 @@ body.menu-open {
   align-items: center;
   justify-content: center;
   gap: var(--pc-space-2, 8px);
-  min-height: 40px;
+  min-height: 48px; /* HCI Touch Target minimum */
   padding: 0 var(--pc-space-4, 16px);
   border-radius: var(--pc-radius-sm, 4px);
   border: 1px solid transparent;
@@ -247,8 +244,8 @@ body.menu-open {
 
 .emtithal-footer-main {
   display: grid;
-  grid-template-columns: minmax(240px, 1.25fr) minmax(180px, 0.8fr) minmax(220px, 1fr);
-  gap: 32px;
+  grid-template-columns: 1fr; /* Mobile-first stacking */
+  gap: 28px;
   align-items: start;
 }
 
@@ -320,8 +317,8 @@ body.menu-open {
 }
 
 .emtithal-social-link {
-  min-width: 42px;
-  min-height: 38px;
+  min-width: 48px; /* HCI Touch Target minimum */
+  min-height: 48px; /* HCI Touch Target minimum */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -345,10 +342,7 @@ body.menu-open {
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, .08);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column; /* Mobile-first stacking */
   font-size: 13px;
   line-height: 22px;
   color: rgba(255, 255, 255, .62);
@@ -637,82 +631,39 @@ body.menu-open {
   flex: 0 0 auto;
 }
 
-/* Media Queries for Shared Components */
-@media (max-width: 1080px) {
-  .site-header .nav-links {
-    display: none;
-  }
-
-  .site-header .menu-toggle {
-    display: inline-flex;
-  }
-
-  .site-header .mobile-panel.open {
-    display: block;
-  }
-
-  .site-header .mobile-panel .nav-links {
-    position: static;
-    transform: none;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: stretch;
-    gap: var(--pc-space-2, 8px);
-  }
-}
-
-@media (max-width: 860px) {
+/* Media Queries: Mobile-First Approach (min-width scaling) */
+@media (min-width: 640px) {
+  .site-header .nav-inner { min-height: 72px; }
   .site-header .brand-logo {
     height: var(--pc-space-12, 48px);
     max-width: 168px;
   }
-}
-
-@media (max-width: 640px) {
-  .site-header .nav-inner {
-    min-height: 64px;
-  }
-
-  .site-header .brand-logo {
-    height: var(--pc-space-10, 40px);
-    max-width: 148px;
-  }
-
-  .site-header .mobile-panel .nav-links {
-    grid-template-columns: 1fr;
-  }
-
   .emtithal-footer-main {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    grid-template-columns: repeat(2, 1fr);
   }
-
-  .emtithal-container {
-    width: min(100% - 24px, 1280px);
-  }
-
-  .emtithal-global-footer {
-    padding: 32px 0 20px;
-  }
-
   .emtithal-footer-bottom {
-    align-items: flex-start;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 
-@media (max-width: 560px) {
-  .login-dialog {
-    width: min(calc(100% - 24px), 520px);
+@media (min-width: 860px) {
+  .site-header .brand-logo {
+    height: var(--pc-space-14, 56px);
+    max-width: 192px;
   }
+  .emtithal-footer-main {
+    grid-template-columns: minmax(240px, 1.25fr) minmax(180px, 0.8fr) minmax(220px, 1fr);
+  }
+}
 
-  .login-modal-head,
-  .login-modal-body {
-    padding: var(--pc-space-5, 20px);
+@media (min-width: 1080px) {
+  .site-header .nav-links {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
-
-  .login-modal-row {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+  .site-header .menu-toggle { display: none; }
+  .site-header .mobile-panel.open { display: none; }
 }

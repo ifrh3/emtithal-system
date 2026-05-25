@@ -210,9 +210,7 @@
       border: 0;
     }
 
-
-
-    /* Hero */
+    /* Hero (Mobile-First Base) */
     .hero {
       position: relative;
       overflow: hidden;
@@ -222,113 +220,79 @@
         radial-gradient(circle at 18% 50%, rgba(78,59,134,.20) 0%, rgba(78,59,134,.08) 34%, transparent 58%),
         url("assets/emtithal-logo-nav.png");
       background-repeat: no-repeat;
-      background-size: 100% 100%, 100% 100%, clamp(420px, 58vw, 780px) auto;
-      background-position: center, center, left 6% center;
+      background-size: 100% 100%, 100% 100%, 460px auto;
+      background-position: center, center, left -180px center;
       color: var(--pc-text-on-dark);
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      border-radius: var(--pc-radius-pill);
-      opacity: .22;
-    }
-    .hero::before {
-      width: 360px;
-      height: 360px;
-      top: -160px;
-      inset-inline-start: -120px;
-      background: var(--pc-indigo-500);
-    }
-    .hero::after {
-      width: 250px;
-      height: 250px;
-      bottom: -120px;
-      inset-inline-end: 8%;
-      background: var(--pc-brand-500);
-    }
     .hero-inner {
-      min-height: 448px;
       display: flex;
-      align-items: center;
-      padding-block: var(--pc-space-20);
+      flex-direction: column;
+      justify-content: center;
+      min-height: 400px;
+      padding-block: var(--pc-space-14);
       position: relative;
-      z-index: 1;
+      z-index: 10;
     }
-    .hero-content { max-width: 780px; }
+    .hero-content { max-width: 640px; }
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--pc-space-2);
-      min-height: 30px;
+      display: inline-block;
+      margin-bottom: var(--pc-space-3);
       padding: 4px 12px;
       border-radius: var(--pc-radius-pill);
-      background: rgba(27,131,84,.14);
-      color: #ABEFC6;
-      border: 1px solid rgba(171,239,198,.28);
+      background: rgba(255,255,255,.12);
+      color: var(--pc-text-on-dark);
       font-size: var(--pc-text-sm);
-      line-height: var(--pc-leading-sm);
-      font-weight: var(--pc-weight-semibold);
-      margin-bottom: var(--pc-space-5);
-    }
-    .eyebrow::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: var(--pc-radius-pill);
-      background: var(--pc-indigo-300);
-      box-shadow: 0 0 0 3px rgba(183,168,208,.15);
-      flex: 0 0 auto;
+      font-weight: var(--pc-weight-bold);
+      letter-spacing: .02em;
     }
     .hero-title {
-      font-family: var(--pc-font-display);
-      font-size: clamp(36px, 5vw, 60px);
+      margin-bottom: var(--pc-space-4);
+      font-size: 36px;
       line-height: 1.2;
-      letter-spacing: -0.02em;
       font-weight: var(--pc-weight-bold);
-      color: var(--pc-neutral-0);
+      letter-spacing: -.02em;
     }
-    .hero-title span {
-      display: block;
-      color: #ABEFC6;
-    }
+    .hero-title span { display: block; color: var(--pc-brand-400); }
     .hero-lead {
-      margin-top: var(--pc-space-5);
-      max-width: 760px;
-      color: rgba(255,255,255,.78);
-      font-size: var(--pc-text-lg);
-      line-height: 32px;
-      font-weight: var(--pc-weight-regular);
+      margin-bottom: var(--pc-space-8);
+      font-size: var(--pc-text-base);
+      line-height: 30px;
+      color: rgba(255,255,255,.8);
     }
     .hero-actions {
-      margin-top: var(--pc-space-8);
       display: flex;
-      align-items: center;
-      gap: var(--pc-space-3);
-      flex-wrap: wrap;
+      align-items: stretch;
+      flex-direction: column;
+      gap: var(--pc-space-4);
     }
-    .hero-actions .btn-secondary {
-      color: var(--pc-neutral-950);
-      border-color: rgba(255,255,255,.72);
-      background: rgba(255,255,255,.94);
-    }
-    .hero-actions .btn-secondary:hover { background: var(--pc-neutral-0); }
+    .hero-actions .btn { width: 100%; min-height: 48px; }
 
-    /* Main Layout */
-    .main {
-      padding-block: var(--pc-space-16) var(--pc-space-20);
-      display: grid;
-      gap: var(--pc-space-16);
+    @media (min-width: 768px) {
+      .hero { background-size: 100% 100%, 100% 100%, clamp(420px, 58vw, 780px) auto; background-position: center, center, left 6% center; }
+      .hero-inner { min-height: 448px; padding-block: var(--pc-space-20); flex-direction: row; align-items: center; }
+      .eyebrow { background: rgba(27,131,84,.14); color: #ABEFC6; border: 1px solid rgba(171,239,198,.28); display: inline-flex; align-items: center; gap: var(--pc-space-2); }
+      .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: var(--pc-radius-pill); background: var(--pc-indigo-300); }
+      .hero-title { font-size: 60px; }
+      .hero-actions { flex-direction: row; }
+      .hero-actions .btn { width: auto; }
+      .hero-actions .btn-secondary { color: var(--pc-neutral-950); border-color: rgba(255,255,255,.72); background: rgba(255,255,255,.94); }
     }
+
+    /* Main layout */
+    .main { padding-block: var(--pc-space-10) var(--pc-space-14); display: flex; flex-direction: column; gap: var(--pc-space-12); }
     .section-head {
       display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: var(--pc-space-5);
+      align-items: flex-start;
+      flex-direction: column;
+      gap: var(--pc-space-4);
       margin-bottom: var(--pc-space-6);
     }
+    @media (min-width: 768px) {
+      .main { gap: var(--pc-space-16); }
+      .section-head { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+    }
+
     .section-kicker {
       display: inline-flex;
       align-items: center;
@@ -424,11 +388,14 @@
       line-height: var(--pc-leading-sm);
     }
 
-    /* Ranking */
+    /* Rank Cards */
     .rank-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: var(--pc-space-4);
+      grid-template-columns: 1fr; /* Mobile First */
+      gap: var(--pc-space-6);
+    }
+    @media (min-width: 768px) {
+      .rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--pc-space-4); }
     }
     .rank-list { display: grid; gap: 0; padding: var(--pc-space-2); }
     .rank-item {
@@ -473,10 +440,10 @@
     }
     .rank-meta { color: var(--pc-text-subtle); font-size: var(--pc-text-sm); line-height: var(--pc-leading-sm); }
 
-    /* Extensions */
+    /* Extensions Grid */
     .extension-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
+      grid-template-columns: 1fr; /* Mobile First */
       gap: var(--pc-space-4);
     }
     .extension-card {
@@ -696,27 +663,36 @@
     .show-more-inner { display: inline-flex; align-items: center; gap: var(--pc-space-2); }
     .show-more-inner svg { width: 16px; height: 16px; }
 
-    /* Responsive styling for homepage specific content */
-    @media (max-width: 1080px) {
+    /* Responsive scaling (Mobile-First) */
+    @media (min-width: 640px) {
+      .hero {
+        background-size: 100% 100%, 100% 100%, min(86vw, 620px) auto;
+        background-position: center, center, left -72px center;
+      }
+      .hero-title { font-size: 42px; }
+      .hero-actions { align-items: center; flex-direction: row; }
+      .hero-actions .btn { width: auto; }
+      .download-row { align-items: center; flex-direction: row; }
+      .download-row .btn { width: auto; }
+      .main { padding-block: var(--pc-space-14) var(--pc-space-20); gap: 80px; }
+      .chips { gap: 8px; }
       .extension-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
-    @media (max-width: 860px) {
-      .hero { background-size: 100% 100%, 100% 100%, min(86vw, 620px) auto; background-position: center, center, left -72px center; }
-      .hero-inner { padding-block: var(--pc-space-14); min-height: 400px; }
-      .section-head { align-items: flex-start; flex-direction: column; }
-      .rank-grid { grid-template-columns: 1fr; }
+
+    @media (min-width: 860px) {
+      .hero {
+        background-size: 100% 100%, 100% 100%, clamp(420px, 58vw, 780px) auto;
+        background-position: center, center, left 6% center;
+      }
+      .hero-inner { min-height: 520px; padding-block: var(--pc-space-20); }
+      .hero-title { font-size: var(--pc-text-5xl); line-height: 1.1; }
+      .hero-lead { font-size: var(--pc-text-lg); line-height: var(--pc-leading-lg); }
+      .section-head { align-items: flex-end; flex-direction: row; justify-content: space-between; margin-bottom: var(--pc-space-8); }
+      .rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
-    @media (max-width: 640px) {
-      .hero { background-size: 100% 100%, 100% 100%, 460px auto; background-position: center, center, left -180px center; }
-      .hero-title { font-size: 36px; }
-      .hero-lead { font-size: var(--pc-text-base); line-height: 30px; }
-      .hero-actions { align-items: stretch; flex-direction: column; }
-      .hero-actions .btn { width: 100%; }
-      .extension-grid { grid-template-columns: 1fr; }
-      .main { padding-block: var(--pc-space-10) var(--pc-space-14); gap: var(--pc-space-12); }
-      .download-row { align-items: flex-start; flex-direction: column; }
-      .download-row .btn { width: 100%; }
-      .chips { gap: 6px; }
+
+    @media (min-width: 1080px) {
+      .extension-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -849,32 +825,18 @@
       {
         id: 4,
         title: 'إضافة معيار 4',
-        category: 'عناصر',
-        categoryClass: 'component',
-        downloads: '21,000+',
-        desc: 'تفحص توافق أزرار واجهة المستخدم (Buttons) من حيث المسافات الداخلية والأبعاد مع متطلبات كود المنصات.'
-      },
-      {
-        id: 2,
-        title: 'إضافة معيار 2',
-        category: 'أساسيات',
+        category: 'أساسات',
         categoryClass: 'foundation',
-        downloads: '15,000+',
-        desc: 'تفحص الإضافة النصوص والخطوط والأوزان المستخدمة في صفحة الويب، وتتأكد من توافقها مع معايير وشروط كود المنصات.'
+        downloads: '18',
+        desc: 'تفحص توافق المسافات الداخلية والخارجية (Spacing & Layout) بين العناصر مع متطلبات كود المنصات.'
       },
       {
-        title: 'إضافة معيار 13',
+        id: 11,
+        title: 'إضافة معيار 11',
         category: 'عناصر',
         categoryClass: 'component',
-        downloads: '12,000+',
-        desc: 'تفحص توافق عنصر القائمة المنسدلة مع معايير التصميم الموحد، وتساعد على اكتشاف أخطاء الاستخدام والوضوح.'
-      },
-      {
-        title: 'إضافة معيار 10',
-        category: 'قوالب',
-        categoryClass: 'template',
-        downloads: '8,000+',
-        desc: 'تفحص تطبيق قالب البحث وفعالية وكفاءة وظيفة البحث، بما في ذلك ملاءمة نتائج البحث وسرعتها.'
+        downloads: '5',
+        desc: 'تفحص الختم الرقمي ومدى التزامه بمعايير كود المنصات من حيث الموقع والرابط والعناصر المجاورة.'
       }
     ];
 
@@ -920,25 +882,46 @@
         <article class="extension-card">
           <div class="extension-top">
             <span class="badge ${ext.categoryClass}">${ext.category}</span>
-            <span class="extension-version">v1.2.0</span>
           </div>
           <div>
             <h3>${ext.title}</h3>
             <p>${ext.desc}</p>
           </div>
           <div class="download-row">
-            <span class="download-count">
+            <span class="download-count" id="home-dl-count-${ext.id}" data-count="${ext.downloads}">
               ${iconUse('i-download')}
-              ${ext.downloads} تحميلة
+              ${ext.downloads} تنزيل
             </span>
-            <a class="btn btn-dark" href="${ext.id === 4 ? '../Emtithal-Criterion4-Extension.zip' : 'Extentions%20page.html'}" ${ext.id === 4 ? 'download="Emtithal-Criterion4-Extension.zip"' : ''}>
+            <button type="button" class="btn btn-dark" onclick="incrementHomeDownload(${ext.id}, '${ext.id === 4 ? '../Emtithal-Criterion4-Extension.zip' : '../Emtithal-Criterion11-Extension.zip'}')">
               تحميل الإضافة
               ${iconUse('i-download')}
-            </a>
+            </button>
           </div>
         </article>
       `).join('');
     }
+
+    window.incrementHomeDownload = async function(id, url) {
+      try {
+        if(window.db) {
+          await window.db.rpc('increment_extension_download', { p_id: id });
+        }
+        const span = document.getElementById('home-dl-count-' + id);
+        if (span) {
+          const current = parseInt(span.dataset.count) || 0;
+          span.dataset.count = current + 1;
+          span.innerHTML = `${iconUse('i-download')} ${current + 1} تنزيل`;
+        }
+      } catch (err) {
+        console.error('Failed to increment download:', err);
+      }
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = url.split('/').pop();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
 
     function renderCategoryChips() {
       const container = document.getElementById('categoryChips');
@@ -1100,17 +1083,20 @@
           };
         });
 
-        // Deduplicate platforms by name, keeping the one with the highest score
-        // (Since the query is ordered by score DESC, the first one seen is the highest)
-        const uniquePlatforms = [];
-        const seenNames = new Set();
+        // Deduplicate platforms by name and calculate average score
+        const platformGroups = {};
         for (const p of platforms) {
-          if (!seenNames.has(p.name)) {
-            seenNames.add(p.name);
-            uniquePlatforms.push(p);
+          if (!platformGroups[p.name]) {
+            platformGroups[p.name] = { ...p, totalScore: 0, count: 0 };
           }
+          platformGroups[p.name].totalScore += p.score;
+          platformGroups[p.name].count += 1;
         }
-        platforms = uniquePlatforms;
+        
+        platforms = Object.values(platformGroups).map(p => {
+          p.score = Math.round(p.totalScore / p.count);
+          return p;
+        });
 
         // Calculate Rankings
         const sorted = [...platforms].sort((a,b) => b.score - a.score);
@@ -1122,6 +1108,22 @@
         renderRankList('topRankings', topPlatforms);
         renderRankList('lowRankings', lowPlatforms);
         renderPlatformRows();
+
+        // Fetch dynamic downloads
+        try {
+          const { data: extData, error: extErr } = await window.db.from('extensions').select('id, downloads').in('id', [4, 11]);
+          if (!extErr && extData) {
+            extensions.forEach(ext => {
+              const dbExt = extData.find(d => d.id === ext.id);
+              if (dbExt && dbExt.downloads !== null && dbExt.downloads !== undefined) {
+                ext.downloads = dbExt.downloads;
+              }
+            });
+            renderExtensions();
+          }
+        } catch (e) {
+          console.error('Could not fetch downloads:', e);
+        }
 
       } catch (err) {
         console.error('Error fetching platforms:', err);

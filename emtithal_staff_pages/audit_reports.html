@@ -114,7 +114,7 @@
 
     .search-box input {
       width: 100%;
-      height: 40px;
+      height: 48px; /* HCI Touch Target minimum */
       padding: 0 36px 0 12px;
       border: 1px solid var(--neutral-300);
       border-radius: 8px;
@@ -131,7 +131,7 @@
 
     .search-box .icon-search {
       position: absolute;
-      top: 10px;
+      top: 14px;
       right: 12px;
       color: var(--neutral-500);
       pointer-events: none;
@@ -216,7 +216,7 @@
     .score-medium { background: var(--warning-100); color: var(--warning-700); }
     .score-low { background: var(--danger-100); color: var(--danger-700); }
 
-    .mono { font-family: 'Roboto Mono', monospace; direction: ltr; display: inline-block; }
+    .mono { font-family: 'Roboto Mono', monospace; }
 
     .empty-state {
       text-align: center;
@@ -297,8 +297,8 @@
       background: transparent;
       border: none;
       color: var(--neutral-500);
-      width: 32px;
-      height: 32px;
+      width: 48px; /* HCI Touch Target minimum */
+      height: 48px; /* HCI Touch Target minimum */
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -394,6 +394,7 @@
       justify-content: center;
       gap: 8px;
       padding: 8px 16px;
+      min-height: 48px; /* HCI Touch Target minimum */
       font-size: 14px;
       font-weight: 500;
       border-radius: 8px;
@@ -423,7 +424,7 @@
     .btn-sm {
       padding: 6px 12px;
       font-size: 12px;
-      height: 32px;
+      min-height: 48px; /* HCI Touch Target minimum */
     }
 
     /* Toast */

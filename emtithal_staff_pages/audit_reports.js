@@ -110,10 +110,10 @@ function renderTable() {
 
   tbody.innerHTML = filtered.map(item => `
     <tr class="report-row" onclick="window.open('../home/report_page.html?id=${item.id}', '_blank')">
-      <td class="mono">#${item.id}</td>
-      <td class="mono" dir="ltr" style="text-align:right">${escapeHTML(item.url)}</td>
+      <td style="white-space: nowrap;"><span class="mono" dir="ltr">#${String(item.id).split('-')[0]}</span></td>
+      <td><span class="mono" dir="ltr">${escapeHTML(item.url)}</span></td>
       <td>${escapeHTML(item.apiName)}</td>
-      <td class="mono">${item.date}</td>
+      <td class="mono" style="white-space: nowrap;">${item.date}</td>
       <td>
         <div style="font-weight:600">معيار ${item.criterionNum}</div>
         <div style="font-size:12px;color:var(--neutral-500)">${escapeHTML(item.criterionName)}</div>
