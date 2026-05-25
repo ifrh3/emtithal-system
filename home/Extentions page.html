@@ -326,14 +326,14 @@ body {
 .cat-قوالب.cat-badge-list { background:var(--cat-templates); color:var(--cat-templates-fg); }
 .cat-عناصر.cat-badge-list { background:var(--cat-components); color:var(--cat-components-fg); }
 .card-link, .card-ext-badge, a.card-ext-badge, .card-ext-badge-footer {
-  min-height: 36px;
+  min-height: 32px;
   display: inline-flex;
   align-items:center;
   justify-content:center;
   gap:6px;
   text-decoration:none;
   border-radius:var(--radius-sm);
-  font-size:14px;
+  font-size:12px;
   line-height:18px;
   font-weight:700;
   transition:background var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition);
@@ -780,14 +780,9 @@ let EXTENSIONS = [];
               : `<span class="card-no-link">—</span>`
             }
             ${(ext.num == 4 || ext.num == 11) ? `
-              <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                <span class="download-count" id="dl-count-${ext.id}" data-count="${ext.downloads || 0}" style="font-size: 13px; color: var(--pc-neutral-400); display: flex; align-items: center; gap: 4px;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${ext.downloads || 0} تنزيل
-                </span>
-                <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${ext.id}, '../Emtithal-Criterion${ext.num}-Extension.zip')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none; width: 100%; justify-content: center;">
-                  ${ICONS.chromeExt} تحميل الإضافة (ZIP)
-                </button>
-              </div>
+              <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${ext.id}, '../Emtithal-Criterion${ext.num}-Extension.zip')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
+                ${ICONS.chromeExt} تحميل الإضافة (ZIP)
+              </button>
             ` : `
               <div class="card-ext-badge-footer" title="إضافة كروم قريباً لهذا المعيار" style="opacity: 0.6; cursor: not-allowed;">
                 ${ICONS.chromeExt} الإضافة قريباً
