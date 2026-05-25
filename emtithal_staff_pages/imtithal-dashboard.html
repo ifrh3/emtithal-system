@@ -48,12 +48,18 @@
 
     * { box-sizing: border-box; }
 
-    body {
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
       min-height: 100vh;
       background: var(--neutral-25);
       color: var(--neutral-900);
       font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+      overflow-x: hidden;
+      width: 100%;
     }
 
     button, input, select { font: inherit; }
@@ -65,8 +71,14 @@
       padding-inline: 24px;
       padding-top: 32px;
       padding-bottom: 80px;
-      display: grid;
+      display: flex;
+      flex-direction: column;
       gap: 48px;
+    }
+
+    .main-container > * {
+      max-width: 100%;
+      min-width: 0;
     }
 
     .section-title-row {
@@ -421,10 +433,9 @@
         <div class="stat-card">
           <div class="stat-top">
             <div class="stat-icon brand" data-icon="server"></div>
-            <span class="badge brand">+12% نشاط</span>
           </div>
           <p>طلبات API اليوم</p>
-          <div class="stat-value">8,492</div>
+          <div class="stat-value" id="total-api-requests">0</div>
         </div>
 
         <div class="stat-card">
@@ -481,7 +492,7 @@
           <table>
             <thead>
               <tr>
-                <th>اسم النظام</th>
+                <th>اسم النظام / الإضافة</th>
                 <th>المفتاح السري (API Key)</th>
                 <th>معدل الاستخدام الشهري</th>
                 <th>الحالة</th>
@@ -489,6 +500,33 @@
               </tr>
             </thead>
             <tbody id="extensions-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Activity Logs (Audit Log) -->
+    <section>
+      <div class="section-title-row">
+        <h2>سجل الأنشطة (Audit Log)</h2>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span class="badge" style="background:var(--indigo-50); color:var(--indigo-700)">يُحدث تلقائياً</span>
+          <div id="clear-logs-slot"></div>
+        </div>
+      </div>
+      <div class="card-table">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ والوقت</th>
+                <th>المستخدم (ID)</th>
+                <th>الإجراء</th>
+                <th>الجدول</th>
+                <th>معرف السجل المتأثر</th>
+              </tr>
+            </thead>
+            <tbody id="activity-logs-table"></tbody>
           </table>
         </div>
       </div>
@@ -645,12 +683,8 @@
 
     /* ─── State ─── */
     let staff        = [];
-    let extensions   = [
-      { id: 1, name: "القوالب",   key: "emt_live_sk_Xk9P2mNqRvL3wYjT", status: "active",    requests: 14820, quota: 50000  },
-      { id: 2, name: "أساسات 1", key: "emt_live_sk_mK7tZv5xJqCfPd2n", status: "active",    requests: 48321, quota: 500000 },
-      { id: 3, name: "أساسات 2", key: "emt_live_sk_aB3cDe4FgH5iJk6l", status: "active",    requests: 12500, quota: 100000 },
-      { id: 4, name: "العناصر",  key: "emt_test_sk_pL1oMbN3KqFvCzXe", status: "suspended", requests: 320,   quota: 10000  }
-    ];
+    let extensions   = [];
+    let activityLogs = [];
     let currentUserId = null;
     let visibleKeys  = {};
     let copiedKey    = null;
@@ -673,12 +707,26 @@
         return;
       }
 
-      // تحميل مفاتيح الربط من localStorage أو استخدام القيمة الافتراضية
-      const storedKeys = localStorage.getItem('emtithal_extensions');
-      if (storedKeys) {
-        extensions = JSON.parse(storedKeys);
-      } else {
-        localStorage.setItem('emtithal_extensions', JSON.stringify(extensions));
+      // جلب مفاتيح الربط (API Keys)
+      const { data: dbKeys, error: keyError } = await db.from('api_keys').select('*').order('created_at', { ascending: false });
+      if (keyError) { console.warn('API Keys error:', keyError.message); }
+      if (dbKeys) {
+        extensions = dbKeys.map(k => ({
+          id: k.id,
+          name: k.name,
+          key: k.key,
+          status: k.status,
+          requests: k.requests,
+          quota: k.quota,
+          lastUsed: k.last_used
+        }));
+      }
+
+      // جلب سجل الأنشطة (Audit Logs)
+      const { data: dbLogs, error: logError } = await db.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20);
+      if (logError) { console.warn('Activity Logs error:', logError.message); }
+      if (dbLogs) {
+        activityLogs = dbLogs;
       }
 
       // جلب الموظفين
@@ -703,7 +751,20 @@
       const nameEl = document.getElementById('current-user-name');
       if (nameEl && myProfile) nameEl.textContent = myProfile.name;
 
+      fetchApiStats();
       render();
+    }
+
+    async function fetchApiStats() {
+      try {
+        const { data, error } = await db.from('api_keys').select('requests');
+        if (error) throw error;
+        const total = data.reduce((acc, curr) => acc + (curr.requests || 0), 0);
+        const reqEl = document.getElementById('total-api-requests');
+        if(reqEl) reqEl.textContent = total.toLocaleString('en-US');
+      } catch(err) {
+        console.error('Error fetching API stats:', err);
+      }
     }
 
     const $ = (sel) => document.querySelector(sel);
@@ -766,6 +827,9 @@
         : "";
       $("#add-extension-slot").innerHTML = p.canGenerateKey
         ? `<button class="btn btn-primary" type="button" data-open-modal="extension-modal">${icon("plus")}إصدار مفتاح جديد (API Key)</button>`
+        : "";
+      $("#clear-logs-slot").innerHTML = p.canDeleteEmployee
+        ? `<button class="btn btn-danger btn-small" type="button" id="clear-logs-btn">${icon("trash")}مسح السجل</button>`
         : "";
     }
 
@@ -874,11 +938,43 @@
       }).join("");
     }
 
+    function renderActivityLogs() {
+      const tb = document.getElementById("activity-logs-table");
+      if (!tb) return;
+      if (!activityLogs.length) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--neutral-500)">لا توجد أنشطة مسجلة حتى الآن</td></tr>`;
+        return;
+      }
+
+      tb.innerHTML = activityLogs.map(log => {
+        const dateObj = new Date(log.created_at);
+        const dateStr = dateObj.toLocaleDateString('ar-SA') + ' - ' + dateObj.toLocaleTimeString('ar-SA');
+        
+        let actionBadge = '';
+        if (log.action_type === 'INSERT') actionBadge = '<span class="badge brand">إضافة</span>';
+        else if (log.action_type === 'UPDATE') actionBadge = '<span class="badge" style="background:var(--indigo-50); color:var(--indigo-700)">تعديل</span>';
+        else if (log.action_type === 'DELETE') actionBadge = '<span class="badge" style="background:var(--danger-50); color:var(--danger-700)">حذف</span>';
+        
+        let userName = "مستخدم النظام";
+        const emp = staff.find(p => p.id === log.user_id);
+        if (emp) userName = emp.name;
+
+        return `<tr>
+          <td style="direction: ltr; text-align: right; font-size: 13px; color: var(--neutral-600);">${dateStr}</td>
+          <td><div style="font-size:13px; font-weight:600;">${userName}</div><div style="font-size:10px; color:var(--neutral-400);">${log.user_id ? log.user_id.split('-')[0]+'...' : 'N/A'}</div></td>
+          <td>${actionBadge}</td>
+          <td><code>${log.table_name}</code></td>
+          <td style="font-size:12px; color:var(--neutral-500);">${log.record_id || '-'}</td>
+        </tr>`;
+      }).join("");
+    }
+
     function render() {
       renderOverview();
       renderActionButtons();
       renderStaffTable();
       renderExtensionsTable();
+      renderActivityLogs();
       paintIcons();
     }
 
@@ -945,21 +1041,40 @@
       const toggleStatus = e.target.closest("[data-toggle-status]");
       if (toggleStatus) {
         const id = Number(toggleStatus.getAttribute("data-toggle-status"));
-        extensions = extensions.map((ext) =>
-          ext.id === id ? { ...ext, status: ext.status === "active" ? "suspended" : "active" } : ext
+        const ext = extensions.find((ex) => ex.id === id);
+        if (!ext) return;
+        
+        const newStatus = ext.status === "active" ? "suspended" : "active";
+        const { error } = await db.from('api_keys').update({ status: newStatus }).eq('id', id);
+        
+        if (error) {
+          alert("فشل تحديث الحالة: " + error.message);
+          return;
+        }
+
+        extensions = extensions.map((ex) =>
+          ex.id === id ? { ...ex, status: newStatus } : ex
         );
-        localStorage.setItem('emtithal_extensions', JSON.stringify(extensions));
-        render();
+        renderExtensionsTable();
         return;
       }
 
       /* delete extension */
       const deleteExt = e.target.closest("[data-delete-extension]");
       if (deleteExt) {
+        if (!confirm("هل أنت متأكد من حذف مفتاح الربط (API Key) هذا نهائياً؟ لا يمكن التراجع عن هذا الإجراء.")) return;
         const id = Number(deleteExt.getAttribute("data-delete-extension"));
+        deleteExt.disabled = true;
+        
+        const { error } = await db.from("api_keys").delete().eq("id", id);
+        if (error) {
+          alert("فشل الحذف من قاعدة البيانات: " + error.message);
+          deleteExt.disabled = false;
+          return;
+        }
+        
         extensions = extensions.filter((ext) => ext.id !== id);
-        localStorage.setItem('emtithal_extensions', JSON.stringify(extensions));
-        render();
+        renderExtensionsTable();
         return;
       }
 
@@ -1012,6 +1127,24 @@
         localStorage.removeItem('sb_session');
         await db.auth.signOut();
         window.location.href = '../home/emtithal_public_home.html';
+        return;
+      }
+      
+      /* clear logs button */
+      if (e.target.id === "clear-logs-btn" || e.target.closest("#clear-logs-btn")) {
+        if (!confirm("هل أنت متأكد من مسح جميع سجلات الأنشطة بالكامل؟ هذا الإجراء لا يمكن التراجع عنه.")) return;
+        const btn = e.target.closest("#clear-logs-btn");
+        btn.disabled = true;
+        btn.textContent = "جاري المسح...";
+        const { error } = await db.from("activity_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000"); // deletes all rows
+        if (error) {
+          alert("حدث خطأ أثناء مسح السجلات: " + error.message);
+          btn.disabled = false;
+          btn.innerHTML = `${icon("trash")}مسح السجل`;
+        } else {
+          activityLogs = [];
+          renderActivityLogs();
+        }
         return;
       }
     });
@@ -1090,19 +1223,45 @@
     });
 
     /* ─── Form: Add extension ─── */
-    $("#extension-form").addEventListener("submit", (e) => {
+    $("#extension-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = $("#extension-name").value.trim();
       if (!name) return;
 
-      extensions = [
-        { id: Date.now(), name, key: `emt_live_sk_${randomKeyPart()}`, status: "active", requests: 0, quota: 10000 },
-        ...extensions
-      ];
-      localStorage.setItem('emtithal_extensions', JSON.stringify(extensions));
-      e.target.reset();
-      closeModal("extension-modal");
-      render();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "جاري التوليد...";
+
+      const newKey = `emt_live_sk_${randomKeyPart()}`;
+      
+      const { data, error } = await db.from('api_keys').insert({
+        name: name,
+        key: newKey,
+        status: "active",
+        quota: 10000,
+        requests: 0
+      }).select();
+
+      if (error) {
+        alert("فشل توليد المفتاح: " + error.message);
+      } else if (data && data.length > 0) {
+        const k = data[0];
+        extensions = [
+          { id: k.id, name: k.name, key: k.key, status: k.status, requests: k.requests, quota: k.quota, lastUsed: k.last_used },
+          ...extensions
+        ];
+        // Reload logs to show the new insert
+        const { data: dbLogs } = await db.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20);
+        if (dbLogs) activityLogs = dbLogs;
+        
+        e.target.reset();
+        closeModal("extension-modal");
+        render();
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<span data-icon="key"></span> توليد المفتاح`;
+      paintIcons();
     });
 
     /* ─── Escape closes modals ─── */

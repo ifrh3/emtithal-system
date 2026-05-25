@@ -847,6 +847,15 @@
 
     const extensions = [
       {
+        id: 4,
+        title: 'إضافة معيار 4',
+        category: 'عناصر',
+        categoryClass: 'component',
+        downloads: '21,000+',
+        desc: 'تفحص توافق أزرار واجهة المستخدم (Buttons) من حيث المسافات الداخلية والأبعاد مع متطلبات كود المنصات.'
+      },
+      {
+        id: 2,
         title: 'إضافة معيار 2',
         category: 'أساسيات',
         categoryClass: 'foundation',
@@ -922,7 +931,7 @@
               ${iconUse('i-download')}
               ${ext.downloads} تحميلة
             </span>
-            <a class="btn btn-dark" href="Extentions%20page.html">
+            <a class="btn btn-dark" href="${ext.id === 4 ? '../Emtithal-Criterion4-Extension.zip' : 'Extentions%20page.html'}" ${ext.id === 4 ? 'download="Emtithal-Criterion4-Extension.zip"' : ''}>
               تحميل الإضافة
               ${iconUse('i-download')}
             </a>
@@ -1044,8 +1053,8 @@
       try {
         const { data, error } = await window.db
           .from('reports_summary')
-          .select('id, overall_compliance, platforms(name, entities(name))')
-          .order('overall_compliance', { ascending: false });
+          .select('id, score, platform_url, api_keys(name)')
+          .order('score', { ascending: false });
           
         if (error) throw error;
 
@@ -1056,25 +1065,52 @@
         }
 
         platforms = data.map(rpt => {
-          let agencyType = 'الهيئات والمنظمات الحكومية';
-          const platformObj = rpt.platforms || {};
-          const entityObj = platformObj.entities || {};
-          const entName = entityObj.name || '';
+          let agencyType = 'الجهات الحكومية';
+          let platName = 'منصة غير معروفة';
+          const url = rpt.platform_url || '';
           
-          if(entName.includes('وزارة')) agencyType = 'الوزارات';
-          else if(entName.includes('جامعة')) agencyType = 'الجامعات والمؤسسات التعليمية';
-          else if(entName.includes('أمانة') || entName.includes('بلدية')) agencyType = 'الأمانات والبلديات';
-          else if(entName.includes('صندوق')) agencyType = 'الصناديق والمساهمات الحكومية';
+          if (url.includes('uqu.edu.sa')) {
+            platName = 'جامعة أم القرى';
+            agencyType = 'الجامعات والمؤسسات التعليمية';
+          } else if (url.includes('moh.gov.sa')) {
+            platName = 'وزارة الصحة';
+            agencyType = 'الوزارات';
+          } else if (url) {
+            try { platName = new URL(url).hostname.replace('www.', ''); } catch(e) {}
+          } else if (rpt.api_keys?.name) {
+            platName = rpt.api_keys.name;
+          }
 
-          const platName = platformObj.name || 'بدون اسم';
+          const shortInitials = platName.replace('منصة', '').replace('جامعة', '').trim().substring(0, 2);
+          let logoHtml = `<div class="logo-box">${shortInitials}</div>`;
+          if (url) {
+            try {
+              const domain = new URL(url).hostname;
+              logoHtml = `<div class="logo-box" style="background:transparent;border:none;"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;"></div>`;
+            } catch(e) {}
+          }
+
           return {
             name: platName,
             agency: agencyType,
-            score: Math.round(rpt.overall_compliance) || 0,
-            short: platName.replace('منصة', '').trim().substring(0, 2),
+            score: Math.round(rpt.score) || 0,
+            short: shortInitials,
+            logoHtml: logoHtml,
             report_id: rpt.id
           };
         });
+
+        // Deduplicate platforms by name, keeping the one with the highest score
+        // (Since the query is ordered by score DESC, the first one seen is the highest)
+        const uniquePlatforms = [];
+        const seenNames = new Set();
+        for (const p of platforms) {
+          if (!seenNames.has(p.name)) {
+            seenNames.add(p.name);
+            uniquePlatforms.push(p);
+          }
+        }
+        platforms = uniquePlatforms;
 
         // Calculate Rankings
         const sorted = [...platforms].sort((a,b) => b.score - a.score);

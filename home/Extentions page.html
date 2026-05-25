@@ -730,9 +730,15 @@ let EXTENSIONS = [];
                  </a>`
               : `<span class="card-no-link">—</span>`
             }
-            <div class="card-ext-badge-footer" title="تثبيت إضافة كروم لهذا المعيار">
-              ${ICONS.chromeExt} تثبيت الإضافة
-            </div>
+            ${ext.num === 4 || ext.num === '4' ? `
+              <a class="card-ext-badge-footer" href="../Emtithal-Criterion4-Extension.zip" download="Emtithal-Criterion4-Extension.zip" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
+                ${ICONS.chromeExt} تحميل الإضافة (ZIP)
+              </a>
+            ` : `
+              <div class="card-ext-badge-footer" title="إضافة كروم قريباً لهذا المعيار" style="opacity: 0.6; cursor: not-allowed;">
+                ${ICONS.chromeExt} الإضافة قريباً
+              </div>
+            `}
           </div>
         </article>
       `;

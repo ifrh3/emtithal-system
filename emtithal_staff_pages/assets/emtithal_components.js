@@ -22,6 +22,8 @@ function injectEmtithalComponents() {
     activeId = 'dashboard';
   } else if (path.endsWith('reports_page.html')) {
     activeId = 'reports';
+  } else if (path.endsWith('audit_reports.html')) {
+    activeId = 'audit';
   }
 
   const activeClass = (id) => activeId === id ? 'class="active"' : '';
@@ -47,6 +49,7 @@ function injectEmtithalComponents() {
             <a href="emtithal_staff_home.html" ${activeClass('home')}>الرئيسية</a>
             <a href="imtithal-dashboard.html" ${activeClass('dashboard')}>لوحة التحكم</a>
             <a href="reports_page.html" ${activeClass('reports')}>البلاغات</a>
+            <a href="audit_reports.html" ${activeClass('audit')}>التقارير الآلية</a>
           </nav>
 
           <div class="emtithal-nav-actions">
@@ -66,6 +69,7 @@ function injectEmtithalComponents() {
               <a href="emtithal_staff_home.html" ${activeClass('home')}>الرئيسية</a>
               <a href="imtithal-dashboard.html" ${activeClass('dashboard')}>لوحة التحكم</a>
               <a href="reports_page.html" ${activeClass('reports')}>البلاغات</a>
+              <a href="audit_reports.html" ${activeClass('audit')}>التقارير الآلية</a>
             </nav>
           </div>
         </div>
@@ -95,6 +99,7 @@ function injectEmtithalComponents() {
                 <a href="emtithal_staff_home.html">الرئيسية</a>
                 <a href="imtithal-dashboard.html">لوحة التحكم</a>
                 <a href="reports_page.html">البلاغات</a>
+                <a href="audit_reports.html">التقارير الآلية</a>
               </div>
             </nav>
 
