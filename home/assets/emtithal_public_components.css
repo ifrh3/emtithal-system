@@ -660,9 +660,8 @@ body.menu-open {
 @media (min-width: 1080px) {
   .site-header .nav-links {
     display: flex;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-inline-end: auto;
+    margin-inline-start: 32px;
   }
   .site-header .menu-toggle { display: none; }
   .site-header .mobile-panel.open { display: none; }
