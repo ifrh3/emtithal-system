@@ -8,7 +8,6 @@ const $ = (selector) => document.querySelector(selector);
 // 55 criteria mock list
 const STANDARDS_LIST = [
   { num: 4, name: "المسافات والتخطيط", type: "أساسات" },
-  { num: 12, name: "عنصر الزر", type: "عناصر" },
   // Adding just a few mock ones for demonstration
   { num: 1, name: "الألوان والتباين", type: "أساسات" },
   { num: 8, name: "الخطوط والطباعة", type: "أساسات" },
