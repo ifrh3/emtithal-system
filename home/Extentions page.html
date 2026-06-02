@@ -842,7 +842,7 @@ let EXTENSIONS = [];
       const extId = Number(ext.id);
       const extNum = Number(ext.num);
       const refUrl = safeExternalUrl(ext.link);
-      const canDownload = Number.isFinite(extId) && (extNum === 4 || extNum === 11);
+      const canDownload = false; // Disabled for Chrome Web Store release
       // The normal renderer now handles both 4 and 11
 
       return `
