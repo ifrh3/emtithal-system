@@ -16,7 +16,7 @@ window.$ = (selector) => document.querySelector(selector);
 
 // 2. Component Injection
 function injectEmtithalComponents() {
-  const path = window.location.pathname;
+  const path = window.location.pathname.toLowerCase();
   let activeId = 'home';
   if (path.endsWith('imtithal-dashboard.html')) {
     activeId = 'dashboard';
@@ -70,6 +70,7 @@ function injectEmtithalComponents() {
               <a href="imtithal-dashboard.html" ${activeClass('dashboard')}>لوحة التحكم</a>
               <a href="reports_page.html" ${activeClass('reports')}>البلاغات</a>
               <a href="audit_reports.html" ${activeClass('audit')}>التقارير الآلية</a>
+              <a href="#" id="mobile-sign-out-btn" style="color: var(--danger-600);">تسجيل الخروج</a>
             </nav>
           </div>
         </div>
@@ -140,6 +141,26 @@ function initMobileMenu() {
         document.body.classList.remove('menu-open');
       });
     });
+
+    const mobileSignOutBtn = document.getElementById('mobile-sign-out-btn');
+    if (mobileSignOutBtn) {
+      mobileSignOutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const desktopBtn = document.getElementById('sign-out-btn');
+        if (desktopBtn) desktopBtn.click();
+      });
+    }
+
+    // Close when clicking outside the menu
+    document.addEventListener('click', (e) => {
+      if (emtithalMobilePanel.classList.contains('open')) {
+        if (!emtithalMobilePanel.contains(e.target) && !emtithalMenuToggle.contains(e.target)) {
+          emtithalMobilePanel.classList.remove('open');
+          emtithalMenuToggle.setAttribute('aria-expanded', 'false');
+          document.body.classList.remove('menu-open');
+        }
+      }
+    });
   }
 }
 
@@ -151,6 +172,17 @@ document.addEventListener('click', async (e) => {
       await window.db.auth.signOut();
     }
     window.location.href = '../home/emtithal_public_home.html';
+  }
+});
+
+// Global Accessibility: Allow 'Space' key to click <a> tags (like skip links or button-styled links)
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.keyCode === 32) {
+    const activeEl = document.activeElement;
+    if (activeEl && activeEl.tagName === 'A') {
+      e.preventDefault();
+      activeEl.click();
+    }
   }
 });
 

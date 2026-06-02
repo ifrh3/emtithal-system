@@ -4,15 +4,50 @@
   Uses variables defined on each public page (:root) for design tokens alignment.
 */
 
+/* Accessibility: Skip to Main Content */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pc-brand-500, #1B8354);
+  color: #FFF;
+  padding: 12px 24px;
+  z-index: 9999;
+  border-radius: 0 0 8px 8px;
+  transition: top 0.2s ease-in-out;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.skip-link:focus, .skip-link:focus-visible {
+  top: 0;
+  outline: 3px solid var(--pc-brand-500, #1B8354);
+  outline-offset: 2px;
+}
+
+/* Global Focus Ring for all interactive elements */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--pc-brand-500, #1B8354) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px rgba(27, 131, 84, 0.2) !important;
+  border-radius: inherit;
+}
+
+
 /* Header & Navigation Styles */
 body.menu-open {
   overflow: hidden;
 }
 
-.site-header {
+#emtithal-header {
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.site-header {
   background: rgba(255, 255, 255, .98);
   border-bottom: 1px solid var(--pc-border-subtle, var(--pc-neutral-200, #E5E7EB));
   backdrop-filter: blur(12px);
@@ -128,6 +163,16 @@ body.menu-open {
   background: var(--pc-surface-raised, #FFFFFF);
 }
 
+.mobile-panel.open {
+  display: block;
+}
+
+.mobile-panel .nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
 /* Common Button Styles */
 .btn {
   display: inline-flex;
@@ -226,6 +271,7 @@ body.menu-open {
   color: var(--pc-success-200, #ABEFC6);
   flex: 0 0 auto;
 }
+
 
 /* Footer Styles */
 .emtithal-container {
@@ -645,6 +691,7 @@ body.menu-open {
     flex-direction: row;
     justify-content: space-between;
   }
+
 }
 
 @media (min-width: 860px) {

@@ -2,6 +2,38 @@
    Emtithal Shared Layout & Navigation Styles
    ========================================================================== */
 
+/* Prevent scroll when mobile menu is open */
+body.menu-open { overflow: hidden; }
+/* Accessibility: Skip to Main Content */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pc-brand-500, #1B8354);
+  color: #FFF;
+  padding: 12px 24px;
+  z-index: 9999;
+  border-radius: 0 0 8px 8px;
+  transition: top 0.2s ease-in-out;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.skip-link:focus, .skip-link:focus-visible {
+  top: 0;
+  outline: 3px solid var(--pc-brand-500, #1B8354);
+  outline-offset: 2px;
+}
+
+/* Global Focus Ring for all interactive elements */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--pc-brand-500, #1B8354) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px rgba(27, 131, 84, 0.2) !important;
+  border-radius: inherit;
+}
 /* Unified Layout */
 body {
   display: flex;
@@ -331,6 +363,15 @@ body {
    Responsive Utilities
    ========================================================================== */
 @media (max-width: 1080px) {
+  .emtithal-nav-inner {
+    justify-content: space-between;
+  }
+
+  .emtithal-brand,
+  .emtithal-nav-actions {
+    position: static;
+  }
+
   .emtithal-nav-inner > .emtithal-nav-links {
     display: none;
   }
@@ -354,6 +395,10 @@ body {
 
   .emtithal-mobile-panel .emtithal-nav-links a {
     justify-content: center;
+  }
+
+  .emtithal-nav-actions #sign-out-btn {
+    display: none;
   }
 }
 

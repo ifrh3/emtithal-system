@@ -249,6 +249,43 @@ body{margin:0;}
 .table-scroll-inner {
   min-width: 960px;
 }
+
+/* ===== Responsive Media Queries ===== */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+  }
+  .hero-r {
+    width: 100%;
+    border-right: none;
+    border-top: 1px solid var(--pc-border-subtle);
+  }
+  .stats {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+  .charts {
+    grid-template-columns: 1fr;
+  }
+  .donut-wrap {
+    flex-direction: column;
+  }
+}
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+  .hero-l, .hero-r {
+    padding: 24px;
+  }
+  .cat-chip {
+    flex: 1 1 calc(50% - 8px);
+    justify-content: center;
+  }
+}
+}
 .table-head{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:12px 20px;background:var(--pc-surface-sunken);border-bottom:1px solid var(--pc-border-default);font-size:var(--pc-text-sm);font-weight:600;color:var(--pc-text-muted);text-transform:uppercase;letter-spacing:.04em;}
 .table-row{border-bottom:1px solid var(--pc-border-subtle);transition:background var(--pc-duration-fast) var(--pc-ease);}
 .table-cells{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:16px 20px;align-items:center;min-height:72px;}
@@ -310,10 +347,7 @@ body{margin:0;}
 .table-foot{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--pc-border-subtle);font-size:var(--pc-text-md);color:var(--pc-text-muted);}
 
 /* ===== Floating scroll button ===== */
-.scroll-fab{position:fixed;inset-inline-end:24px;bottom:24px;width:48px;height:48px;border-radius:var(--pc-radius-pill);background:var(--pc-brand-500);color:var(--pc-text-on-brand);border:0;cursor:pointer;box-shadow:var(--pc-shadow-lg);display:flex;align-items:center;justify-content:center;z-index:50;transition:transform var(--pc-duration-base) var(--pc-ease),background var(--pc-duration-fast) var(--pc-ease);}
-.scroll-fab:hover{background:var(--pc-brand-600);}
-.scroll-fab:focus-visible{outline:none;box-shadow:var(--pc-ring-focus),var(--pc-shadow-lg);}
-.scroll-fab svg{width:22px;height:22px;}
+
 
 /* ===== Empty / filtered states ===== */
 .empty-state{display:flex;flex-direction:column;align-items:center;padding:64px 32px;gap:16px;text-align:center;}
@@ -351,7 +385,6 @@ body{margin:0;}
 .search-wrap { min-width: auto; }
 .title-row { flex-direction: column; align-items: flex-start; }
 .meta-strip { display: none; flex-wrap: wrap; gap: 12px; }
-.scroll-fab { bottom: 16px; inset-inline-end: 16px; }
 
 /* Desktop scaling */
 @media (min-width: 600px) {
@@ -477,12 +510,12 @@ body{margin:0;}
 <div aria-hidden="true" class="entity-logo">—</div>
 <div style="flex:1;min-width:0;">
 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-<h2 style="font-family:var(--pc-font-display);font-size:22px;font-weight:700;line-height:30px;margin:0;" id="heroEntityName">جاري تحميل البيانات...</h2>
+<h2 style="font-family:var(--pc-font-display);font-size:22px;font-weight:700;line-height:30px;margin:0;" id="heroPlatformName">جاري تحميل البيانات...</h2>
 </div>
 </div>
 </div>
 <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
-<div class="kv"><span class="k">المنصة</span><span class="v" id="heroPlatformName">—</span></div>
+<div class="kv"><span class="k">الجهة</span><span class="v" id="heroEntityName">—</span></div>
 <div class="kv">
 <span class="k">رابط المنصة</span>
 <span class="v" style="direction:ltr;display:inline-flex;align-items:center;gap:6px;">
@@ -559,7 +592,7 @@ body{margin:0;}
 </article>
 <article aria-label="عدد الصفحات المفحوصة" class="card card-pad stat" data-filter-status="pages" role="button" tabindex="0">
 <div style="display:flex;align-items:center;gap:10px;"><div class="ic indigo"><svg><use href="#i-page"></use></svg></div><span class="lbl">عدد الصفحات المفحوصة</span></div>
-<div class="num pc-tnum">14</div>
+<div class="num pc-tnum" id="cnt-pages-scanned">0</div>
 <div class="sub">إجمالي الصفحات التي فحصتها الإضافات.</div>
 </article>
 </section>
@@ -778,10 +811,20 @@ body{margin:0;}
 <div id="emtithal-footer"></div>
 
 <!-- Floating scroll button -->
-<button aria-label="التمرير إلى المعايير" class="scroll-fab" id="scrollFab" type="button">
-<svg aria-hidden="true" id="scrollFabIcon"><use href="#i-arrow-down"></use></svg>
-</button>
 <script>
+    const platformDirectory = {
+      'uqu.edu.sa': { name: 'جامعة أم القرى', agency: 'الجامعات والمؤسسات التعليمية' },
+      'moh.gov.sa': { name: 'وزارة الصحة', agency: 'الوزارات' },
+      'absher.sa': { name: 'منصة أبشر', agency: 'القطاعات العسكرية والأمنية' },
+      'moe.gov.sa': { name: 'وزارة التعليم', agency: 'الوزارات' },
+      'hrsd.gov.sa': { name: 'وزارة الموارد البشرية', agency: 'الوزارات' },
+      'my.gov.sa': { name: 'المنصة الوطنية الموحدة', agency: 'الهيئات والمنظمات الحكومية' },
+      'zatca.gov.sa': { name: 'هيئة الزكاة والضريبة والجمارك', agency: 'الهيئات والمنظمات الحكومية' },
+      'etimad.sa': { name: 'منصة اعتماد', agency: 'الوزارات' },
+      'qiwa.sa': { name: 'منصة قوى', agency: 'الوزارات' },
+      'dga.gov.sa': { name: 'هيئة الحكومة الرقمية', agency: 'الهيئات والمنظمات الحكومية' },
+      'saudiexports.gov.sa': { name: 'هيئة تنمية الصادرات', agency: 'الهيئات والمنظمات الحكومية' }
+    };
 // ============================================================
 // DATA — 41 criteria
 // ============================================================
@@ -1141,36 +1184,6 @@ document.getElementById('showMoreBtn').addEventListener('click', function() {
   this.setAttribute('aria-expanded', !expanded);
 });
 
-// ============================================================
-// FLOATING SCROLL BUTTON
-// ============================================================
-const fab = document.getElementById('scrollFab');
-const fabIcon = document.getElementById('scrollFabIcon');
-const criteriaTarget = document.getElementById('criteriaSection');
-
-function updateFab() {
-  const scrolled = window.scrollY || document.documentElement.scrollTop;
-  const threshold = document.documentElement.scrollHeight - window.innerHeight - 300;
-  if (scrolled > threshold) {
-    fab.setAttribute('aria-label', 'التمرير إلى الأعلى');
-    fab.title = 'التمرير إلى الأعلى';
-    fabIcon.innerHTML = '<use href="#i-arrow-up"/>';
-  } else {
-    fab.setAttribute('aria-label', 'التمرير إلى المعايير');
-    fab.title = 'التمرير إلى المعايير';
-    fabIcon.innerHTML = '<use href="#i-arrow-down"/>';
-  }
-}
-window.addEventListener('scroll', updateFab, { passive:true });
-fab.addEventListener('click', function() {
-  const scrolled = window.scrollY || document.documentElement.scrollTop;
-  const threshold = document.documentElement.scrollHeight - window.innerHeight - 300;
-  if (scrolled > threshold) {
-    window.scrollTo({ top:0, behavior:'smooth' });
-  } else {
-    criteriaTarget.scrollIntoView({ behavior:'smooth' });
-  }
-});
 
 // ============================================================
 // TOAST (Handled by global showToast in components.js)
@@ -1238,7 +1251,6 @@ async function loadReportData() {
   if (!db) {
     console.error('Supabase client not found. Falling back to empty state.');
     render();
-    updateFab();
     return;
   }
 
@@ -1309,7 +1321,6 @@ async function loadReportData() {
 
     if (!report || reports.length === 0) {
       render();
-      updateFab();
       return;
     }
 
@@ -1318,14 +1329,22 @@ async function loadReportData() {
     let entName = 'الجهات الحكومية';
     const url = report.platform_url || '';
     
-    if (url.includes('uqu.edu.sa')) {
-      platName = 'جامعة أم القرى';
-      entName = 'الجامعات والمؤسسات التعليمية';
-    } else if (url.includes('moh.gov.sa')) {
-      platName = 'وزارة الصحة';
-      entName = 'الوزارات';
-    } else if (url) {
-      try { platName = new URL(url).hostname.replace('www.', ''); } catch(e) {}
+    if (url) {
+      let matched = false;
+      for (const [domain, info] of Object.entries(platformDirectory)) {
+        if (url.includes(domain)) {
+          platName = info.name;
+          entName = info.agency;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        try { 
+          const parsedUrl = new URL(url.startsWith('http') ? url : 'https://' + url);
+          platName = parsedUrl.hostname.replace('www.', ''); 
+        } catch(e) {}
+      }
     }
 
     const logoElem = document.querySelector('.entity-logo');
@@ -1421,7 +1440,6 @@ async function loadReportData() {
 
     // 5. Render standard table
     render();
-    updateFab();
 
   } catch (error) {
     console.error('Error fetching report data:', error);
@@ -1433,7 +1451,6 @@ async function loadReportData() {
     }
     showToast('تعذر جلب بيانات التقرير.');
     render();
-    updateFab();
   }
 }
 
@@ -1465,6 +1482,9 @@ function updateSummaryStats(dbCompliance) {
   if(elPart) elPart.textContent = partial;
   if(elNotImp) elNotImp.textContent = notImplemented;
   if(elNotInsp) elNotInsp.textContent = notInspected;
+  
+  const elPages = document.getElementById('cnt-pages-scanned');
+  if(elPages) elPages.textContent = window._reportPagesScanned ? window._reportPagesScanned.length : 0;
   
   // Update donut chart text
   const donutTexts = document.querySelectorAll('.result-donut-text-main');

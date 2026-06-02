@@ -23,6 +23,8 @@ const svgSprites = `
     <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7 7 7-7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
   </defs>
 </svg>
 `;
@@ -237,20 +239,52 @@ function bindEvents() {
         document.body.classList.remove('menu-open');
       });
     });
+
+    // Close when clicking outside the menu
+    document.addEventListener('click', (e) => {
+      if (mobilePanel.classList.contains('open')) {
+        if (!mobilePanel.contains(e.target) && !newMenuToggle.contains(e.target)) {
+          mobilePanel.classList.remove('open');
+          newMenuToggle.setAttribute('aria-expanded', 'false');
+          document.body.classList.remove('menu-open');
+        }
+      }
+    });
   }
 
+  // Global fix: Allow 'Space' key to click <a> tags that look like buttons or are skip links
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.keyCode === 32) {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.tagName === 'A') {
+        e.preventDefault(); // Prevent page scroll
+        activeEl.click();
+      }
+    }
+  });
+
   // Login Modal Handling
-  const loginDialog = document.getElementById('loginModal');
-  const openLoginLinks = document.querySelectorAll('[data-login-modal-open]');
-  const closeLoginButton = document.querySelector('[data-login-modal-close]');
+  const loginModalForgot = document.getElementById('loginModalForgot');
+  if (loginModalForgot) {
+    loginModalForgot.addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast('يرجى التواصل مع مدير النظام لاستعادة كلمة المرور.');
+    });
+  }
+
+  // --- Login Form Validation ---
   const loginForm = document.getElementById('loginModalForm');
   const loginEmail = document.getElementById('loginModalEmail');
   const loginPassword = document.getElementById('loginModalPassword');
   const loginEmailError = document.getElementById('loginModalEmailError');
   const loginPasswordError = document.getElementById('loginModalPasswordError');
+  const loginDialog = document.getElementById('loginModal');
+  const openLoginLinks = document.querySelectorAll('[data-login-modal-open]');
+  const closeLoginButton = document.querySelector('[data-login-modal-close]');
   const loginSuccess = document.getElementById('loginModalSuccess');
   const loginError = document.getElementById('loginModalError');
   const loginErrorText = document.getElementById('loginModalErrorText');
+
   const loginForgot = document.getElementById('loginModalForgot');
 
   if (loginDialog) {

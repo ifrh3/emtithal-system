@@ -110,8 +110,14 @@
     .main-container {
       padding-top: 32px;
       padding-bottom: 64px;
+      padding-inline: 16px;
       display: grid;
       gap: 48px;
+    }
+
+    .main-container > * {
+      max-width: 100%;
+      min-width: 0;
     }
 
     .section-title-row {
@@ -142,17 +148,10 @@
     }
 
     .dashboard-cards {
-      display: flex;
-      flex-flow: row nowrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 16px;
       padding-bottom: 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    .dashboard-cards::-webkit-scrollbar {
-      display: none;
     }
 
     .stat-card {
@@ -277,7 +276,7 @@
       width: min(100%, 360px);
     }
 
-    .search-wrap svg {
+    .search-wrap [data-icon] {
       position: absolute;
       top: 50%;
       right: 12px;
@@ -286,6 +285,12 @@
       transform: translateY(-50%);
       color: var(--neutral-400);
       pointer-events: none;
+      z-index: 1;
+      display: flex;
+    }
+    .search-wrap [data-icon] svg {
+      width: 100%;
+      height: 100%;
     }
 
     .search-input {
@@ -312,23 +317,26 @@
 
     .reports-tools {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 12px;
-      width: min(100%, 560px);
     }
 
     .reports-tools .search-wrap {
       flex: 1 1 320px;
-      width: auto;
       min-width: 220px;
+    }
+
+    .reports-tools .filter-wrap {
+      flex: 1 1 170px;
+      min-width: 170px;
     }
 
     .filter-wrap {
       position: relative;
-      flex: 0 0 170px;
     }
 
-    .filter-wrap svg {
+    .filter-wrap [data-icon] {
       position: absolute;
       top: 50%;
       right: 12px;
@@ -337,6 +345,12 @@
       transform: translateY(-50%);
       color: var(--neutral-400);
       pointer-events: none;
+      z-index: 1;
+      display: flex;
+    }
+    .filter-wrap [data-icon] svg {
+      width: 100%;
+      height: 100%;
     }
 
     .filter-select {
@@ -372,10 +386,10 @@
 
     table {
       width: 100%;
+      min-width: 1100px;
       border-collapse: collapse;
       text-align: right;
       font-size: 14px;
-      table-layout: fixed;
     }
 
     thead {
@@ -390,6 +404,15 @@
       font-weight: 500;
       white-space: nowrap;
     }
+
+    th:nth-child(1) { min-width: 140px; } /* رقم البلاغ */
+    th:nth-child(2) { min-width: 180px; } /* الجهة */
+    th:nth-child(3) { min-width: 180px; } /* المعيار */
+    th:nth-child(4) { min-width: 180px; } /* الصفحة */
+    th:nth-child(5) { min-width: 140px; } /* الإضافة */
+    th:nth-child(6) { min-width: 200px; } /* ملاحظات */
+    th:nth-child(7) { min-width: 100px; } /* التاريخ */
+    th:nth-child(8) { min-width: 120px; } /* الحالة */
 
     td {
       padding: 16px 24px;
@@ -867,9 +890,11 @@
 </head>
 
 <body>
+  <a href="#main-content" class="skip-link">تخطي إلى المحتوى</a>
+
   <div id="emtithal-header"></div>
 
-  <main class="main-container">
+  <main id="main-content" class="main-container">
     <section aria-labelledby="overview-title">
       <div class="section-title-row compact">
         <h2 id="overview-title">نظرة عامة</h2>

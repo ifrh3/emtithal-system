@@ -698,10 +698,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
-
+  <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
   <div id="emtithal-header"></div>
 
-  <main id="top">
+  <main id="main-content">
     <section class="hero" aria-labelledby="hero-title">
       <div class="container hero-inner">
         <div class="hero-content">
@@ -820,6 +820,20 @@
     let lowPlatforms = [];
     let platforms = [];
     let activeFilters = new Set(['الكل']);
+
+    const platformDirectory = {
+      'uqu.edu.sa': { name: 'جامعة أم القرى', agency: 'الجامعات والمؤسسات التعليمية' },
+      'moh.gov.sa': { name: 'وزارة الصحة', agency: 'الوزارات' },
+      'absher.sa': { name: 'منصة أبشر', agency: 'القطاعات العسكرية والأمنية' },
+      'moe.gov.sa': { name: 'وزارة التعليم', agency: 'الوزارات' },
+      'hrsd.gov.sa': { name: 'وزارة الموارد البشرية', agency: 'الوزارات' },
+      'my.gov.sa': { name: 'المنصة الوطنية الموحدة', agency: 'الهيئات والمنظمات الحكومية' },
+      'zatca.gov.sa': { name: 'هيئة الزكاة والضريبة والجمارك', agency: 'الهيئات والمنظمات الحكومية' },
+      'etimad.sa': { name: 'منصة اعتماد', agency: 'الوزارات' },
+      'qiwa.sa': { name: 'منصة قوى', agency: 'الوزارات' },
+      'dga.gov.sa': { name: 'هيئة الحكومة الرقمية', agency: 'الهيئات والمنظمات الحكومية' },
+      'saudiexports.gov.sa': { name: 'هيئة تنمية الصادرات', agency: 'الهيئات والمنظمات الحكومية' }
+    };
 
     const extensions = [
       {
@@ -1052,16 +1066,22 @@
           let platName = 'منصة غير معروفة';
           const url = rpt.platform_url || '';
           
-          if (url.includes('uqu.edu.sa')) {
-            platName = 'جامعة أم القرى';
-            agencyType = 'الجامعات والمؤسسات التعليمية';
-          } else if (url.includes('moh.gov.sa')) {
-            platName = 'وزارة الصحة';
-            agencyType = 'الوزارات';
-          } else if (url) {
-            try { platName = new URL(url).hostname.replace('www.', ''); } catch(e) {}
-          } else if (rpt.api_keys?.name) {
-            platName = rpt.api_keys.name;
+          if (url) {
+            let matched = false;
+            for (const [domain, info] of Object.entries(platformDirectory)) {
+              if (url.includes(domain)) {
+                platName = info.name;
+                agencyType = info.agency;
+                matched = true;
+                break;
+              }
+            }
+            if (!matched) {
+              try { 
+                const parsedUrl = new URL(url.startsWith('http') ? url : 'https://' + url);
+                platName = parsedUrl.hostname.replace('www.', ''); 
+              } catch(e) {}
+            }
           }
 
           const shortInitials = platName.replace('منصة', '').replace('جامعة', '').trim().substring(0, 2);

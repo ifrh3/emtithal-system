@@ -80,16 +80,27 @@
       gap: 32px;
     }
 
+    .main-container > * {
+      max-width: 100%;
+      min-width: 0;
+    }
+
     @media (min-width: 640px) { .main-container { padding-inline: 24px; } }
     @media (min-width: 1024px) { .main-container { padding-inline: 32px; } }
 
     .section-title-row {
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
       gap: 16px;
       margin-bottom: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .section-title-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     h2 {
@@ -352,8 +363,10 @@
 
     .criterion-item {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       padding: 16px;
       border: 1px solid var(--neutral-200);
       border-radius: 8px;
@@ -415,6 +428,14 @@
       color: var(--neutral-700);
       border-color: var(--neutral-300);
     }
+    
+    .btn-secondary:hover { background: var(--neutral-50); }
+
+    .btn-small {
+      min-height: 32px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
 
     .btn-secondary:hover {
       background: var(--neutral-50);
@@ -455,10 +476,13 @@
 </head>
 <body>
 
-  <!-- Top Navigation -->
+  <!-- Skip Link for Accessibility -->
+  <a href="#main-content" class="skip-link">تخطي إلى المحتوى</a>
+
   <div id="emtithal-header"></div>
 
-  <main class="main-container">
+  <!-- Main Content -->
+  <main id="main-content" class="main-container">
     <section>
       <div class="section-title-row">
         <h2>التقارير الآلية للمنصات الحكومية</h2>
