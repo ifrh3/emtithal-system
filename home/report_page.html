@@ -1376,7 +1376,11 @@ async function loadReportData() {
     const urlElem = document.getElementById('heroPlatformUrl');
     if(urlElem) {
       urlElem.textContent = report.platform_url || '—';
-      urlElem.href = report.platform_url || '#';
+      let finalUrl = report.platform_url || '#';
+      if (finalUrl !== '#' && !finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+        finalUrl = 'https://' + finalUrl;
+      }
+      urlElem.href = finalUrl;
     }
     
     // Update top header meta
