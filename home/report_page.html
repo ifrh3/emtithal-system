@@ -7,9 +7,9 @@
 <title>تقرير الامتثال — إمتثال × Platforms Code</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="assets/emtithal_public_components.css">
+<link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/emtithal_public_components.js"></script>
+<script src="assets/emtithal_public_components.js?v=20260602"></script>
 <style>
 /* =====================================================================
    DESIGN TOKENS — Platforms Code (PC) 1.0
@@ -250,41 +250,6 @@ body{margin:0;}
   min-width: 960px;
 }
 
-/* ===== Responsive Media Queries ===== */
-@media (max-width: 1024px) {
-  .hero {
-    flex-direction: column;
-  }
-  .hero-r {
-    width: 100%;
-    border-right: none;
-    border-top: 1px solid var(--pc-border-subtle);
-  }
-  .stats {
-    grid-template-columns: repeat(3, minmax(0,1fr));
-  }
-  .charts {
-    grid-template-columns: 1fr;
-  }
-  .donut-wrap {
-    flex-direction: column;
-  }
-}
-@media (max-width: 640px) {
-  .stats {
-    grid-template-columns: repeat(2, minmax(0,1fr));
-  }
-  .grid {
-    grid-template-columns: 1fr !important;
-  }
-  .hero-l, .hero-r {
-    padding: 24px;
-  }
-  .cat-chip {
-    flex: 1 1 calc(50% - 8px);
-    justify-content: center;
-  }
-}
 .table-head{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:12px 20px;background:var(--pc-surface-sunken);border-bottom:1px solid var(--pc-border-default);font-size:var(--pc-text-sm);font-weight:600;color:var(--pc-text-muted);text-transform:uppercase;letter-spacing:.04em;}
 .table-row{border-bottom:1px solid var(--pc-border-subtle);transition:background var(--pc-duration-fast) var(--pc-ease);}
 .table-cells{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:16px 20px;align-items:center;min-height:72px;}
@@ -363,6 +328,7 @@ body{margin:0;}
 .stats { grid-template-columns: 1fr 1fr; }
 .hero { grid-template-columns: 1fr; }
 .charts { grid-template-columns: 1fr; }
+.hero-meta-grid { grid-template-columns: 1fr; }
 .hero-l { padding: 20px; }
 .hero-r { padding: 20px; border-inline-start: 0; border-top: 1px solid var(--pc-border-subtle); }
 .donut-wrap { flex-direction: column; }
@@ -393,6 +359,7 @@ body{margin:0;}
 
 @media (min-width: 768px) {
   .stats { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .hero-meta-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .result-head { align-items: center; }
   .result-stats { width: auto; max-width: none; gap: 22px; }
   .result-stat-line { grid-template-columns: 46px 32px; }
@@ -426,6 +393,7 @@ body{margin:0;}
 </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
   <div id="emtithal-header"></div>
 <!-- SVG sprite -->
 <svg aria-hidden="true" height="0" style="position:absolute" width="0">
@@ -462,7 +430,7 @@ body{margin:0;}
 <symbol id="i-x-close" viewbox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
 </defs>
 </svg>
-<main class="page" id="page">
+<main class="page" id="main-content">
 <!-- ===== Page Header ===== -->
 <header class="page-header">
 <nav aria-label="Breadcrumb" class="crumbs">
@@ -513,7 +481,7 @@ body{margin:0;}
 </div>
 </div>
 </div>
-<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+<div class="grid hero-meta-grid">
 <div class="kv"><span class="k">الجهة</span><span class="v" id="heroEntityName">—</span></div>
 <div class="kv">
 <span class="k">رابط المنصة</span>
@@ -831,6 +799,46 @@ let CRITERIA = [];
 // ============================================================
 // HELPERS
 // ============================================================
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function escapeAttr(value) {
+  return escapeHTML(value);
+}
+
+function safeExternalUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '#';
+  try {
+    const parsed = new URL(raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`);
+    return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '#';
+  } catch {
+    return '#';
+  }
+}
+
+function safeHost(value) {
+  const href = safeExternalUrl(value);
+  if (href === '#') return '';
+  try {
+    return new URL(href).hostname;
+  } catch {
+    return '';
+  }
+}
+
+function clampPercent(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
 function statusPill(st) {
   const map = {
     'implemented':     { cls:'brand',   icon:'i-check-circle', label:'مطبَّقة' },
@@ -848,8 +856,9 @@ function catTag(cat) {
     templates:   { label:'القوالب',  icon:'i-page' },
     components:  { label:'المكونات', icon:'i-component' },
   };
-  const m = map[cat] || map.components;
-  return `<span class="cat-tag ${cat}"><span class="dot" aria-hidden="true"></span>${m.label}</span>`;
+  const key = map[cat] ? cat : 'components';
+  const m = map[key];
+  return `<span class="cat-tag ${key}"><span class="dot" aria-hidden="true"></span>${m.label}</span>`;
 }
 
 function prioLabel(pr) {
@@ -866,9 +875,7 @@ function extensionPages(extName) {
 }
 
 function pageHref(page) {
-  if(!page) return '#';
-  if(page.startsWith('http')) return page;
-  return 'https://' + page;
+  return safeExternalUrl(page);
 }
 
 function extensionDownloadUrl(ext) {
@@ -880,8 +887,8 @@ function buildPagesAccordion(c) {
   if (pages.length === 0) return '';
   
   const links = pages.map(page => `
-    <a class="page-link" href="${pageHref(page)}" target="_blank" rel="noreferrer">
-      <span dir="ltr">${page}</span>
+    <a class="page-link" href="${escapeAttr(pageHref(page))}" target="_blank" rel="noreferrer">
+      <span dir="ltr">${escapeHTML(page)}</span>
       <svg aria-hidden="true"><use href="#i-external"/></svg>
     </a>`).join('');
     
@@ -894,6 +901,12 @@ function buildPagesAccordion(c) {
 
 function buildDetails(c) {
   const isIssue = c.st === 'partial' || c.st === 'not-implemented';
+  const criterionNum = Number(c.n);
+  const displayNum = Number.isFinite(criterionNum) ? String(criterionNum).padStart(2, '0') : escapeHTML(c.n);
+  const refNum = Number.isFinite(criterionNum) ? criterionNum : '';
+  const extName = escapeHTML(c.ext?.n || 'لا يوجد');
+  const extAvatar = escapeHTML(c.ext?.a || '-');
+  const notesAr = escapeHTML(c.notes_ar);
   const issueSection = isIssue ? `
     <div class="issue-alert${c.st === 'not-implemented' ? ' danger' : ''}">
       <svg aria-hidden="true"><use href="#i-alert-tri"/></svg>
@@ -901,7 +914,7 @@ function buildDetails(c) {
         <div style="font-weight:600;font-size:var(--pc-text-md);margin-bottom:4px;">
           ${c.st === 'not-implemented' ? 'المعيار غير مطبَّق' : 'تطبيق جزئي — يُوصى بالمراجعة'}
         </div>
-        <div style="font-size:var(--pc-text-md);color:var(--pc-text-muted);line-height:1.5;">${c.notes_ar}</div>
+        <div style="font-size:var(--pc-text-md);color:var(--pc-text-muted);line-height:1.5;">${notesAr}</div>
       </div>
     </div>` : '';
 
@@ -912,25 +925,25 @@ function buildDetails(c) {
       <div class="det-section">
         <h4><svg aria-hidden="true"><use href="#i-info"/></svg>أ. ملخّص الفحص</h4>
         <div class="det-grid-3">
-          <div class="kv"><span class="k">رقم المعيار</span><span class="v pc-tnum">${String(c.n).padStart(2,'0')}</span></div>
+          <div class="kv"><span class="k">رقم المعيار</span><span class="v pc-tnum">${displayNum}</span></div>
           <div class="kv"><span class="k">المجموعة</span><span class="v">${c.pr === 'P' ? 'أساسي' : 'ثانوي'}</span></div>
           <div class="kv"><span class="k">الفئة</span><span class="v">${catTag(c.cat)}</span></div>
           <div class="kv"><span class="k">حالة التطبيق</span><span class="v">${statusPill(c.st)}</span></div>
           <div class="kv"><span class="k">تاريخ الفحص</span><span class="v" style="font-size:var(--pc-text-sm);">2026-05-09</span></div>
-          <div class="kv"><span class="k">مصدر الإضافة</span><span class="v" style="font-size:var(--pc-text-sm);">${c.ext.n}</span></div>
+          <div class="kv"><span class="k">مصدر الإضافة</span><span class="v" style="font-size:var(--pc-text-sm);">${extName}</span></div>
         </div>
       </div>
       <div class="det-section">
         <h4><svg aria-hidden="true"><use href="#i-book"/></svg>ب. معلومات المعيار</h4>
         <div class="kv" style="margin-bottom:12px;">
           <span class="k">العنوان (عربي)</span>
-          <span class="v" style="line-height:1.5;">${c.t_ar}</span>
+          <span class="v" style="line-height:1.5;">${escapeHTML(c.t_ar)}</span>
         </div>
         <div class="kv" style="margin-bottom:12px;">
           <span class="k">العنوان (إنجليزي)</span>
-          <span class="v" style="direction:ltr;unicode-bidi:plaintext;line-height:1.5;">${c.t_en}</span>
+          <span class="v" style="direction:ltr;unicode-bidi:plaintext;line-height:1.5;">${escapeHTML(c.t_en)}</span>
         </div>
-        ${c.ref ? `<a href="https://platformscode.gov.sa/criteria/${c.n}" target="_blank" rel="noreferrer" class="ref-link" aria-label="فتح المرجع الرسمي في نافذة جديدة">
+        ${c.ref && refNum ? `<a href="https://platformscode.gov.sa/criteria/${refNum}" target="_blank" rel="noreferrer" class="ref-link" aria-label="فتح المرجع الرسمي في نافذة جديدة">
           <span>فتح المرجع الرسمي</span>
           <svg aria-hidden="true"><use href="#i-external"/></svg>
         </a>` : '<span style="color:var(--pc-text-subtle);font-size:var(--pc-text-md);">لا يوجد مرجع رسمي</span>'}
@@ -944,7 +957,7 @@ function buildDetails(c) {
         <h4><svg aria-hidden="true"><use href="#i-alert-tri"/></svg>د. المشاكل</h4>
         <div class="kv" style="margin-bottom:12px;">
           <span class="k">الملاحظات</span>
-          <span class="v" style="line-height:1.5;color:var(--pc-text-muted);">${c.notes_ar}</span>
+          <span class="v" style="line-height:1.5;color:var(--pc-text-muted);">${notesAr}</span>
         </div>
         <div class="kv">
           <span class="k">الإجراء التصحيحي المقترح</span>
@@ -955,10 +968,10 @@ function buildDetails(c) {
         <h4><svg aria-hidden="true"><use href="#i-component"/></svg>الإضافة الخاصة بالمعيار</h4>
         <div class="extension-card">
           <span class="ext-mini">
-            <span class="ext-avatar">${c.ext.a}</span>
-            <span style="font-size:var(--pc-text-md);font-weight:600;">${c.ext.n}</span>
+            <span class="ext-avatar">${extAvatar}</span>
+            <span style="font-size:var(--pc-text-md);font-weight:600;">${extName}</span>
           </span>
-          <a href="${extensionDownloadUrl(c.ext)}" class="btn btn-secondary btn-sm">
+          <a href="${escapeAttr(extensionDownloadUrl(c.ext))}" class="btn btn-secondary btn-sm">
             <svg aria-hidden="true"><use href="#i-external"/></svg>عرض الإضافة
           </a>
         </div>
@@ -969,28 +982,31 @@ function buildDetails(c) {
 
 // Build a single row
 function buildRow(c, idx, zebra) {
+  const criterionNum = Number(c.n);
+  const displayNum = Number.isFinite(criterionNum) ? String(criterionNum).padStart(2, '0') : escapeHTML(c.n);
+  const safeN = escapeAttr(c.n);
   return `
-  <div class="table-row${zebra ? ' row-even' : ''}" role="row" data-n="${c.n}" data-pr="${c.pr}" data-cat="${c.cat}" data-st="${c.st}" data-page="${c.page}" data-ext="${c.ext.n}" data-ref="${c.ref}" aria-expanded="false">
+  <div class="table-row${zebra ? ' row-even' : ''}" role="row" data-n="${safeN}" data-pr="${escapeAttr(c.pr)}" data-cat="${escapeAttr(c.cat)}" data-st="${escapeAttr(c.st)}" data-page="${escapeAttr(c.page)}" data-ext="${escapeAttr(c.ext?.n || '')}" data-ref="${escapeAttr(c.ref)}" aria-expanded="false">
     <div class="table-cells">
-      <div class="crit-num">${String(c.n).padStart(2,'0')}</div>
+      <div class="crit-num">${displayNum}</div>
       <div>${prioLabel(c.pr)}</div>
       <div>${catTag(c.cat)}</div>
       <div>
-        <div class="crit-title">${c.t_ar}</div>
-        <div class="crit-subtitle">${c.t_en}</div>
+        <div class="crit-title">${escapeHTML(c.t_ar)}</div>
+        <div class="crit-subtitle">${escapeHTML(c.t_en)}</div>
       </div>
       <div>${statusPill(c.st)}</div>
-      <div class="crit-page">${c.page}</div>
+      <div class="crit-page">${escapeHTML(c.page)}</div>
       <div class="actions-cell">
         <button type="button" class="btn btn-ghost btn-sm detail-btn"
           aria-expanded="false"
-          aria-label="عرض تفاصيل المعيار ${c.n}"
+          aria-label="عرض تفاصيل المعيار ${escapeAttr(c.n)}"
           style="gap:4px;padding:6px 10px;">
           تفاصيل <svg aria-hidden="true" style="width:14px;height:14px;"><use href="#i-chev-down" class="chev-icon"/></svg>
         </button>
       </div>
     </div>
-    <div class="detail" id="detail-${c.n}">
+    <div class="detail" id="detail-${safeN}">
       ${buildDetails(c)}
     </div>
   </div>`;
@@ -1246,6 +1262,13 @@ document.getElementById('btnShare').addEventListener('click', async function() {
 // DYNAMIC DATA LOADING (SUPABASE)
 // ============================================================
 async function loadReportData() {
+  if (window.ensureEmtithalSupabaseClient) {
+    try {
+      await window.ensureEmtithalSupabaseClient();
+    } catch (error) {
+      console.warn('Supabase initialization failed:', error.message);
+    }
+  }
   const db = window.db;
   if (!db) {
     console.error('Supabase client not found. Falling back to empty state.');
@@ -1282,14 +1305,14 @@ async function loadReportData() {
     if (reportId) {
       const { data, error } = await db
         .from('reports_summary')
-        .select('*, api_keys(name)')
+        .select('*')
         .eq('id', reportId)
         .single();
       if (error) throw error;
       
       const { data: allData, error: allError } = await db
         .from('reports_summary')
-        .select('*, api_keys(name)')
+        .select('*')
         .eq('platform_url', data.platform_url)
         .order('report_date', { ascending: false });
       if (allError) throw allError;
@@ -1309,7 +1332,7 @@ async function loadReportData() {
       if (latest && latest.platform_url) {
         const { data: allData, error: allError } = await db
           .from('reports_summary')
-          .select('*, api_keys(name)')
+          .select('*')
           .eq('platform_url', latest.platform_url)
           .order('report_date', { ascending: false });
         if (allError) throw allError;
@@ -1349,8 +1372,9 @@ async function loadReportData() {
     const logoElem = document.querySelector('.entity-logo');
     if (url) {
       try {
-        const domain = new URL(url).hostname;
-        logoElem.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=128" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:var(--pc-radius-md);">`;
+        const domain = safeHost(url);
+        if (!domain) throw new Error('Invalid platform URL');
+        logoElem.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:var(--pc-radius-md);">`;
         logoElem.style.background = 'transparent';
         logoElem.style.border = 'none';
       } catch(e) {
@@ -1375,11 +1399,7 @@ async function loadReportData() {
     const urlElem = document.getElementById('heroPlatformUrl');
     if(urlElem) {
       urlElem.textContent = report.platform_url || '—';
-      let finalUrl = report.platform_url || '#';
-      if (finalUrl !== '#' && !finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
-        finalUrl = 'https://' + finalUrl;
-      }
-      urlElem.href = finalUrl;
+      urlElem.href = safeExternalUrl(report.platform_url);
     }
     
     // Update top header meta
@@ -1423,14 +1443,15 @@ async function loadReportData() {
       
       const index = CRITERIA.findIndex(c => String(c.n) === critNum);
       if (index !== -1) {
+        const score = clampPercent(r.score);
         let st = 'not-implemented';
-        if (r.score === 100) st = 'implemented';
-        else if (r.score > 0) st = 'partial';
+        if (score === 100) st = 'implemented';
+        else if (score > 0) st = 'partial';
 
         CRITERIA[index].st = st;
         CRITERIA[index].page = raw.pageUrl || r.platform_url || '';
         CRITERIA[index].notes_ar = 'تم الفحص آلياً عبر الإضافة.';
-        let extName = r.api_keys?.name || 'إضافة امتثال الرسمية';
+        let extName = raw.extensionName || raw.apiName || r.api_key_name || 'إضافة امتثال الرسمية';
         CRITERIA[index].ext = {
           n: extName,
           a: extName.substring(0, 2)
@@ -1473,7 +1494,7 @@ function updateSummaryStats(dbCompliance) {
 
   // Use DB compliance if available, otherwise calculate
   const compliance = dbCompliance !== undefined && dbCompliance !== null ? 
-                     Math.round(dbCompliance) : calcCompliance;
+                     clampPercent(dbCompliance) : clampPercent(calcCompliance);
 
   // Update counts
   const elImp = document.getElementById('cnt-implemented');

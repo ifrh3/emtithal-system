@@ -6,8 +6,30 @@ CREATE TABLE IF NOT EXISTS public.extensions (
     desc_text TEXT,
     link TEXT,
     subs JSONB,
-    icon TEXT
+    icon TEXT,
+    downloads INTEGER NOT NULL DEFAULT 0
 );
+
+ALTER TABLE public.extensions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Read Extensions" ON public.extensions;
+
+CREATE POLICY "Public Read Extensions" ON public.extensions
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+GRANT SELECT ON public.extensions TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.increment_extension_download(p_id integer)
+RETURNS void AS $$
+BEGIN
+    UPDATE public.extensions
+    SET downloads = COALESCE(downloads, 0) + 1
+    WHERE id = p_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+GRANT EXECUTE ON FUNCTION public.increment_extension_download(integer) TO anon, authenticated;
 
 TRUNCATE TABLE public.extensions;
 INSERT INTO public.extensions (num, cat, title, desc_text, link, subs, icon) VALUES (1, 'اساسيات', 'تطبيق نظام التصميم الموحد', 'التأكد من تطبيق النسخة 1.0 من نظام التصميم الموحد (كود المنصات) بشكل صحيح على المنصة', 'https://design.dga.gov.sa/', '["التأكد من استيراد مكتبة كود المنصات بنسختها الصحيحة 1.0","مراجعة جميع المكونات للتحقق من توافقها مع الإصدار الحالي"]', 'dashboard');

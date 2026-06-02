@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/emtithal_public_components.css">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js" defer></script>
+  <script src="assets/emtithal_public_components.js?v=20260602" defer></script>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -771,6 +771,41 @@ let EXTENSIONS = [];
     'عناصر': { label: 'عناصر', iconClass: 'icon-purple', badgeClass: 'cat-عناصر' },
   };
 
+  function escapeHTML(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function escapeAttr(value) {
+    return escapeHTML(value);
+  }
+
+  function safeExternalUrl(value) {
+    const raw = String(value ?? '').trim();
+    if (!raw) return '';
+    try {
+      const parsed = new URL(raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`);
+      return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '';
+    } catch {
+      return '';
+    }
+  }
+
+  function parseSubItems(value) {
+    if (Array.isArray(value)) return value;
+    if (!value) return [];
+    try {
+      const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
   function updateCounts(filtered) {
     document.getElementById('fc-all').textContent = EXTENSIONS.length;
     const bycat = {};
@@ -785,8 +820,8 @@ let EXTENSIONS = [];
     const q = searchQuery.toLowerCase().trim();
     const filtered = EXTENSIONS.filter(ext => {
       const matchCat = activeFilter === 'all' || ext.cat === activeFilter;
-      const matchQ   = !q || ext.title.includes(q) || ext.desc.includes(q) ||
-                       (ext.subs || []).some(s => s.includes(q));
+      const matchQ   = !q || String(ext.title).toLowerCase().includes(q) || String(ext.desc).toLowerCase().includes(q) ||
+                       (ext.subs || []).some(s => String(s).toLowerCase().includes(q));
       return matchCat && matchQ;
     });
 
@@ -801,37 +836,41 @@ let EXTENSIONS = [];
     grid.className = 'cards-grid' + (viewMode === 'list' ? ' list-view' : '');
 
     grid.innerHTML = filtered.map((ext, i) => {
-      const cfg = CAT_CONFIG[ext.cat];
+      const cfg = CAT_CONFIG[ext.cat] || CAT_CONFIG['عناصر'];
       const icon = ICONS[ext.icon] || ICONS['dashboard'];
       const delay = Math.min(i * 30, 300);
+      const extId = Number(ext.id);
+      const extNum = Number(ext.num);
+      const refUrl = safeExternalUrl(ext.link);
+      const canDownload = Number.isFinite(extId) && (extNum === 4 || extNum === 11);
       // The normal renderer now handles both 4 and 11
 
       return `
         <article class="ext-card" style="animation-delay:${delay}ms"
-          tabindex="0" role="article" aria-label="${ext.title}"
-          data-num="${ext.num}" data-cat="${ext.cat}">
+          tabindex="0" role="article" aria-label="${escapeAttr(ext.title)}"
+          data-num="${escapeAttr(ext.num)}" data-cat="${escapeAttr(ext.cat)}">
           <div class="card-header">
             <div class="card-icon-wrap ${cfg.iconClass}">${icon}</div>
             <div class="card-meta">
-              <div class="card-num">معيار #${ext.num}</div>
-              <div class="card-title">${ext.title}</div>
-              <p class="card-desc-inline">${ext.desc}</p>
+              <div class="card-num">معيار #${escapeHTML(ext.num)}</div>
+              <div class="card-title">${escapeHTML(ext.title)}</div>
+              <p class="card-desc-inline">${escapeHTML(ext.desc)}</p>
             </div>
             <span class="cat-badge ${cfg.badgeClass}">${cfg.label}</span>
           </div>
           <div class="card-body">
-            <p class="card-desc">${ext.desc}</p>
+            <p class="card-desc">${escapeHTML(ext.desc)}</p>
           </div>
           <div class="card-footer">
             <span class="cat-badge-list ${cfg.badgeClass}">${cfg.label}</span>
-            ${ext.link
-              ? `<a class="card-ext-badge" href="${ext.link}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="عرض المعيار">
+            ${refUrl
+              ? `<a class="card-ext-badge" href="${escapeAttr(refUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="عرض المعيار">
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> عرض المعيار
-                 </a>`
+                  </a>`
               : `<span class="card-no-link">—</span>`
             }
-            ${(ext.num == 4 || ext.num == 11) ? `
-              <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${ext.id}, '../Emtithal-Criterion${ext.num}-Extension.zip')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
+            ${canDownload ? `
+              <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${extId}, '../Emtithal-Criterion${extNum}-Extension.zip')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
                 ${ICONS.chromeExt} تحميل الإضافة (ZIP)
               </button>
             ` : `
@@ -930,6 +969,13 @@ let EXTENSIONS = [];
 
   // Fetch Extensions from Supabase DB
   async function init() {
+    if (window.ensureEmtithalSupabaseClient) {
+      try {
+        await window.ensureEmtithalSupabaseClient();
+      } catch (error) {
+        console.warn('Supabase initialization failed:', error.message);
+      }
+    }
     if (!window.db) {
       console.error('Supabase client not initialized');
       emptyState.innerHTML = '<p style="color:var(--pc-danger-500);text-align:center;">خطأ في الاتصال بقاعدة البيانات. الرجاء التأكد من ملفات الإعدادات.</p>';
@@ -960,7 +1006,7 @@ let EXTENSIONS = [];
         desc: d.desc_text || '', 
         link: d.link,
         downloads: d.downloads || 0,
-        subs: d.subs ? (typeof d.subs === 'string' ? JSON.parse(d.subs) : d.subs) : [],
+        subs: parseSubItems(d.subs),
         icon: d.icon
       }));
 
@@ -968,7 +1014,7 @@ let EXTENSIONS = [];
       renderCards();
     } catch (e) {
       console.error('Error fetching extensions:', e);
-      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--pc-danger-500);">حدث خطأ أثناء تحميل البيانات: ${e.message}</div>`;
+      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--pc-danger-500);">حدث خطأ أثناء تحميل البيانات: ${escapeHTML(e.message)}</div>`;
     }
   }
 

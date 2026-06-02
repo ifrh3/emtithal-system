@@ -10,12 +10,31 @@ CREATE TABLE public.extensions (
     desc_text TEXT,
     link TEXT,
     subs JSONB,
-    icon TEXT
+    icon TEXT,
+    downloads INTEGER NOT NULL DEFAULT 0
 );
 
 TRUNCATE TABLE public.extensions;
-ALTER TABLE public.extensions DISABLE ROW LEVEL SECURITY;
-GRANT ALL ON public.extensions TO anon, authenticated, service_role;
+ALTER TABLE public.extensions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Read Extensions" ON public.extensions;
+
+CREATE POLICY "Public Read Extensions" ON public.extensions
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+GRANT SELECT ON public.extensions TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.increment_extension_download(p_id integer)
+RETURNS void AS $$
+BEGIN
+    UPDATE public.extensions
+    SET downloads = COALESCE(downloads, 0) + 1
+    WHERE id = p_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+GRANT EXECUTE ON FUNCTION public.increment_extension_download(integer) TO anon, authenticated;
 
 INSERT INTO public.extensions (num, pr, cat, t_ar, t_en, ref, desc_text, link, subs, icon) VALUES (1, 'P', 'اساسيات', 'اعتماد النظام الموحد للتصميم (Platforms Code) إصدار 1.0 بشكل صحيح', 'Unified Design System v1.0 correctly implemented', true, 'التأكد من تطبيق النسخة 1.0 من نظام التصميم الموحد (كود المنصات) بشكل صحيح على المنصة', 'https://design.dga.gov.sa/', '["التأكد من استيراد مكتبة كود المنصات بنسختها الصحيحة 1.0","مراجعة جميع المكونات للتحقق من توافقها مع الإصدار الحالي"]', 'dashboard');
 INSERT INTO public.extensions (num, pr, cat, t_ar, t_en, ref, desc_text, link, subs, icon) VALUES (2, 'P', 'اساسيات', 'استخدام الألوان المعتمدة وفق نظام التصميم الموحد', 'Use of approved color tokens', true, 'الالتزام باستخدام رموز ألوان التصميم (Color Design Tokens) دون تعديل أو استبدال', 'https://design.dga.gov.sa/guidelines/foundations/color-system', '["الالتزام باستخدام رموز ألوان التصميم مثل الألوان المخصصة للخلفيات والخطوط وغيرها","في حال إضافة عناصر على خلفيات ملونة يجب التحقق من تحقيق متطلبات التباين والوضوح","استخدام خاصية On Color الموجودة في العناصر لضمان إمكانية الوصول"]', 'palette');

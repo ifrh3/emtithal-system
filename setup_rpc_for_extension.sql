@@ -24,7 +24,7 @@ DECLARE
     v_key_name text;
     v_quota int;
     v_requests int;
-    v_report_id int;
+    v_report_id public.reports_summary.id%TYPE;
 BEGIN
     -- Verify API Key
     SELECT id, name, quota, requests INTO v_key_id, v_key_name, v_quota, v_requests 
@@ -55,7 +55,7 @@ BEGIN
 
     RETURN jsonb_build_object('success', true, 'report_id', v_report_id, 'message', 'Report submitted successfully via API.');
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 3. Expose the RPC to anonymous users (Auth is handled by the API key internally)
 GRANT EXECUTE ON FUNCTION public.submit_audit_report(text, text, jsonb, numeric) TO anon;

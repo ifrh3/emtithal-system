@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/emtithal_public_components.css">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js" defer></script>
+  <script src="assets/emtithal_public_components.js?v=20260602" defer></script>
   <style>
     :root {
       --brand-50:#F3FCF6;
@@ -70,13 +70,13 @@
       justify-content:space-between;
       gap:20px;
     }
-    .brand {
+    .topbar .brand {
       display:flex;
       align-items:center;
       gap:12px;
       flex:none;
     }
-    .brand-mark {
+    .topbar .brand-mark {
       width:44px;
       height:44px;
       display:grid;
@@ -89,8 +89,8 @@
       font-size:22px;
       box-shadow:var(--shadow-sm);
     }
-    .brand strong { display:block; font-size:16px; line-height:1.4; }
-    .brand span span { display:block; color:var(--neutral-500); font-size:12px; margin-top:2px; }
+    .topbar .brand strong { display:block; font-size:16px; line-height:1.4; }
+    .topbar .brand span span { display:block; color:var(--neutral-500); font-size:12px; margin-top:2px; }
     .page-note {
       display:inline-flex;
       align-items:center;
@@ -431,39 +431,94 @@
       flex-wrap:wrap;
     }
 
-    @media (max-width: 1060px) {
-      .page-layout { grid-template-columns:1fr; }
-      .secondary-nav-card {
-        position:relative;
-        top:auto;
-        order:-1;
-      }
-      .secondary-links {
-        display:grid;
-        grid-template-columns:repeat(4, 1fr);
-      }
+    /* Mobile-first page layout */
+    .container { width:min(100% - 28px, 1180px); }
+    .hero { padding:48px 0 40px; }
+    .hero::before {
+      background-position:left -120px center;
+      background-size:360px auto;
+      opacity:.06;
     }
-    @media (max-width: 960px) {
-      .hero-grid,
-      .contact-card { grid-template-columns:1fr; }
-      .about-box,
-      .values-grid,
-      .team-grid { grid-template-columns:repeat(2, 1fr); }
+    .hero-grid,
+    .page-layout,
+    .about-box,
+    .values-grid,
+    .team-grid,
+    .stats,
+    .secondary-links,
+    .contact-card {
+      grid-template-columns:1fr;
     }
-    @media (max-width: 720px) {
-      .container { width:min(100% - 28px, 1180px); }
-      .topbar-row { min-height:64px; }
-      .page-note { display:none; }
-      .hero { padding:48px 0 40px; }
-      .lead { font-size:16px; }
+    h1 {
+      font-size:clamp(32px, 12vw, 48px);
+      letter-spacing:0;
+    }
+    .lead { font-size:16px; line-height:1.9; }
+    .page-layout { padding:32px 0 48px; }
+    .secondary-nav-card {
+      position:relative;
+      top:auto;
+      order:-1;
+    }
+    .secondary-links a,
+    .contact-email {
+      min-height:48px;
+    }
+    .section { padding-bottom:46px; scroll-margin-top:84px; }
+    .text-card,
+    .value-card,
+    .team-card,
+    .contact-card { border-radius:var(--radius-md); }
+    .contact-card { padding:24px; }
+    .contact-email { width:100%; }
+    .member-email {
+      max-width:100%;
+      overflow-wrap:anywhere;
+      white-space:normal;
+    }
+
+    @media (min-width: 720px) {
+      .container { width:min(100% - 40px, 1180px); }
+      .hero { padding:64px 0 52px; }
       .stats,
       .about-box,
       .values-grid,
+      .team-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+      .secondary-links { grid-template-columns:repeat(4, minmax(0,1fr)); }
+      .contact-email { width:auto; }
+    }
+
+    @media (min-width: 960px) {
+      .hero-grid { grid-template-columns:1fr; }
+      .about-box,
+      .values-grid,
       .team-grid,
-      .secondary-links { grid-template-columns:1fr; }
-      .page-layout { padding:32px 0 48px; }
-      .section { padding-bottom:46px; }
-      .contact-card { padding:24px; }
+      .stats { grid-template-columns:repeat(3, minmax(0,1fr)); }
+      .contact-card {
+        grid-template-columns:1fr auto;
+        padding:30px;
+      }
+    }
+
+    @media (min-width: 1060px) {
+      .hero { padding:72px 0 56px; }
+      .hero::before {
+        background-position:left 7% center;
+        background-size:min(520px, 52vw) auto;
+        opacity:.08;
+      }
+      .page-layout {
+        grid-template-columns:236px minmax(0,1fr);
+        padding:48px 0 72px;
+      }
+      .secondary-nav-card {
+        position:sticky;
+        top:88px;
+      }
+      .secondary-links {
+        display:flex;
+        flex-direction:column;
+      }
     }
   
 </style>
@@ -585,7 +640,7 @@
                 <div><h3>ود الزهراني</h3><span>محللة بيانات</span></div>
               </div>
               <p>تراجع بيانات الفحص والمؤشرات الناتجة من التقارير، وتحوّلها إلى ملاحظات تساعد على تحسين دقة المخرجات.</p>
-              <a class="member-email" href="mailto:weddew863@gmail.com">weddew863@gmail.com</a>
+              <a class="member-email" href="mailto:wed.f.alzahrani@gmail.com">wed.f.alzahrani@gmail.com</a>
               <div class="chips"><span class="chip">تحليل البيانات</span><span class="chip">مؤشرات النتائج</span></div>
             </article>
 

@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/emtithal_public_components.css">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js"></script>
+  <script src="assets/emtithal_public_components.js?v=20260602"></script>
   <style>
     /*
       Emtithal public home — aligned with Platforms Code Design System.
@@ -695,7 +695,6 @@
       .extension-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
@@ -870,6 +869,40 @@
       return `<svg aria-hidden="true"><use href="#${id}"></use></svg>`;
     }
 
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value);
+    }
+
+    function clampPercent(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(100, Math.round(n)));
+    }
+
+    function reportHref(id) {
+      return `report_page.html?id=${encodeURIComponent(String(id ?? ''))}`;
+    }
+
+    function safeHost(value) {
+      const raw = String(value ?? '').trim();
+      if (!raw) return '';
+      try {
+        const parsed = new URL(raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`);
+        return ['http:', 'https:'].includes(parsed.protocol) ? parsed.hostname : '';
+      } catch {
+        return '';
+      }
+    }
+
     function scoreBadge(score) {
       if (score >= 90) return 'success';
       if (score >= 70) return 'warning';
@@ -879,14 +912,14 @@
     function renderRankList(targetId, list) {
       const target = document.getElementById(targetId);
       target.innerHTML = list.map((item, i) => `
-        <button class="rank-item" type="button" data-name="${item.name}"
-          onclick="window.location.href='report_page.html?id=${item.report_id}'">
+        <button class="rank-item" type="button" data-name="${escapeAttr(item.name)}"
+          onclick="window.location.href='${reportHref(item.report_id)}'">
           <span class="rank-number">${i + 1}</span>
           <span>
-            <span class="rank-name">${item.name}</span>
+            <span class="rank-name">${escapeHTML(item.name)}</span>
             <span class="rank-meta">نسبة الامتثال حسب الفحص</span>
           </span>
-          <span class="badge ${scoreBadge(item.score)}">${item.score}%</span>
+          <span class="badge ${scoreBadge(item.score)}">${clampPercent(item.score)}%</span>
         </button>
       `).join('');
     }
@@ -898,8 +931,8 @@
             <span class="badge ${ext.categoryClass}">${ext.category}</span>
           </div>
           <div>
-            <h3>${ext.title}</h3>
-            <p>${ext.desc}</p>
+            <h3>${escapeHTML(ext.title)}</h3>
+            <p>${escapeHTML(ext.desc)}</p>
           </div>
           <div class="download-row">
             <span class="download-count" id="home-dl-count-${ext.id}" data-count="${ext.downloads}">
@@ -991,21 +1024,21 @@
         <tr>
           <td>
             <div class="platform-cell">
-              <span class="platform-avatar">${p.short}</span>
-              <span class="platform-name">${p.name}</span>
+              <span class="platform-avatar">${escapeHTML(p.short)}</span>
+              <span class="platform-name">${escapeHTML(p.name)}</span>
             </div>
           </td>
-          <td><span class="agency-text">${p.agency}</span></td>
+          <td><span class="agency-text">${escapeHTML(p.agency)}</span></td>
           <td>
             <div class="score-cell">
-              <span class="badge ${scoreBadge(p.score)}">${p.score}%</span>
+              <span class="badge ${scoreBadge(p.score)}">${clampPercent(p.score)}%</span>
               <span class="progress ${p.score < 80 ? 'warning' : ''}">
-                <span style="width:${p.score}%"></span>
+                <span style="width:${clampPercent(p.score)}%"></span>
               </span>
             </div>
           </td>
           <td class="report-action">
-            <a class="btn btn-secondary" href="report_page.html?id=${p.report_id}">
+            <a class="btn btn-secondary" href="${reportHref(p.report_id)}">
               عرض تقرير المنصة
               ${iconUse('i-arrow-left')}
             </a>
@@ -1032,7 +1065,7 @@
       
       // If there is a specific error message stored, show it in the empty state
       if (window._platformError) {
-        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:red;direction:ltr;display:inline-block;">${window._platformError}</span>`;
+        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:red;direction:ltr;display:inline-block;">${escapeHTML(window._platformError)}</span>`;
         empty.classList.add('show');
       } else {
         empty.innerHTML = `<strong>لا توجد منصات مطابقة</strong><span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>`;
@@ -1042,6 +1075,13 @@
 
     async function loadPlatformsData() {
       const empty = document.getElementById('emptyState');
+      if (window.ensureEmtithalSupabaseClient) {
+        try {
+          await window.ensureEmtithalSupabaseClient();
+        } catch (error) {
+          console.warn('Supabase initialization failed:', error.message);
+        }
+      }
       if (!window.db) {
         window._platformError = 'Supabase client not initialized (window.db is undefined).';
         renderPlatformRows();
@@ -1050,7 +1090,7 @@
       try {
         const { data, error } = await window.db
           .from('reports_summary')
-          .select('id, score, platform_url, api_keys(name)')
+          .select('id, score, platform_url')
           .order('score', { ascending: false });
           
         if (error) throw error;
@@ -1088,15 +1128,16 @@
           let logoHtml = `<div class="logo-box">${shortInitials}</div>`;
           if (url) {
             try {
-              const domain = new URL(url).hostname;
-              logoHtml = `<div class="logo-box" style="background:transparent;border:none;"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;"></div>`;
+              const domain = safeHost(url);
+              if (!domain) throw new Error('Invalid platform URL');
+              logoHtml = `<div class="logo-box" style="background:transparent;border:none;"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;"></div>`;
             } catch(e) {}
           }
 
           return {
             name: platName,
             agency: agencyType,
-            score: Math.round(rpt.score) || 0,
+            score: clampPercent(rpt.score),
             short: shortInitials,
             logoHtml: logoHtml,
             report_id: rpt.id
@@ -1131,10 +1172,10 @@
 
         // Fetch dynamic downloads
         try {
-          const { data: extData, error: extErr } = await window.db.from('extensions').select('id, downloads').in('id', [4, 11]);
+          const { data: extData, error: extErr } = await window.db.from('extensions').select('num, downloads').in('num', [4, 11]);
           if (!extErr && extData) {
             extensions.forEach(ext => {
-              const dbExt = extData.find(d => d.id === ext.id);
+              const dbExt = extData.find(d => Number(d.num) === Number(ext.id));
               if (dbExt && dbExt.downloads !== null && dbExt.downloads !== undefined) {
                 ext.downloads = dbExt.downloads;
               }

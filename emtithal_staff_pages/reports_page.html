@@ -885,6 +885,201 @@
         width: 100%;
       }
     }
+
+    /* Compact tools + fixed reports table */
+    .card-table {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .reports-tools {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .reports-tools .search-wrap,
+    .reports-tools .filter-wrap {
+      width: 100%;
+      min-width: 0;
+      flex: initial;
+    }
+
+    .search-input,
+    .filter-select {
+      min-height: 40px;
+      padding-block: 7px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .table-scroll {
+      overflow: visible;
+      width: 100%;
+    }
+
+    table {
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    table,
+    thead,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    tbody tr.report-row {
+      padding: 16px;
+      border: 1px solid var(--neutral-200);
+      border-radius: 12px;
+      background: var(--neutral-0);
+      box-shadow: var(--shadow-sm);
+      transition: background-color .16s ease;
+      transform: none;
+    }
+
+    tbody tr.report-row:hover {
+      transform: none;
+    }
+
+    td {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--neutral-100);
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+
+    td:last-child {
+      border-bottom: 0;
+    }
+
+    td::before {
+      content: attr(data-label);
+      color: var(--neutral-500);
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .empty-state td {
+      display: block;
+      padding: 48px 24px;
+    }
+
+    .empty-state td::before {
+      content: none;
+    }
+
+    .report-id,
+    .page-cell {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      text-align: left;
+    }
+
+    @media (min-width: 760px) {
+      .section-title-row {
+        gap: 16px;
+      }
+
+      .reports-tools {
+        width: min(100%, 520px);
+        display: grid;
+        grid-template-columns: minmax(220px, 320px) 168px;
+        justify-content: end;
+        align-items: center;
+      }
+
+      table {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        display: table-header-group;
+      }
+
+      tbody {
+        display: table-row-group;
+      }
+
+      tr {
+        display: table-row;
+      }
+
+      th,
+      td {
+        display: table-cell;
+        width: auto;
+        padding: 13px 10px;
+        vertical-align: middle;
+        text-align: right;
+      }
+
+      td::before {
+        content: none;
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) { width: 18%; min-width: 0; }
+      th:nth-child(2),
+      td:nth-child(2) { width: 12%; min-width: 0; }
+      th:nth-child(3),
+      td:nth-child(3) { width: 15%; min-width: 0; }
+      th:nth-child(4),
+      td:nth-child(4) { width: 16%; min-width: 0; }
+      th:nth-child(5),
+      td:nth-child(5) { width: 11%; min-width: 0; }
+      th:nth-child(6),
+      td:nth-child(6) { width: 14%; min-width: 0; }
+      th:nth-child(7),
+      td:nth-child(7) { width: 6%; min-width: 0; }
+      th:nth-child(8),
+      td:nth-child(8) { width: 8%; min-width: 0; }
+
+      .report-id,
+      .page-cell {
+        text-align: right;
+      }
+
+      .report-id,
+      .date-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .entity-cell,
+      .standard-cell,
+      .notes-cell,
+      .extension-badge {
+        overflow-wrap: anywhere;
+      }
+    }
   
   </style>
 </head>
@@ -1098,7 +1293,14 @@
         return;
       }
 
-      const session = JSON.parse(stored);
+      let session;
+      try {
+        session = JSON.parse(stored);
+      } catch {
+        localStorage.removeItem('sb_session');
+        window.location.href = '../home/emtithal_public_home.html';
+        return;
+      }
 
       // تحقق إن الجلسة ما انتهت
       if (session.expires_at && Date.now() / 1000 > session.expires_at) {
@@ -1139,15 +1341,15 @@
 
       // نحوّل البيانات لنفس شكل الكود القديم
       complaints = data.map((row) => ({
-        id:        row.id,
-        entity:    row.entity,
+        id:        String(row.id ?? ''),
+        entity:    row.entity || '',
         category:  row.category   || '—',
-        standard:  row.standard,
-        page:      row.url,
+        standard:  row.standard || '',
+        page:      row.url || '',
         date:      row.created_at ? row.created_at.slice(0, 10) : '—',
-        extension: row.extension,
-        userNotes: row.violation,
-        status:    row.status
+        extension: row.extension || '',
+        userNotes: row.violation || '',
+        status:    row.status || 'جديد'
       }));
 
       renderReports();
@@ -1239,19 +1441,19 @@
 
       tableBody.innerHTML = data.map((item) => `
         <tr class="report-row" tabindex="0" data-report-id="${escapeHTML(item.id)}">
-          <td class="report-id">${escapeHTML(item.id)}</td>
-          <td class="entity-cell">${escapeHTML(item.entity)}</td>
-          <td class="standard-cell">
+          <td data-label="رقم البلاغ" title="${escapeHTML(item.id)}"><div class="report-id">${escapeHTML(item.id)}</div></td>
+          <td class="entity-cell" data-label="الجهة">${escapeHTML(item.entity)}</td>
+          <td class="standard-cell" data-label="المعيار">
             <div class="standard-name">${escapeHTML(item.standard)}</div>
             <div class="standard-category">${escapeHTML(item.category)}</div>
           </td>
-          <td class="page-cell">${escapeHTML(item.page)}</td>
-          <td>
+          <td data-label="الصفحة"><div class="page-cell">${escapeHTML(item.page)}</div></td>
+          <td data-label="الإضافة">
             <span class="extension-badge">${icon('activity')}${escapeHTML(item.extension)}</span>
           </td>
-          <td class="notes-cell" title="${escapeHTML(item.userNotes)}">${escapeHTML(item.userNotes)}</td>
-          <td class="date-cell">${escapeHTML(item.date)}</td>
-          <td>${statusBadge(item.status)}</td>
+          <td class="notes-cell" data-label="ملاحظات" title="${escapeHTML(item.userNotes)}">${escapeHTML(item.userNotes)}</td>
+          <td class="date-cell" data-label="التاريخ">${escapeHTML(item.date)}</td>
+          <td data-label="الحالة">${statusBadge(item.status)}</td>
         </tr>
       `).join('');
     }

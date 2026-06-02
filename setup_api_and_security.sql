@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public.api_keys (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     key TEXT NOT NULL UNIQUE,
-    status TEXT DEF AULT 'active',
+    status TEXT DEFAULT 'active',
     quota INTEGER DEFAULT 10000,
     requests INTEGER DEFAULT 0,
     last_used TIMESTAMP WITH TIME ZONE,
@@ -39,7 +39,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Add triggers to tables
 DROP TRIGGER IF EXISTS audit_profiles ON public.profiles;
@@ -52,12 +52,30 @@ CREATE TRIGGER audit_api_keys AFTER INSERT OR UPDATE OR DELETE ON public.api_key
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS boolean AS $$
 BEGIN
+  IF to_regclass('public.profiles') IS NULL THEN
+    RETURN false;
+  END IF;
+
   RETURN EXISTS (
     SELECT 1 FROM public.profiles
     WHERE id = auth.uid() AND role = 'Full Access'
   );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+CREATE OR REPLACE FUNCTION public.has_staff_role(p_roles text[])
+RETURNS boolean AS $$
+BEGIN
+  IF to_regclass('public.profiles') IS NULL THEN
+    RETURN false;
+  END IF;
+
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = ANY(p_roles)
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Ensure existing users have Full Access so we don't lock the developer out
 UPDATE public.profiles SET role = 'Full Access' WHERE role IS NULL;
@@ -66,6 +84,8 @@ UPDATE public.profiles SET role = 'Full Access' WHERE role IS NULL;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.reports_summary ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.complaints ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies if any
 DROP POLICY IF EXISTS "Public Read Profiles" ON public.profiles;
@@ -79,21 +99,63 @@ DROP POLICY IF EXISTS "Admin Update API Keys" ON public.api_keys;
 DROP POLICY IF EXISTS "Admin Delete API Keys" ON public.api_keys;
 
 DROP POLICY IF EXISTS "Public Read Logs" ON public.activity_logs;
+DROP POLICY IF EXISTS "Staff Read Profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Staff Read API Keys" ON public.api_keys;
+DROP POLICY IF EXISTS "Staff Insert API Keys" ON public.api_keys;
+DROP POLICY IF EXISTS "Staff Update API Keys" ON public.api_keys;
+DROP POLICY IF EXISTS "Full Access Read Logs" ON public.activity_logs;
+
+DO $$
+BEGIN
+  IF to_regclass('public.reports_summary') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Public Read Report Summaries" ON public.reports_summary;
+  END IF;
+
+  IF to_regclass('public.complaints') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Staff Read Complaints" ON public.complaints;
+    DROP POLICY IF EXISTS "Staff Update Complaints" ON public.complaints;
+  END IF;
+END $$;
 
 -- Policies for profiles
-CREATE POLICY "Public Read Profiles" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Staff Read Profiles" ON public.profiles
+  FOR SELECT TO authenticated
+  USING (id = auth.uid() OR public.is_admin());
 CREATE POLICY "Admin Insert Profiles" ON public.profiles FOR INSERT WITH CHECK ( public.is_admin() );
 CREATE POLICY "Admin Update Profiles" ON public.profiles FOR UPDATE USING ( public.is_admin() );
 CREATE POLICY "Admin Delete Profiles" ON public.profiles FOR DELETE USING ( public.is_admin() );
 
 -- Policies for API Keys
-CREATE POLICY "Public Read API Keys" ON public.api_keys FOR SELECT USING (true);
-CREATE POLICY "Admin Insert API Keys" ON public.api_keys FOR INSERT WITH CHECK ( public.is_admin() );
-CREATE POLICY "Admin Update API Keys" ON public.api_keys FOR UPDATE USING ( public.is_admin() );
+CREATE POLICY "Staff Read API Keys" ON public.api_keys
+  FOR SELECT TO authenticated
+  USING (public.has_staff_role(ARRAY['Full Access', 'Key Generator']::text[]));
+CREATE POLICY "Staff Insert API Keys" ON public.api_keys
+  FOR INSERT TO authenticated
+  WITH CHECK (public.has_staff_role(ARRAY['Full Access', 'Key Generator']::text[]));
+CREATE POLICY "Staff Update API Keys" ON public.api_keys
+  FOR UPDATE TO authenticated
+  USING (public.has_staff_role(ARRAY['Full Access', 'Key Generator']::text[]))
+  WITH CHECK (public.has_staff_role(ARRAY['Full Access', 'Key Generator']::text[]));
 CREATE POLICY "Admin Delete API Keys" ON public.api_keys FOR DELETE USING ( public.is_admin() );
 
 -- Policies for Activity Logs
-CREATE POLICY "Public Read Logs" ON public.activity_logs FOR SELECT USING (true);
+CREATE POLICY "Full Access Read Logs" ON public.activity_logs
+  FOR SELECT TO authenticated
+  USING (public.is_admin());
+
+DO $$
+BEGIN
+  -- Public reports are intentionally readable, but report submission still goes through RPC.
+  IF to_regclass('public.reports_summary') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "Public Read Report Summaries" ON public.reports_summary FOR SELECT TO anon, authenticated USING (true)';
+  END IF;
+
+  -- Complaints are staff-only operational data.
+  IF to_regclass('public.complaints') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "Staff Read Complaints" ON public.complaints FOR SELECT TO authenticated USING (public.has_staff_role(ARRAY[''Full Access'', ''Key Generator'', ''View Only'']::text[]))';
+    EXECUTE 'CREATE POLICY "Staff Update Complaints" ON public.complaints FOR UPDATE TO authenticated USING (public.has_staff_role(ARRAY[''Full Access'', ''Key Generator'']::text[])) WITH CHECK (public.has_staff_role(ARRAY[''Full Access'', ''Key Generator'']::text[]))';
+  END IF;
+END $$;
 
 -- Reload Schema Cache
 NOTIFY pgrst, 'reload schema';

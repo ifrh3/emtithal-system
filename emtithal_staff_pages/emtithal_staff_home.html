@@ -1152,7 +1152,14 @@
       return;
     }
 
-    const session = JSON.parse(stored);
+    let session;
+    try {
+      session = JSON.parse(stored);
+    } catch {
+      localStorage.removeItem('sb_session');
+      window.location.href = '../home/emtithal_public_home.html';
+      return;
+    }
 
     if (session.expires_at && Date.now() / 1000 > session.expires_at) {
       localStorage.removeItem('sb_session');

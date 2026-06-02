@@ -93,12 +93,31 @@ CREATE TABLE public.extensions (
     desc_text TEXT,
     link TEXT,
     subs JSONB,
-    icon TEXT
+    icon TEXT,
+    downloads INTEGER NOT NULL DEFAULT 0
 );
 
 TRUNCATE TABLE public.extensions;
-ALTER TABLE public.extensions DISABLE ROW LEVEL SECURITY;
-GRANT ALL ON public.extensions TO anon, authenticated, service_role;
+ALTER TABLE public.extensions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Read Extensions" ON public.extensions;
+
+CREATE POLICY "Public Read Extensions" ON public.extensions
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+GRANT SELECT ON public.extensions TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.increment_extension_download(p_id integer)
+RETURNS void AS $$
+BEGIN
+    UPDATE public.extensions
+    SET downloads = COALESCE(downloads, 0) + 1
+    WHERE id = p_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+GRANT EXECUTE ON FUNCTION public.increment_extension_download(integer) TO anon, authenticated;
 
 `;
 

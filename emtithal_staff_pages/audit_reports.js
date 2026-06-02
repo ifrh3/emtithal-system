@@ -23,7 +23,14 @@ async function loadReports() {
     window.location.href = '../home/emtithal_public_home.html';
     return;
   }
-  const session = JSON.parse(stored);
+  let session;
+  try {
+    session = JSON.parse(stored);
+  } catch {
+    localStorage.removeItem('sb_session');
+    window.location.href = '../home/emtithal_public_home.html';
+    return;
+  }
   if (session.expires_at && Date.now() / 1000 > session.expires_at) {
     localStorage.removeItem('sb_session');
     window.location.href = '../home/emtithal_public_home.html';
@@ -39,10 +46,16 @@ async function loadReports() {
     .eq('id', currentUserId)
     .single();
 
-  if (profile) {
-    const nameEl = document.getElementById('current-user-name');
-    if (nameEl) nameEl.textContent = profile.name;
+  if (profileError || !profile) {
+    console.warn('Profile validation failed:', profileError?.message);
+    localStorage.removeItem('sb_session');
+    await db.auth.signOut();
+    window.location.href = '../home/emtithal_public_home.html';
+    return;
   }
+
+  const nameEl = document.getElementById('current-user-name');
+  if (nameEl) nameEl.textContent = profile.name;
 
   // Fetch from reports_summary
   const { data, error } = await db
@@ -52,8 +65,7 @@ async function loadReports() {
       score,
       report_date,
       platform_url,
-      raw_report_data,
-      api_keys (name)
+      raw_report_data
     `)
     .order('report_date', { ascending: false });
 
@@ -68,7 +80,7 @@ async function loadReports() {
     return {
       id: row.id,
       url: row.platform_url || '—',
-      apiName: row.api_keys?.name || 'مفتاح مجهول',
+      apiName: raw.extensionName || raw.apiName || 'إضافة امتثال الرسمية',
       date: row.report_date ? new Date(row.report_date).toLocaleString('ar-SA') : '—',
       score: row.score || 0,
       criterionNum: raw.number || raw.criterion || '—',
@@ -108,16 +120,16 @@ function renderTable() {
   }
 
   tbody.innerHTML = filtered.map(item => `
-    <tr class="report-row" onclick="window.open('../home/report_page.html?id=${item.id}', '_blank')">
-      <td style="white-space: nowrap;"><span class="mono" dir="ltr">#${String(item.id).split('-')[0]}</span></td>
+    <tr class="report-row" onclick="window.open('../home/report_page.html?id=${encodeURIComponent(String(item.id))}', '_blank')">
+      <td style="white-space: nowrap;"><span class="mono" dir="ltr">#${escapeHTML(String(item.id).split('-')[0])}</span></td>
       <td><span class="mono" dir="ltr">${escapeHTML(item.url)}</span></td>
       <td>${escapeHTML(item.apiName)}</td>
-      <td class="mono" style="white-space: nowrap;">${item.date}</td>
+      <td class="mono" style="white-space: nowrap;">${escapeHTML(item.date)}</td>
       <td>
-        <div style="font-weight:600">معيار ${item.criterionNum}</div>
+        <div style="font-weight:600">معيار ${escapeHTML(item.criterionNum)}</div>
         <div style="font-size:12px;color:var(--neutral-500)">${escapeHTML(item.criterionName)}</div>
       </td>
-      <td><span class="score-badge ${getScoreClass(item.score)}">${item.score}%</span></td>
+      <td><span class="score-badge ${getScoreClass(item.score)}">${escapeHTML(item.score)}%</span></td>
       <td>${getStatusBadge(item.status)}</td>
     </tr>
   `).join('');

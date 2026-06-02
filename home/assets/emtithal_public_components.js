@@ -5,11 +5,38 @@
 */
 
 // --- Initialize Global Supabase Client ---
-if (typeof supabase !== 'undefined' && !window.db) {
-  const SUPABASE_URL  = 'https://wsexgnphxcuceyqquhzv.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzZXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA';
-  window.db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const EMTITHAL_SUPABASE_URL  = 'https://wsexgnphxcuceyqquhzv.supabase.co';
+const EMTITHAL_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzZXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA';
+const EMTITHAL_SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+
+function loadSupabaseSdk() {
+  if (window.supabase) return Promise.resolve(window.supabase);
+  if (window.__emtithalSupabaseLoad) return window.__emtithalSupabaseLoad;
+
+  window.__emtithalSupabaseLoad = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = EMTITHAL_SUPABASE_CDN;
+    script.async = true;
+    script.onload = () => resolve(window.supabase);
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  return window.__emtithalSupabaseLoad;
 }
+
+async function ensureEmtithalSupabaseClient() {
+  if (window.db) return window.db;
+  if (!window.supabase) await loadSupabaseSdk();
+  if (!window.supabase) throw new Error('Supabase SDK failed to load.');
+  window.db = window.supabase.createClient(EMTITHAL_SUPABASE_URL, EMTITHAL_SUPABASE_ANON);
+  return window.db;
+}
+
+window.ensureEmtithalSupabaseClient = ensureEmtithalSupabaseClient;
+ensureEmtithalSupabaseClient().catch((error) => {
+  console.warn('Supabase client initialization failed:', error.message);
+});
 
 // --- Component HTML Templates ---
 
@@ -264,14 +291,6 @@ function bindEvents() {
   });
 
   // Login Modal Handling
-  const loginModalForgot = document.getElementById('loginModalForgot');
-  if (loginModalForgot) {
-    loginModalForgot.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('يرجى التواصل مع مدير النظام لاستعادة كلمة المرور.');
-    });
-  }
-
   // --- Login Form Validation ---
   const loginForm = document.getElementById('loginModalForm');
   const loginEmail = document.getElementById('loginModalEmail');
@@ -393,7 +412,10 @@ function bindEvents() {
         const originalBtnText = submitBtn.textContent;
         submitBtn.textContent = 'جاري الدخول...';
 
-        if (typeof supabase === 'undefined') {
+        let authClient;
+        try {
+          authClient = await ensureEmtithalSupabaseClient();
+        } catch (loadError) {
           submitBtn.disabled = false;
           submitBtn.textContent = originalBtnText;
           if (loginSuccess) loginSuccess.hidden = true;
@@ -404,11 +426,7 @@ function bindEvents() {
           return;
         }
 
-        const SUPABASE_URL  = 'https://wsexgnphxcuceyqquhzv.supabase.co';
-        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzZXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA';
-        
         try {
-          const authClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
           const { data, error } = await authClient.auth.signInWithPassword({
             email: loginEmail.value.trim(),
             password: loginPassword.value

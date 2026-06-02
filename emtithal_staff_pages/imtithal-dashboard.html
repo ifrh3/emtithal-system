@@ -699,7 +699,14 @@
         return;
       }
 
-      const session = JSON.parse(stored);
+      let session;
+      try {
+        session = JSON.parse(stored);
+      } catch {
+        localStorage.removeItem('sb_session');
+        window.location.href = '../home/emtithal_public_home.html';
+        return;
+      }
 
       // تحقق إن الجلسة ما انتهت
       if (session.expires_at && Date.now() / 1000 > session.expires_at) {
@@ -807,11 +814,32 @@
     }
 
     function maskKey(key, id) {
-      return visibleKeys[id] ? key : `${key.substring(0, 8)}••••••••••••`;
+      const safeKey = String(key || '');
+      return visibleKeys[id] ? safeKey : `${safeKey.substring(0, 8)}••••••••••••`;
     }
 
     function fmtNum(n) {
-      return Number(n).toLocaleString("en-US");
+      const value = Number(n);
+      return Number.isFinite(value) ? value.toLocaleString("en-US") : "0";
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value);
+    }
+
+    function percent(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(100, n));
     }
 
     /* ─── Renders ─── */
@@ -843,14 +871,14 @@
         if (p.canEditEmployee) {
           actions.push(`
             <button class="btn btn-ghost btn-icon-only btn-edit" type="button"
-              data-edit-employee="${emp.id}" aria-label="تعديل">
+              data-edit-employee="${escapeAttr(emp.id)}" aria-label="تعديل">
               ${icon("pencil")}
             </button>`);
         }
         if (p.canDeleteEmployee) {
           actions.push(`
             <button class="btn btn-ghost btn-icon-only btn-trash" type="button"
-              data-delete-employee="${emp.id}" aria-label="حذف">
+              data-delete-employee="${escapeAttr(emp.id)}" aria-label="حذف">
               ${icon("trash")}
             </button>`);
         }
@@ -858,12 +886,12 @@
         return `
           <tr>
             <td>
-              <div class="employee-cell">
-                <div class="avatar">${emp.name.charAt(0)}</div>
-                <div class="employee-name">${emp.name}</div>
+                <div class="employee-cell">
+                <div class="avatar">${escapeHTML(String(emp.name || '').charAt(0))}</div>
+                <div class="employee-name">${escapeHTML(emp.name)}</div>
               </div>
             </td>
-            <td class="email-cell">${emp.email}</td>
+            <td class="email-cell">${escapeHTML(emp.email)}</td>
             <td>${badge(emp.role)}</td>
             <td class="actions-cell">
               <div class="actions-wrap">
@@ -877,14 +905,14 @@
     function renderExtensionsTable() {
       const p = permissions();
       $("#extensions-table").innerHTML = extensions.map((ext) => {
-        const pct = Math.min((ext.requests / ext.quota) * 100, 100);
+        const pct = percent((Number(ext.requests) / Number(ext.quota || 1)) * 100);
         const actions = [];
 
         if (p.canToggleKey) {
           const isActive = ext.status === "active";
           actions.push(`
             <button class="btn ${isActive ? "btn-secondary" : "btn-primary"} btn-small"
-              type="button" data-toggle-status="${ext.id}">
+              type="button" data-toggle-status="${escapeAttr(ext.id)}">
               ${icon(isActive ? "power-off" : "power")}
               ${isActive ? "إيقاف" : "تنشيط"}
             </button>`);
@@ -893,7 +921,7 @@
         if (p.canDeleteKey) {
           actions.push(`
             <button class="btn btn-ghost btn-icon-only btn-trash" type="button"
-              data-delete-extension="${ext.id}" aria-label="حذف">
+              data-delete-extension="${escapeAttr(ext.id)}" aria-label="حذف">
               ${icon("trash")}
             </button>`);
         }
@@ -904,18 +932,18 @@
 
         return `
           <tr>
-            <td><div class="system-name">${ext.name}</div></td>
+            <td><div class="system-name">${escapeHTML(ext.name)}</div></td>
             <td class="key-cell">
               <div class="key-box">
                 <div class="key-inner">
-                  <code>${maskKey(ext.key, ext.id)}</code>
+                  <code>${escapeHTML(maskKey(ext.key, ext.id))}</code>
                   <div class="icon-actions">
                     <button class="inline-icon-btn" type="button"
-                      data-toggle-key="${ext.id}" aria-label="إظهار أو إخفاء المفتاح">
+                       data-toggle-key="${escapeAttr(ext.id)}" aria-label="إظهار أو إخفاء المفتاح">
                       ${icon(visibleKeys[ext.id] ? "eye-off" : "eye")}
                     </button>
                     <button class="inline-icon-btn ${copiedKey === ext.id ? "copied" : ""}" type="button"
-                      data-copy-key="${ext.id}" aria-label="نسخ المفتاح">
+                       data-copy-key="${escapeAttr(ext.id)}" aria-label="نسخ المفتاح">
                       ${icon(copiedKey === ext.id ? "check" : "copy")}
                     </button>
                   </div>
@@ -961,11 +989,11 @@
         if (emp) userName = emp.name;
 
         return `<tr>
-          <td style="direction: ltr; text-align: right; font-size: 13px; color: var(--neutral-600);">${dateStr}</td>
-          <td><div style="font-size:13px; font-weight:600;">${userName}</div><div style="font-size:10px; color:var(--neutral-400);">${log.user_id ? log.user_id.split('-')[0]+'...' : 'N/A'}</div></td>
+          <td style="direction: ltr; text-align: right; font-size: 13px; color: var(--neutral-600);">${escapeHTML(dateStr)}</td>
+          <td><div style="font-size:13px; font-weight:600;">${escapeHTML(userName)}</div><div style="font-size:10px; color:var(--neutral-400);">${log.user_id ? escapeHTML(String(log.user_id).split('-')[0]+'...') : 'N/A'}</div></td>
           <td>${actionBadge}</td>
-          <td><code>${log.table_name}</code></td>
-          <td style="font-size:12px; color:var(--neutral-500);">${log.record_id || '-'}</td>
+          <td><code>${escapeHTML(log.table_name)}</code></td>
+          <td style="font-size:12px; color:var(--neutral-500);">${escapeHTML(log.record_id || '-')}</td>
         </tr>`;
       }).join("");
     }
@@ -985,7 +1013,10 @@
 
     /* ─── Key utils ─── */
     function randomKeyPart(len = 24) {
-      return Array.from({ length: len }, () => Math.random().toString(36).charAt(2)).join("");
+      const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+      const bytes = new Uint8Array(len);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, byte => alphabet[byte % alphabet.length]).join("");
     }
 
     async function copyToClipboard(text) {
