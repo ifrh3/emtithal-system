@@ -549,7 +549,15 @@
     .input::placeholder { color: var(--pc-text-disabled); }
     .input:hover { border-color: var(--pc-neutral-400); }
     .input:focus { border-color: var(--pc-border-brand); box-shadow: var(--pc-ring-focus); }
-    .chips { display: flex; align-items: stretch; gap: var(--pc-space-2); flex-wrap: wrap; }
+    .chips {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      display: flex;
+      align-items: stretch;
+      gap: var(--pc-space-2);
+      flex-wrap: wrap;
+    }
     .chip {
       min-height: 34px;
       display: inline-flex;
@@ -577,6 +585,83 @@
     .chip-check { display: none; width: 14px; height: 14px; flex: 0 0 auto; }
     .chip.active .chip-check { display: block; }
     .table-scroll { overflow-x: auto; }
+    .platform-cards {
+      display: grid;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-4);
+      background: var(--pc-surface-sunken);
+    }
+    .platform-mobile-card {
+      display: grid;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-4);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      background: var(--pc-surface-raised);
+      box-shadow: var(--pc-shadow-xs);
+    }
+    .platform-mobile-head {
+      display: flex;
+      align-items: center;
+      gap: var(--pc-space-3);
+      min-width: 0;
+    }
+    .platform-mobile-title {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+    .platform-mobile-title strong {
+      color: var(--pc-text-strong);
+      font-size: var(--pc-text-base);
+      line-height: var(--pc-leading-base);
+      font-weight: var(--pc-weight-semibold);
+      overflow-wrap: anywhere;
+    }
+    .platform-mobile-title span {
+      color: var(--pc-text-muted);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+    }
+    .platform-mobile-score {
+      display: grid;
+      gap: var(--pc-space-2);
+    }
+    .platform-mobile-score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--pc-space-3);
+    }
+    .platform-mobile-score-row > span:first-child {
+      color: var(--pc-text-muted);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .platform-mobile-card .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .platform-show-more {
+      width: calc(100% - var(--pc-space-8));
+      margin: 0 var(--pc-space-4) var(--pc-space-4);
+      min-height: 48px;
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-sm);
+      background: var(--pc-surface-raised);
+      color: var(--pc-brand-700);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .platform-show-more:hover {
+      background: var(--pc-brand-50);
+      border-color: var(--pc-brand-500);
+    }
+    .platform-cards[hidden],
+    .table-scroll[hidden],
+    .platform-show-more[hidden] {
+      display: none !important;
+    }
     table {
       width: 100%;
       min-width: 800px;
@@ -689,10 +774,35 @@
       .hero-lead { font-size: var(--pc-text-lg); line-height: var(--pc-leading-lg); }
       .section-head { align-items: flex-end; flex-direction: row; justify-content: space-between; margin-bottom: var(--pc-space-8); }
       .rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .platform-cards { display: none; }
+      .table-scroll { display: block; }
     }
 
     @media (min-width: 1080px) {
       .extension-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 859px) {
+      .platform-tools { padding: var(--pc-space-4); }
+      .table-scroll { display: none; }
+      .platform-card { overflow: visible; }
+      .search-box { max-width: none; }
+      .chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: var(--pc-space-1);
+        scroll-snap-type: inline proximity;
+      }
+      .chip {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+      }
+      .extension-card { min-height: auto; }
+      .download-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .download-row .btn { width: 100%; }
     }
   </style>
 </head>
@@ -803,6 +913,11 @@
             </table>
           </div>
 
+          <div class="platform-cards" id="platformCards" aria-live="polite"></div>
+          <button class="platform-show-more" id="platformShowMore" type="button" hidden>
+            عرض المزيد من المنصات
+          </button>
+
           <div class="empty-state" id="emptyState">
             <strong>لا توجد منصات مطابقة</strong>
             <span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>
@@ -819,6 +934,7 @@
     let lowPlatforms = [];
     let platforms = [];
     let activeFilters = new Set(['الكل']);
+    let visiblePlatformLimit = 6;
 
     const platformDirectory = {
       'uqu.edu.sa': { name: 'جامعة أم القرى', agency: 'الجامعات والمؤسسات التعليمية' },
@@ -837,7 +953,7 @@
     const extensions = [
       {
         id: 4,
-        title: 'إضافة معيار 4',
+        title: 'المعيار 4 - فحص المسافات',
         category: 'أساسات',
         categoryClass: 'foundation',
         downloads: '18',
@@ -845,11 +961,19 @@
       },
       {
         id: 11,
-        title: 'إضافة معيار 11',
+        title: 'المعيار 11 - الختم الرقمي',
         category: 'عناصر',
         categoryClass: 'component',
         downloads: '5',
         desc: 'تفحص الختم الرقمي ومدى التزامه بمعايير كود المنصات من حيث الموقع والرابط والعناصر المجاورة.'
+      },
+      {
+        id: 23,
+        title: 'المعيار 23 - زر التبديل',
+        category: 'عناصر',
+        categoryClass: 'component',
+        downloads: '1',
+        desc: 'تفحص عنصر زر التبديل وتتحقق من مطابقته لنظام كود المنصات وحالاته التفاعلية وإمكانية الوصول.'
       }
     ];
 
@@ -939,10 +1063,10 @@
               ${iconUse('i-download')}
               ${ext.downloads} تنزيل
             </span>
-            <div class="btn btn-dark" style="opacity: 0.6; cursor: not-allowed;" title="الإضافة ستتوفر قريباً على متجر كروم">
-              الإضافة قريباً
-              ${iconUse('i-download')}
-            </div>
+            <a class="btn btn-dark" href="Extentions%20page.html" aria-label="عرض تفاصيل ${escapeAttr(ext.title)}">
+              عرض تفاصيل الإضافة
+              ${iconUse('i-arrow-left')}
+            </a>
           </div>
         </article>
       `).join('');
@@ -999,6 +1123,7 @@
               activeFilters.add(cat);
             }
           }
+          visiblePlatformLimit = 6;
           renderCategoryChips();
           renderPlatformRows();
         });
@@ -1008,19 +1133,16 @@
     function filteredPlatforms() {
       const query = document.getElementById('platformSearch').value.trim().toLowerCase();
       return platforms.filter(p => {
-        const matchQuery = !query || p.name.toLowerCase().includes(query) || p.agency.toLowerCase().includes(query);
+        const searchableText = [p.name, p.agency, p.short, p.url, p.host].join(' ').toLowerCase();
+        const matchQuery = !query || searchableText.includes(query);
         const matchCat = activeFilters.has('الكل') || activeFilters.has(p.agency);
         return matchQuery && matchCat;
       });
     }
 
-    function renderPlatformRows() {
-      const list = filteredPlatforms();
-      const tbody = document.getElementById('platformRows');
-      const wrap = document.getElementById('platformTableWrap');
-      const empty = document.getElementById('emptyState');
-
-      tbody.innerHTML = list.map(p => `
+    function platformTableRowMarkup(p) {
+      const score = clampPercent(p.score);
+      return `
         <tr>
           <td>
             <div class="platform-cell">
@@ -1031,9 +1153,9 @@
           <td><span class="agency-text">${escapeHTML(p.agency)}</span></td>
           <td>
             <div class="score-cell">
-              <span class="badge ${scoreBadge(p.score)}">${clampPercent(p.score)}%</span>
-              <span class="progress ${p.score < 80 ? 'warning' : ''}">
-                <span style="width:${clampPercent(p.score)}%"></span>
+              <span class="badge ${scoreBadge(score)}">${score}%</span>
+              <span class="progress ${score < 80 ? 'warning' : ''}">
+                <span style="width:${score}%"></span>
               </span>
             </div>
           </td>
@@ -1044,33 +1166,71 @@
             </a>
           </td>
         </tr>
-      `).join('') + `
-        <tr class="show-more-row" id="showMoreRow">
-          <td colspan="4">
-            <span class="show-more-inner">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              عرض المزيد من المنصات
-            </span>
-          </td>
-        </tr>
       `;
+    }
 
-      document.getElementById('showMoreRow')?.addEventListener('click', () => {
-        showToast('سيتم إظهار منصات إضافية عند إدراج المزيد في قاعدة البيانات.');
-      });
+    function platformMobileCardMarkup(p) {
+      const score = clampPercent(p.score);
+      return `
+        <article class="platform-mobile-card">
+          <div class="platform-mobile-head">
+            <span class="platform-avatar">${escapeHTML(p.short)}</span>
+            <span class="platform-mobile-title">
+              <strong>${escapeHTML(p.name)}</strong>
+              <span>${escapeHTML(p.agency)}</span>
+            </span>
+          </div>
+          <div class="platform-mobile-score">
+            <div class="platform-mobile-score-row">
+              <span>نسبة الامتثال</span>
+              <span class="badge ${scoreBadge(score)}">${score}%</span>
+            </div>
+            <span class="progress ${score < 80 ? 'warning' : ''}" aria-hidden="true">
+              <span style="width:${score}%"></span>
+            </span>
+          </div>
+          <a class="btn btn-secondary" href="${reportHref(p.report_id)}">
+            عرض تقرير المنصة
+            ${iconUse('i-arrow-left')}
+          </a>
+        </article>
+      `;
+    }
 
-      wrap.style.display = list.length ? 'block' : 'none';
-      
-      // If there is a specific error message stored, show it in the empty state
-      if (window._platformError) {
-        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:red;direction:ltr;display:inline-block;">${escapeHTML(window._platformError)}</span>`;
-        empty.classList.add('show');
-      } else {
-        empty.innerHTML = `<strong>لا توجد منصات مطابقة</strong><span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>`;
-        empty.classList.toggle('show', list.length === 0);
+    function renderPlatformRows() {
+      const list = filteredPlatforms();
+      const visible = list.slice(0, visiblePlatformLimit);
+      const hasMore = visible.length < list.length;
+      const tbody = document.getElementById('platformRows');
+      const cards = document.getElementById('platformCards');
+      const wrap = document.getElementById('platformTableWrap');
+      const empty = document.getElementById('emptyState');
+      const showMore = document.getElementById('platformShowMore');
+
+      if (tbody) tbody.innerHTML = visible.map(platformTableRowMarkup).join('');
+      if (cards) {
+        cards.innerHTML = visible.map(platformMobileCardMarkup).join('');
+        cards.hidden = list.length === 0;
       }
+      if (wrap) wrap.hidden = list.length === 0;
+      if (showMore) {
+        showMore.hidden = !hasMore;
+        showMore.textContent = hasMore ? `عرض المزيد من المنصات (${list.length - visible.length})` : 'عرض المزيد من المنصات';
+        showMore.onclick = () => {
+          visiblePlatformLimit += 6;
+          renderPlatformRows();
+        };
+      }
+
+      if (!empty) return;
+      if (window._platformError) {
+        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:var(--pc-danger-600);direction:ltr;display:inline-block;">${escapeHTML(window._platformError)}</span>`;
+        empty.classList.add('show');
+        return;
+      }
+
+      empty.innerHTML = `<strong>لا توجد منصات مطابقة</strong><span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>`;
+      empty.classList.toggle('show', list.length === 0);
     }
 
     async function loadPlatformsData() {
@@ -1090,8 +1250,8 @@
       try {
         const { data, error } = await window.db
           .from('reports_summary')
-          .select('id, score, platform_url')
-          .order('score', { ascending: false });
+          .select('id, score, platform_url, report_date')
+          .order('report_date', { ascending: false });
           
         if (error) throw error;
 
@@ -1140,11 +1300,14 @@
             score: clampPercent(rpt.score),
             short: shortInitials,
             logoHtml: logoHtml,
-            report_id: rpt.id
+            url: url,
+            host: safeHost(url),
+            report_id: rpt.id,
+            report_date: rpt.report_date
           };
         });
 
-        // Deduplicate platforms by name and calculate average score
+        // Deduplicate platforms by name, keep the latest report link, and calculate average score.
         const platformGroups = {};
         for (const p of platforms) {
           if (!platformGroups[p.name]) {
@@ -1172,7 +1335,7 @@
 
         // Fetch dynamic downloads
         try {
-          const { data: extData, error: extErr } = await window.db.from('extensions').select('num, downloads').in('num', [4, 11]);
+          const { data: extData, error: extErr } = await window.db.from('extensions').select('num, downloads').in('num', [4, 11, 23]);
           if (!extErr && extData) {
             extensions.forEach(ext => {
               const dbExt = extData.find(d => Number(d.num) === Number(ext.id));
@@ -1196,7 +1359,10 @@
     renderExtensions();
     renderCategoryChips();
     
-    document.getElementById('platformSearch').addEventListener('input', renderPlatformRows);
+    document.getElementById('platformSearch').addEventListener('input', () => {
+      visiblePlatformLimit = 6;
+      renderPlatformRows();
+    });
     
     // Fetch dynamic data immediately
     setTimeout(loadPlatformsData, 100);

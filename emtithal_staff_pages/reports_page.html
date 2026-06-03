@@ -888,10 +888,12 @@
 
     /* Compact tools + fixed reports table */
     .card-table {
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      overflow: visible;
+      border: 1px solid var(--neutral-200);
+      border-radius: 14px;
+      background: var(--neutral-0);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      padding: 10px;
     }
 
     .reports-tools {
@@ -948,7 +950,7 @@
 
     tbody tr.report-row {
       padding: 16px;
-      border: 1px solid var(--neutral-200);
+      border: 1px solid var(--neutral-300);
       border-radius: 12px;
       background: var(--neutral-0);
       box-shadow: var(--shadow-sm);
@@ -962,12 +964,13 @@
 
     td {
       display: grid;
-      grid-template-columns: 104px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) 104px;
       gap: 10px;
       padding: 10px 0;
       border-bottom: 1px solid var(--neutral-100);
       overflow-wrap: anywhere;
-      text-align: left;
+      direction: rtl;
+      text-align: start;
     }
 
     td:last-child {
@@ -976,10 +979,18 @@
 
     td::before {
       content: attr(data-label);
+      grid-column: 2;
+      justify-self: end;
       color: var(--neutral-500);
       font-size: 12px;
       line-height: 20px;
       font-weight: 600;
+      text-align: right;
+    }
+
+    .cell-value {
+      grid-column: 1;
+      min-width: 0;
       text-align: right;
     }
 
@@ -998,6 +1009,9 @@
       overflow-wrap: anywhere;
       white-space: normal;
       text-align: left;
+      direction: ltr;
+      unicode-bidi: plaintext;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
     @media (min-width: 760px) {
@@ -1019,6 +1033,10 @@
         border-collapse: collapse;
       }
 
+      .card-table {
+        padding: 0;
+      }
+
       thead {
         display: table-header-group;
       }
@@ -1036,12 +1054,26 @@
         display: table-cell;
         width: auto;
         padding: 13px 10px;
+        border-bottom: 1px solid var(--neutral-100);
         vertical-align: middle;
         text-align: right;
       }
 
       td::before {
         content: none;
+      }
+
+      .cell-value {
+        display: inline;
+        text-align: inherit;
+      }
+
+      .standard-cell .cell-value {
+        display: block;
+      }
+
+      .extension-badge.cell-value {
+        display: inline-flex;
       }
 
       th:nth-child(1),
@@ -1441,19 +1473,21 @@
 
       tableBody.innerHTML = data.map((item) => `
         <tr class="report-row" tabindex="0" data-report-id="${escapeHTML(item.id)}">
-          <td data-label="رقم البلاغ" title="${escapeHTML(item.id)}"><div class="report-id">${escapeHTML(item.id)}</div></td>
-          <td class="entity-cell" data-label="الجهة">${escapeHTML(item.entity)}</td>
+          <td data-label="رقم البلاغ" title="${escapeHTML(item.id)}"><div class="cell-value report-id">${escapeHTML(item.id)}</div></td>
+          <td class="entity-cell" data-label="الجهة"><div class="cell-value">${escapeHTML(item.entity)}</div></td>
           <td class="standard-cell" data-label="المعيار">
-            <div class="standard-name">${escapeHTML(item.standard)}</div>
-            <div class="standard-category">${escapeHTML(item.category)}</div>
+            <div class="cell-value">
+              <div class="standard-name">${escapeHTML(item.standard)}</div>
+              <div class="standard-category">${escapeHTML(item.category)}</div>
+            </div>
           </td>
-          <td data-label="الصفحة"><div class="page-cell">${escapeHTML(item.page)}</div></td>
+          <td data-label="الصفحة"><div class="cell-value page-cell">${escapeHTML(item.page)}</div></td>
           <td data-label="الإضافة">
-            <span class="extension-badge">${icon('activity')}${escapeHTML(item.extension)}</span>
+            <span class="cell-value extension-badge">${icon('activity')}${escapeHTML(item.extension)}</span>
           </td>
-          <td class="notes-cell" data-label="ملاحظات" title="${escapeHTML(item.userNotes)}">${escapeHTML(item.userNotes)}</td>
-          <td class="date-cell" data-label="التاريخ">${escapeHTML(item.date)}</td>
-          <td data-label="الحالة">${statusBadge(item.status)}</td>
+          <td class="notes-cell" data-label="ملاحظات" title="${escapeHTML(item.userNotes)}"><div class="cell-value">${escapeHTML(item.userNotes)}</div></td>
+          <td class="date-cell" data-label="التاريخ"><div class="cell-value">${escapeHTML(item.date)}</div></td>
+          <td data-label="الحالة"><div class="cell-value">${statusBadge(item.status)}</div></td>
         </tr>
       `).join('');
     }

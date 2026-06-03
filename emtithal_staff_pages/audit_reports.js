@@ -5,6 +5,29 @@ let toastTimer = null;
 
 const $ = (selector) => document.querySelector(selector);
 
+function getReportCriterionNumber(raw) {
+  return String(raw?.number || raw?.criterionNumber || raw?.criterion || '').trim();
+}
+
+const OFFICIAL_EXTENSION_NAMES = {
+  '4': 'المعيار 4 - فحص المسافات',
+  '11': 'المعيار 11 - الختم الرقمي',
+  '23': 'المعيار 23 - زر التبديل'
+};
+
+function getReportExtensionName(raw) {
+  const critNum = getReportCriterionNumber(raw);
+  const officialName = OFFICIAL_EXTENSION_NAMES[critNum] || (critNum ? `المعيار ${critNum}` : 'إضافة فحص امتثال');
+  const rawName = String(raw?.extensionDisplayName || raw?.extensionName || raw?.apiName || '').trim();
+  const brandOnly = /^(إمتثال|امتثال|Emtithal)$/i.test(rawName);
+
+  if (OFFICIAL_EXTENSION_NAMES[critNum] || raw?.extensionKind === 'criterion-23-switch' || !rawName || brandOnly) {
+    return officialName;
+  }
+
+  return rawName;
+}
+
 // 55 criteria mock list
 const STANDARDS_LIST = [
   { num: 4, name: "المسافات والتخطيط", type: "أساسات" },
@@ -80,11 +103,11 @@ async function loadReports() {
     return {
       id: row.id,
       url: row.platform_url || '—',
-      apiName: raw.extensionName || raw.apiName || 'إضافة امتثال الرسمية',
+      apiName: getReportExtensionName(raw),
       date: row.report_date ? new Date(row.report_date).toLocaleString('ar-SA') : '—',
       score: row.score || 0,
-      criterionNum: raw.number || raw.criterion || '—',
-      criterionName: raw.title || raw.criterionName || 'تقرير غير معروف',
+      criterionNum: getReportCriterionNumber(raw) || '—',
+      criterionName: raw.title || raw.criterionTitle || raw.criterionNameAr || raw.criterionName || 'تقرير غير معروف',
       status: raw.status || (row.score === 100 ? 'Passed' : 'Failed'),
       raw: raw
     };

@@ -234,8 +234,9 @@ function highlightActiveLinks() {
     // Fallback for homepage
     const isHome = attrVal.includes('emtithal_public_home.html');
     const isPathHome = currentPath === '/' || currentPath.endsWith('/') || currentPath === '' || currentPath.endsWith('index.html');
+    const isHomeSectionPage = decodedPath.endsWith('report_page.html') || decodedPath.endsWith('report_page.html/');
 
-    if (isExactMatch || isDecodedMatch || (isHome && isPathHome)) {
+    if (isExactMatch || isDecodedMatch || (isHome && (isPathHome || isHomeSectionPage))) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');

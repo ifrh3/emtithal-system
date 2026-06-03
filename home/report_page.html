@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/emtithal_public_components.js?v=20260602"></script>
+<script src="assets/emtithal_public_components.js?v=20260603-menu"></script>
 <style>
 /* =====================================================================
    DESIGN TOKENS — Platforms Code (PC) 1.0
@@ -104,10 +104,11 @@ body{margin:0;}
 
 /* ===== Header ===== */
 .page-header{background:var(--pc-surface-raised);border-bottom:1px solid var(--pc-border-subtle);padding:20px 32px 24px;}
-.crumbs{display:flex;gap:8px;align-items:center;font-size:var(--pc-text-md);color:var(--pc-text-subtle);}
-.crumbs a{color:var(--pc-text-link);text-decoration:none;}
+.crumbs{display:flex;gap:8px;align-items:center;width:fit-content;max-width:100%;font-size:var(--pc-text-sm);line-height:var(--pc-leading-sm);color:var(--pc-text-subtle);}
+.crumbs a{color:var(--pc-text-link);text-decoration:none;font-weight:var(--pc-weight-medium);}
+.crumbs a:hover{color:var(--pc-text-link-hover);text-decoration:underline;text-underline-offset:3px;}
 .crumbs .sep{color:var(--pc-text-disabled);}
-.crumbs [aria-current="page"]{color:var(--pc-text-default);font-weight:500;pointer-events:none;}
+.crumbs [aria-current="page"]{color:var(--pc-text-muted);font-weight:var(--pc-weight-medium);pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-top:16px;flex-wrap:wrap;}
 .title-h1{font-family:var(--pc-font-display);font-size:32px;line-height:40px;font-weight:700;margin:0;}
 .desc{margin:8px 0 0;font-size:var(--pc-text-base);color:var(--pc-text-muted);max-width:720px;line-height:1.5;}
@@ -292,6 +293,9 @@ body{margin:0;}
 .page-links{display:flex;flex-direction:column;gap:var(--pc-space-2);padding:0 14px 14px;}
 .page-link{display:flex;align-items:center;justify-content:space-between;gap:var(--pc-space-2);padding:10px 12px;background:var(--pc-surface-raised);border:1px solid var(--pc-border-subtle);border-radius:var(--pc-radius-sm);color:var(--pc-text-link);text-decoration:none;font-size:var(--pc-text-md);direction:ltr;unicode-bidi:plaintext;}
 .page-link svg{width:16px;height:16px;flex-shrink:0;}
+.page-link-main{display:flex;align-items:center;gap:8px;min-width:0;}
+.page-link-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.page-score{direction:rtl;unicode-bidi:plaintext;white-space:nowrap;color:var(--pc-text-default);background:var(--pc-surface-sunken);border:1px solid var(--pc-border-subtle);border-radius:var(--pc-radius-pill);padding:2px 8px;font-family:var(--pc-font-mono);font-size:var(--pc-text-sm);}
 
 /* ===== Show More ===== */
 .show-more{border-top:1px solid var(--pc-border-subtle);}
@@ -444,7 +448,7 @@ body{margin:0;}
 <h1 class="title-h1">تقرير الامتثال</h1>
 <span class="pill brand"><svg aria-hidden="true"><use href="#i-check-circle"></use></svg>مكتمل</span>
 </div>
-<p class="desc">نتائج الفحوصات المُجمَّعة المستلمة من إضافات المتصفح بناءً على قائمة معايير نظام التصميم الموحد (Platforms Code).</p>
+<p class="desc">تقرير شامل يجمع نتائج فحوصات إضافات المتصفح حسب كل معيار، مع صفحات الفحص ونسبة الامتثال وفق نظام التصميم الموحد (Platforms Code).</p>
 </div>
 <div class="meta-strip">
 <div class="meta-item">
@@ -458,7 +462,7 @@ body{margin:0;}
 </div>
 <div aria-hidden="true" class="meta-sep"></div>
 <div class="meta-item">
-<div class="lbl"><svg aria-hidden="true" style="width:14px;height:14px"><use href="#i-component"></use></svg>الإضافات المساهمة</div>
+<div class="lbl"><svg aria-hidden="true" style="width:14px;height:14px"><use href="#i-component"></use></svg>مصادر الفحص</div>
 <div class="val" id="topContributingCount">—</div>
 </div>
 <div aria-hidden="true" class="meta-sep"></div>
@@ -560,7 +564,7 @@ body{margin:0;}
 <article aria-label="عدد الصفحات المفحوصة" class="card card-pad stat" data-filter-status="pages" role="button" tabindex="0">
 <div style="display:flex;align-items:center;gap:10px;"><div class="ic indigo"><svg><use href="#i-page"></use></svg></div><span class="lbl">عدد الصفحات المفحوصة</span></div>
 <div class="num pc-tnum" id="cnt-pages-scanned">0</div>
-<div class="sub">إجمالي الصفحات التي فحصتها الإضافات.</div>
+<div class="sub">إجمالي الصفحات المفحوصة ضمن التقرير الشامل.</div>
 </article>
 </section>
 <!-- ===== Charts ===== -->
@@ -568,7 +572,7 @@ body{margin:0;}
 <article class="card card-pad">
 <div class="eyebrow">تحليل بصري</div>
 <h3 style="margin:4px 0 0;font-family:var(--pc-font-display);font-size:20px;font-weight:600;">توزيع نتائج الامتثال</h3>
-<p style="margin:6px 0 0;font-size:var(--pc-text-md);color:var(--pc-text-muted);line-height:1.5;">العدد والنسبة لكل حالة، مجمَّعة من نتائج جميع الإضافات.</p>
+<p style="margin:6px 0 0;font-size:var(--pc-text-md);color:var(--pc-text-muted);line-height:1.5;">العدد والنسبة لكل حالة، محسوبة بعد دمج صفحات كل معيار في التقرير الشامل.</p>
 <div class="donut-wrap" style="margin-top:20px;">
 <svg aria-label="مخطط دائري لتوزيع حالات الامتثال" class="donut-svg" role="img" viewbox="0 0 100 100">
 <circle cx="50" cy="50" fill="none" r="38" stroke="var(--pc-neutral-100)" stroke-width="15"></circle>
@@ -833,6 +837,127 @@ function safeHost(value) {
   }
 }
 
+function canonicalPageUrl(value) {
+  const href = safeExternalUrl(value);
+  if (href === '#') return '';
+  try {
+    const parsed = new URL(href);
+    parsed.hash = '';
+    return parsed.href;
+  } catch {
+    return '';
+  }
+}
+
+function getReportPages(row) {
+  const pages = new Set();
+  const raw = row?.raw_report_data || {};
+  const add = value => {
+    const page = canonicalPageUrl(value);
+    if (page) pages.add(page);
+  };
+
+  if (Array.isArray(row?.pages_scanned)) {
+    row.pages_scanned.forEach(add);
+  } else if (typeof row?.pages_scanned === 'string') {
+    try {
+      const parsed = JSON.parse(row.pages_scanned);
+      if (Array.isArray(parsed)) parsed.forEach(add);
+      else add(parsed);
+    } catch {
+      add(row.pages_scanned);
+    }
+  }
+  add(raw.pageUrl);
+
+  return Array.from(pages);
+}
+
+function getReportCriterionNumber(raw) {
+  return String(raw?.number || raw?.criterionNumber || raw?.criterion || '').trim();
+}
+
+const OFFICIAL_EXTENSION_NAMES = {
+  '4': 'المعيار 4 - فحص المسافات',
+  '11': 'المعيار 11 - الختم الرقمي',
+  '23': 'المعيار 23 - زر التبديل'
+};
+
+function getReportExtensionName(raw, row) {
+  const critNum = getReportCriterionNumber(raw);
+  const officialName = OFFICIAL_EXTENSION_NAMES[critNum] || (critNum ? `المعيار ${critNum}` : 'إضافة فحص امتثال');
+  const rawName = String(raw?.extensionDisplayName || raw?.extensionName || raw?.apiName || row?.api_key_name || '').trim();
+  const brandOnly = /^(إمتثال|امتثال|Emtithal)$/i.test(rawName);
+
+  if (OFFICIAL_EXTENSION_NAMES[critNum] || raw?.extensionKind === 'criterion-23-switch' || !rawName || brandOnly) {
+    return officialName;
+  }
+
+  return rawName;
+}
+
+function average(values) {
+  const nums = values.map(Number).filter(Number.isFinite);
+  if (!nums.length) return 0;
+  return Math.round(nums.reduce((sum, n) => sum + n, 0) / nums.length);
+}
+
+function statusFromScore(score) {
+  if (score >= 100) return 'implemented';
+  if (score > 0) return 'partial';
+  return 'not-implemented';
+}
+
+function summarizeReportGroups(rows) {
+  const groups = new Map();
+
+  rows.forEach(row => {
+    const raw = row.raw_report_data || {};
+    const critNum = getReportCriterionNumber(raw);
+    if (!critNum || critNum === 'undefined') return;
+
+    if (!groups.has(critNum)) {
+      groups.set(critNum, {
+        criterion: critNum,
+        rows: [],
+        pageMap: new Map(),
+        latest: row,
+        extensionName: getReportExtensionName(raw, row)
+      });
+    }
+
+    const group = groups.get(critNum);
+    group.rows.push(row);
+
+    const pages = getReportPages(row);
+    const score = clampPercent(row.score);
+    const pageList = pages.length ? pages : [row.platform_url].filter(Boolean).map(canonicalPageUrl).filter(Boolean);
+
+    pageList.forEach(page => {
+      if (!group.pageMap.has(page)) {
+        group.pageMap.set(page, {
+          url: page,
+          score,
+          date: row.report_date || row.created_at || '',
+          reportId: row.id
+        });
+      }
+    });
+  });
+
+  return Array.from(groups.values()).map(group => {
+    const pages = Array.from(group.pageMap.values());
+    const scores = pages.length ? pages.map(page => page.score) : group.rows.map(row => clampPercent(row.score));
+    return {
+      ...group,
+      pages,
+      score: average(scores),
+      reportsCount: group.rows.length,
+      latestDate: group.latest?.report_date || group.latest?.created_at || ''
+    };
+  });
+}
+
 function clampPercent(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return 0;
@@ -883,18 +1008,21 @@ function extensionDownloadUrl(ext) {
 }
 
 function buildPagesAccordion(c) {
-  const pages = window._reportPagesScanned || [];
+  const pages = Array.isArray(c.pages) ? c.pages : [];
   if (pages.length === 0) return '';
   
   const links = pages.map(page => `
-    <a class="page-link" href="${escapeAttr(pageHref(page))}" target="_blank" rel="noreferrer">
-      <span dir="ltr">${escapeHTML(page)}</span>
+    <a class="page-link" href="${escapeAttr(pageHref(page.url || page))}" target="_blank" rel="noreferrer">
+      <span class="page-link-main">
+        <span dir="ltr">${escapeHTML(page.url || page)}</span>
+        ${Number.isFinite(Number(page.score)) ? `<span class="page-score">${clampPercent(page.score)}%</span>` : ''}
+      </span>
       <svg aria-hidden="true"><use href="#i-external"/></svg>
     </a>`).join('');
     
   return `
     <details class="page-accordion">
-      <summary>عرض الصفحات التي تم فحصها بواسطة الإضافة <span class="pc-tnum">${pages.length}</span></summary>
+      <summary>الصفحات التي فُحصت لهذا المعيار <span class="pc-tnum">${pages.length}</span></summary>
       <div class="page-links">${links}</div>
     </details>`;
 }
@@ -929,6 +1057,8 @@ function buildDetails(c) {
           <div class="kv"><span class="k">المجموعة</span><span class="v">${c.pr === 'P' ? 'أساسي' : 'ثانوي'}</span></div>
           <div class="kv"><span class="k">الفئة</span><span class="v">${catTag(c.cat)}</span></div>
           <div class="kv"><span class="k">حالة التطبيق</span><span class="v">${statusPill(c.st)}</span></div>
+          <div class="kv"><span class="k">نسبة المعيار</span><span class="v pc-tnum">${Number.isFinite(Number(c.score)) ? `${clampPercent(c.score)}%` : '—'}</span></div>
+          <div class="kv"><span class="k">عدد الصفحات</span><span class="v pc-tnum">${Array.isArray(c.pages) ? c.pages.length : 0}</span></div>
           <div class="kv"><span class="k">تاريخ الفحص</span><span class="v" style="font-size:var(--pc-text-sm);">2026-05-09</span></div>
           <div class="kv"><span class="k">مصدر الإضافة</span><span class="v" style="font-size:var(--pc-text-sm);">${extName}</span></div>
         </div>
@@ -985,6 +1115,8 @@ function buildRow(c, idx, zebra) {
   const criterionNum = Number(c.n);
   const displayNum = Number.isFinite(criterionNum) ? String(criterionNum).padStart(2, '0') : escapeHTML(c.n);
   const safeN = escapeAttr(c.n);
+  const pageDisplay = c.pageLabel || c.page || '—';
+  const scoreLabel = Number.isFinite(Number(c.score)) ? `<span class="page-score">${clampPercent(c.score)}%</span>` : '';
   return `
   <div class="table-row${zebra ? ' row-even' : ''}" role="row" data-n="${safeN}" data-pr="${escapeAttr(c.pr)}" data-cat="${escapeAttr(c.cat)}" data-st="${escapeAttr(c.st)}" data-page="${escapeAttr(c.page)}" data-ext="${escapeAttr(c.ext?.n || '')}" data-ref="${escapeAttr(c.ref)}" aria-expanded="false">
     <div class="table-cells">
@@ -995,8 +1127,8 @@ function buildRow(c, idx, zebra) {
         <div class="crit-title">${escapeHTML(c.t_ar)}</div>
         <div class="crit-subtitle">${escapeHTML(c.t_en)}</div>
       </div>
-      <div>${statusPill(c.st)}</div>
-      <div class="crit-page">${escapeHTML(c.page)}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${statusPill(c.st)}${scoreLabel}</div>
+      <div class="crit-page">${escapeHTML(pageDisplay)}</div>
       <div class="actions-cell">
         <button type="button" class="btn btn-ghost btn-sm detail-btn"
           aria-expanded="false"
@@ -1024,14 +1156,14 @@ function getFiltered() {
     if (filters.group && c.pr !== filters.group) return false;
     if (filters.cat && c.cat !== filters.cat) return false;
     if (filters.status && c.st !== filters.status) return false;
-    if (filters.page && c.page !== filters.page) return false;
+    if (filters.page && !(c.pages || []).some(page => (page.url || page) === filters.page)) return false;
     if (filters.ext && c.ext.n !== filters.ext) return false;
     if (filters.ref === 'yes' && !c.ref) return false;
     if (filters.ref === 'no' && c.ref) return false;
     if (q) {
       const haystack = [
         String(c.n), c.t_ar, c.t_en, c.cat, c.st,
-        c.page, c.ext.n, c.notes_ar, c.notes_en
+        c.page, c.pageLabel, (c.pages || []).map(page => page.url || page).join(' '), c.ext.n, c.notes_ar, c.notes_en
       ].join(' ').toLowerCase();
       if (!haystack.includes(q)) return false;
     }
@@ -1309,15 +1441,16 @@ async function loadReportData() {
         .eq('id', reportId)
         .single();
       if (error) throw error;
-      
+
       const { data: allData, error: allError } = await db
         .from('reports_summary')
         .select('*')
         .eq('platform_url', data.platform_url)
         .order('report_date', { ascending: false });
       if (allError) throw allError;
+
       reports = allData || [];
-      report = data;
+      report = reports[0] || data;
     } else {
       // Fallback: load the latest report's platform
       const { data: latest, error: errLatest } = await db
@@ -1387,12 +1520,10 @@ async function loadReportData() {
     document.getElementById('heroEntityName').textContent = entName;
     document.getElementById('heroPlatformName').textContent = platName;
     
-    // Collect all pages scanned across all reports for this platform
+    // Collect pages scanned by the selected report only.
     const pagesScanned = new Set();
     reports.forEach(r => {
-      if (r.pages_scanned && Array.isArray(r.pages_scanned)) r.pages_scanned.forEach(p => pagesScanned.add(p));
-      if (r.raw_report_data?.pageUrl) pagesScanned.add(r.raw_report_data.pageUrl);
-      if (r.platform_url) pagesScanned.add(r.platform_url);
+      getReportPages(r).forEach(p => pagesScanned.add(p));
     });
     window._reportPagesScanned = Array.from(pagesScanned);
     
@@ -1420,38 +1551,35 @@ async function loadReportData() {
     const heroReportDate = document.getElementById('heroReportDate');
     if(heroReportDate) heroReportDate.textContent = dateStr;
     
+    const reportGroups = summarizeReportGroups(reports);
     const heroCriteriaCount = document.getElementById('heroCriteriaCount');
-    if(heroCriteriaCount) heroCriteriaCount.textContent = CRITERIA.length;
+    if(heroCriteriaCount) heroCriteriaCount.textContent = reportGroups.length;
 
     // Reset criteria to default
     CRITERIA.forEach(c => {
       c.st = 'not-inspected';
       c.page = '';
+      c.pageLabel = '';
+      c.pages = [];
+      c.score = null;
+      c.reportsCount = 0;
       c.ext = { n: 'لا يوجد', a: '-' };
       c.notes_ar = 'لم يتم فحص هذا المعيار حتى الآن.';
     });
 
-    const seenCriteria = new Set();
-
-    for (const r of reports) {
-      const raw = r.raw_report_data || {};
-      const critNum = String(raw.number || raw.criterion);
-      if (!critNum || critNum === 'undefined') continue;
-      
-      if (seenCriteria.has(critNum)) continue; // Keep the newest report for each criterion
-      seenCriteria.add(critNum);
-      
-      const index = CRITERIA.findIndex(c => String(c.n) === critNum);
+    for (const group of reportGroups) {
+      const index = CRITERIA.findIndex(c => String(c.n) === group.criterion);
       if (index !== -1) {
-        const score = clampPercent(r.score);
-        let st = 'not-implemented';
-        if (score === 100) st = 'implemented';
-        else if (score > 0) st = 'partial';
-
-        CRITERIA[index].st = st;
-        CRITERIA[index].page = raw.pageUrl || r.platform_url || '';
-        CRITERIA[index].notes_ar = 'تم الفحص آلياً عبر الإضافة.';
-        let extName = raw.extensionName || raw.apiName || r.api_key_name || 'إضافة امتثال الرسمية';
+        const score = clampPercent(group.score);
+        const firstPage = group.pages[0]?.url || '';
+        CRITERIA[index].st = statusFromScore(score);
+        CRITERIA[index].score = score;
+        CRITERIA[index].pages = group.pages;
+        CRITERIA[index].page = firstPage;
+        CRITERIA[index].pageLabel = group.pages.length > 1 ? `${group.pages.length} صفحات` : firstPage;
+        CRITERIA[index].reportsCount = group.reportsCount;
+        CRITERIA[index].notes_ar = `تم فحص هذا المعيار عبر الإضافة على ${group.pages.length || 1} صفحة. نسبة المعيار ${score}%، وتحسب من متوسط نتائج الصفحات الخاصة به.`;
+        let extName = group.extensionName;
         CRITERIA[index].ext = {
           n: extName,
           a: extName.substring(0, 2)
@@ -1485,12 +1613,10 @@ function updateSummaryStats(dbCompliance) {
   const notInspected = CRITERIA.filter(c => c.st === 'not-inspected').length;
   const total = CRITERIA.length;
   const totalInspected = implemented + partial + notImplemented;
+  const inspectedItems = CRITERIA.filter(c => c.st !== 'not-inspected');
   
-  // Calculate compliance based ONLY on inspected criteria
-  let calcCompliance = 0;
-  if (totalInspected > 0) {
-    calcCompliance = Math.round(((implemented + partial * 0.5) / totalInspected) * 100);
-  }
+  // Smart aggregate: each criterion contributes once after its scanned pages are averaged.
+  const calcCompliance = inspectedItems.length ? average(inspectedItems.map(c => clampPercent(c.score))) : 0;
 
   // Use DB compliance if available, otherwise calculate
   const compliance = dbCompliance !== undefined && dbCompliance !== null ? 
@@ -1521,26 +1647,36 @@ function updateSummaryStats(dbCompliance) {
   const heroSub = document.getElementById('heroSub');
   const statusPills = document.querySelectorAll('.result-status-pill');
   
+  const heroStatus = totalInspected === 0
+    ? { cls: 'neutral', icon: 'i-minus-circle', label: 'لم يتم الفحص' }
+    : compliance >= 90
+      ? { cls: 'brand', icon: 'i-check-circle', label: 'ممتثل' }
+      : compliance >= 60
+        ? { cls: 'warn', icon: 'i-half', label: 'ممتثل جزئيًا' }
+        : { cls: 'danger', icon: 'i-x-circle', label: 'غير ممتثل' };
+
   if(heroLabel) {
-    if (totalInspected === 0) {
-      heroLabel.textContent = 'لم يتم الفحص';
-    } else if(compliance >= 90) {
-      heroLabel.textContent = 'ممتثل';
-    } else if(compliance >= 60) {
-      heroLabel.textContent = 'ممتثل جزئيًا';
-    } else {
-      heroLabel.textContent = 'غير ممتثل';
-    }
+    heroLabel.textContent = heroStatus.label;
   }
+
+  statusPills.forEach(pill => {
+    pill.className = `result-status-pill pill ${heroStatus.cls}`;
+    pill.innerHTML = `<svg aria-hidden="true"><use href="#${heroStatus.icon}"></use></svg>${heroStatus.label}`;
+  });
   
   if(heroSub) {
-    heroSub.textContent = `${implemented} معيار مطبق بالكامل من أصل ${totalInspected} معيار تم فحصه`;
+    heroSub.textContent = `${totalInspected} معيار مفحوص. الامتثال الإجمالي متوسط نسب المعايير بعد دمج صفحات كل معيار.`;
+  }
+
+  const heroCriteriaCount = document.getElementById('heroCriteriaCount');
+  if (heroCriteriaCount) {
+    heroCriteriaCount.textContent = totalInspected;
   }
   
   // Update hardcoded total numbers in HTML
   const totalInspectedKVs = document.querySelectorAll('.hero-l .kv .v.pc-tnum');
   if(totalInspectedKVs.length > 0) {
-    totalInspectedKVs[0].innerHTML = `${total} <span style="color:var(--pc-text-subtle);font-weight:400;">معيارًا</span>`;
+    totalInspectedKVs[0].innerHTML = `${totalInspected} <span style="color:var(--pc-text-subtle);font-weight:400;">معيارًا</span>`;
   }
   
   const statAll = document.querySelector('article[data-filter-status="all"] .num');
@@ -1548,7 +1684,7 @@ function updateSummaryStats(dbCompliance) {
   
   const chartFootnote = document.querySelector('.charts article:nth-child(1) .footnote span');
   if(chartFootnote) {
-    chartFootnote.textContent = `ملخّص نصي: تم فحص ${totalInspected} معيار من أصل ${total}. (${implemented} مطبَّق بالكامل، ${partial} مطبَّق جزئيًا، ${notImplemented} غير مطبَّق).`;
+    chartFootnote.textContent = `ملخّص نصي: تم فحص ${totalInspected} معيار من أصل ${total}. الامتثال الإجمالي ${compliance}% محسوب من متوسط درجات المعايير المفحوصة.`;
   }
   
   // Dynamic update of SVG Donut Charts
@@ -1598,13 +1734,10 @@ function updateSummaryStats(dbCompliance) {
   const calcCat = (catId) => {
     const items = CRITERIA.filter(c => c.cat === catId);
     if (!items.length) return 0;
-    // Calculate based ONLY on inspected items within this category!
     const inspected = items.filter(c => c.st !== 'not-inspected');
     if (!inspected.length) return 0;
-    
-    const imp = inspected.filter(c => c.st === 'implemented').length;
-    const par = inspected.filter(c => c.st === 'partial').length;
-    return Math.round(((imp + (par * 0.5)) / inspected.length) * 100);
+
+    return average(inspected.map(c => clampPercent(c.score)));
   };
   
   const fPct = calcCat('foundations');
@@ -1627,9 +1760,15 @@ function updateSummaryStats(dbCompliance) {
     if (implemented + partial + notImplemented === 0) {
       catFootnote.textContent = 'لا توجد بيانات كافية لفحص أداء الفئات حتى الآن.';
     } else {
-      let lowest = { name: 'الأسس', val: fPct };
-      if (tPct < lowest.val) lowest = { name: 'القوالب', val: tPct };
-      if (cPct < lowest.val) lowest = { name: 'المكونات', val: cPct };
+      const inspectedCats = [
+        { id: 'foundations', name: 'الأسس', val: fPct },
+        { id: 'templates', name: 'القوالب', val: tPct },
+        { id: 'components', name: 'المكونات', val: cPct }
+      ].filter(cat => CRITERIA.some(c => c.cat === cat.id && c.st !== 'not-inspected'));
+      let lowest = inspectedCats[0] || { name: 'الفئات المفحوصة', val: 0 };
+      inspectedCats.forEach(cat => {
+        if (cat.val < lowest.val) lowest = cat;
+      });
       
       catFootnote.textContent = `الفئة الأقل امتثالًا (من بين الفئات المفحوصة) هي «${lowest.name}» بنسبة ${lowest.val}٪.`;
     }
@@ -1638,7 +1777,6 @@ function updateSummaryStats(dbCompliance) {
   // 5. Update Contributing Extensions Count
   const topContributingCount = document.getElementById('topContributingCount');
   if (topContributingCount) {
-    const inspectedItems = CRITERIA.filter(c => c.st !== 'not-inspected');
     const uniqueExtNames = new Set(inspectedItems.map(c => c.ext.n));
     topContributingCount.textContent = uniqueExtNames.size || 0;
   }
