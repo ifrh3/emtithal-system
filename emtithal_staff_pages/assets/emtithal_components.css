@@ -117,21 +117,34 @@ body {
   font-weight: 500;
 }
 
-.emtithal-nav-links a {
-  min-height: 40px;
+.emtithal-nav-links a,
+.emtithal-mobile-sign-out {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   padding: 10px 14px;
   border-radius: var(--pc-radius-sm, var(--radius-sm, 8px));
   border-bottom: 2px solid transparent;
   color: inherit;
+  font: inherit;
   text-decoration: none;
   white-space: nowrap;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
+.emtithal-mobile-sign-out {
+  width: auto;
+  border-top: 0;
+  border-inline: 0;
+  background: transparent;
+  color: var(--pc-danger-600, #B42318);
+  cursor: pointer;
+}
+
 .emtithal-nav-links a:hover,
-.emtithal-nav-links a:focus-visible {
+.emtithal-nav-links a:focus-visible,
+.emtithal-mobile-sign-out:hover,
+.emtithal-mobile-sign-out:focus-visible {
   background: var(--pc-brand-50, var(--brand-50, #F3FCF6));
   color: var(--pc-brand-700, var(--brand-700, #067647));
   border-bottom-color: var(--pc-brand-500, var(--brand-500, #1B8354));
@@ -159,7 +172,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 12px;
   border-radius: 10px;
   background: var(--pc-neutral-50, var(--neutral-50, #F9FAFB));
@@ -207,8 +220,8 @@ body {
 /* Mobile Toggle */
 .emtithal-menu-toggle {
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--pc-neutral-300, var(--neutral-300, #D2D6DB));
@@ -311,6 +324,9 @@ body {
 
 .emtithal-footer-links a,
 .emtithal-social-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   font-weight: 500;
@@ -326,7 +342,7 @@ body {
 
 .emtithal-social-link {
   min-width: 42px;
-  min-height: 38px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -393,7 +409,8 @@ body {
     gap: 8px;
   }
 
-  .emtithal-mobile-panel .emtithal-nav-links a {
+  .emtithal-mobile-panel .emtithal-nav-links a,
+  .emtithal-mobile-panel .emtithal-mobile-sign-out {
     justify-content: center;
   }
 
@@ -448,7 +465,7 @@ body {
   }
 
   .emtithal-nav-actions .emtithal-user-chip {
-    min-height: 36px;
+    min-height: 44px;
     padding-inline: 10px;
     font-size: 12px;
   }
@@ -464,5 +481,16 @@ body {
   .emtithal-footer-bottom {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

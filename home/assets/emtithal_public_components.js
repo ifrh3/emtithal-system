@@ -70,7 +70,7 @@ const headerHTML = `
     </nav>
 
     <div class="nav-actions">
-      <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" id="menuToggle">
+      <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobilePanel" id="menuToggle">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/>
         </svg>
@@ -107,7 +107,7 @@ const footerHTML = `
           <a href="emtithal_public_home.html#platforms">المنصات</a>
           <a href="Extentions%20page.html">الإضافات</a>
           <a href="emtithal_about_us.html">من نحن</a>
-          <a href="#" data-login-modal-open>دخول فريق العمل</a>
+          <button class="emtithal-footer-link-button" type="button" data-login-modal-open>دخول فريق العمل</button>
         </div>
       </nav>
 
@@ -172,7 +172,7 @@ const loginModalHTML = `
             <input id="loginModalRemember" name="remember" type="checkbox">
             <span>تذكرني</span>
           </label>
-          <a class="login-modal-forgot" href="#" id="loginModalForgot">نسيت كلمة المرور؟</a>
+          <button class="login-modal-forgot" type="button" id="loginModalForgot">نسيت كلمة المرور؟</button>
         </div>
 
         <button class="btn btn-primary login-modal-submit" type="submit">تسجيل الدخول</button>
@@ -234,12 +234,12 @@ function highlightActiveLinks() {
     // Fallback for homepage
     const isHome = attrVal.includes('emtithal_public_home.html');
     const isPathHome = currentPath === '/' || currentPath.endsWith('/') || currentPath === '' || currentPath.endsWith('index.html');
-    const isHomeSectionPage = decodedPath.endsWith('report_page.html') || decodedPath.endsWith('report_page.html/');
-
-    if (isExactMatch || isDecodedMatch || (isHome && (isPathHome || isHomeSectionPage))) {
+    if (isExactMatch || isDecodedMatch || (isHome && isPathHome)) {
       link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
     } else {
       link.classList.remove('active');
+      link.removeAttribute('aria-current');
     }
   });
 }

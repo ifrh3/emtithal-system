@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-public-pages">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js?v=20260602" defer></script>
+  <script src="assets/emtithal_public_components.js?v=20260604-public-pages" defer></script>
   <style>
     :root {
       --brand-50:#F3FCF6;
@@ -46,6 +46,7 @@
 
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
+    main:focus { outline:none; }
     body {
       margin:0;
       font-family:var(--font);
@@ -158,7 +159,7 @@
     h1 {
       font-size:clamp(42px, 6vw, 72px);
       line-height:1.15;
-      letter-spacing:-.04em;
+      letter-spacing:0;
       color:var(--neutral-900);
     }
     .lead {
@@ -270,7 +271,7 @@
     .section-head h2 {
       font-size:clamp(26px, 3vw, 36px);
       line-height:1.45;
-      letter-spacing:-.02em;
+      letter-spacing:0;
       color:var(--neutral-900);
     }
     .section-head p {
@@ -358,7 +359,7 @@
     .member-email {
       display:inline-flex;
       align-items:center;
-      min-height:30px;
+      min-height:44px;
       margin-bottom:14px;
       padding:0 10px;
       border-radius:999px;
@@ -397,7 +398,7 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:42px;
+      min-height:48px;
       padding:0 16px;
       border-radius:var(--radius-sm);
       border:1px solid var(--brand-500);
@@ -477,6 +478,16 @@
       white-space:normal;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior:auto; }
+      *, *::before, *::after {
+        animation-duration:1ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:1ms !important;
+      }
+    }
+
     @media (min-width: 720px) {
       .container { width:min(100% - 40px, 1180px); }
       .hero { padding:64px 0 52px; }
@@ -529,11 +540,11 @@
 
 
 
-  <main id="main-content">
-    <section class="hero" id="top">
+  <main id="main-content" tabindex="-1">
+    <section class="hero" id="top" aria-labelledby="about-title">
       <div class="container hero-grid">
         <div>
-          <h1>إمتثال</h1>
+          <h1 id="about-title">إمتثال</h1>
           <p class="lead">إمتثال مشروع تخرج أكاديمي من تنفيذ طالبات تخصص تفاعل الإنسان مع الحاسب في جامعة أم القرى، كأول دفعة في التخصص على مستوى الشرق الأوسط.</p>
         </div>
       </div>
@@ -543,7 +554,7 @@
       <aside class="secondary-nav-card" aria-label="تنقل ثانوي داخل الصفحة">
         <p class="secondary-nav-label">في هذه الصفحة</p>
         <nav class="secondary-links" aria-label="أقسام الصفحة">
-          <a href="#intro" class="active">عن المشروع</a>
+          <a href="#intro" class="active" aria-current="location">عن المشروع</a>
           <a href="#method">آلية العمل</a>
           <a href="#team">الفريق</a>
           <a href="#contact">التواصل</a>
@@ -683,22 +694,56 @@
 <script>
     const sections = Array.from(document.querySelectorAll('section[id]'));
     const navLinks = Array.from(document.querySelectorAll('.secondary-links a'));
+    const trackedSections = sections.filter((section) => section.id !== 'top');
 
     const setActiveLink = (id) => {
       navLinks.forEach((link) => {
-        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        const isActive = link.getAttribute('href') === `#${id}`;
+        link.classList.toggle('active', isActive);
+        if (isActive) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
       });
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    const getCurrentSectionId = () => {
+      const offset = Math.min(window.innerHeight * 0.25, 160);
+      let currentId = trackedSections[0]?.id || 'intro';
 
-      if (visible) setActiveLink(visible.target.id);
-    }, { rootMargin:'-20% 0px -55% 0px', threshold:[0.1, 0.3, 0.6] });
+      trackedSections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= offset) {
+          currentId = section.id;
+        }
+      });
 
-    sections.forEach((section) => observer.observe(section));
+      return currentId;
+    };
+
+    let scrollTicking = false;
+    const updateActiveFromScroll = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      window.requestAnimationFrame(() => {
+        setActiveLink(getCurrentSectionId());
+        scrollTicking = false;
+      });
+    };
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        const id = link.getAttribute('href')?.slice(1);
+        if (id) setActiveLink(id);
+      });
+    });
+
+    window.addEventListener('scroll', updateActiveFromScroll, { passive:true });
+    window.addEventListener('hashchange', () => {
+      const id = window.location.hash.slice(1);
+      if (id) setActiveLink(id);
+    });
+    updateActiveFromScroll();
   </script>
 
 

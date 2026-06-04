@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260602-mobile">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-public-pages">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js?v=20260602" defer></script>
+  <script src="assets/emtithal_public_components.js?v=20260604-public-pages" defer></script>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -61,6 +61,7 @@
 }
 
 html { scroll-behavior: smooth; }
+main:focus { outline: none; }
 
 body {
   font-family: var(--font);
@@ -117,8 +118,8 @@ body {
 }
 .search-input {
   width:100%;
-  height:44px;
-  padding:10px 42px 10px 40px;
+  min-height:48px;
+  padding:10px 42px 10px 58px;
   border:1px solid var(--pc-neutral-300);
   border-radius:var(--radius-sm);
   background:var(--pc-neutral-0);
@@ -134,15 +135,15 @@ body {
 .search-input::placeholder { color:var(--pc-neutral-500); }
 .search-clear {
   position:absolute;
-  left:10px;
+  left:4px;
   top:50%;
   transform:translateY(-50%);
   border:0;
   background:transparent;
   cursor:pointer;
   color:var(--pc-neutral-500);
-  width:28px;
-  height:28px;
+  width:44px;
+  height:44px;
   border-radius:var(--radius-sm);
   display:flex;
   align-items:center;
@@ -326,7 +327,7 @@ body {
 .cat-قوالب.cat-badge-list { background:var(--cat-templates); color:var(--cat-templates-fg); }
 .cat-عناصر.cat-badge-list { background:var(--cat-components); color:var(--cat-components-fg); }
 .card-link, .card-ext-badge, a.card-ext-badge, .card-ext-badge-footer {
-  min-height: 32px;
+  min-height: 44px;
   display: inline-flex;
   align-items:center;
   justify-content:center;
@@ -604,6 +605,16 @@ body {
   height: 22px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
+
 @media (min-width: 640px) {
   .scroll-fab {
     left: 32px;
@@ -616,26 +627,27 @@ body {
   <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
   <div id="emtithal-header"></div>
 
-  <div class="controls-bar">
+  <div class="controls-bar" role="region" aria-label="أدوات البحث والتصفية">
     <div class="container controls-inner">
       <div class="search-wrap">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن معيار..." />
-        <button class="search-clear hidden" id="clearSearch" aria-label="مسح البحث">
+        <label class="visually-hidden" for="searchInput">ابحث عن معيار</label>
+        <input type="search" id="searchInput" class="search-input" placeholder="ابحث عن معيار..." autocomplete="off" aria-describedby="resultsInfo" />
+        <button class="search-clear hidden" id="clearSearch" type="button" aria-label="مسح البحث">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="filter-group" role="group" aria-label="تصفية المعايير">
-        <button class="filter-btn active" data-cat="all">الكل <span class="filter-count" id="fc-all">36</span></button>
-        <button class="filter-btn" data-cat="اساسيات"><span class="dot dot-blue"></span>أساسات <span class="filter-count" id="fc-اساسيات">6</span></button>
-        <button class="filter-btn" data-cat="قوالب"><span class="dot dot-green"></span>قوالب <span class="filter-count" id="fc-قوالب">4</span></button>
-        <button class="filter-btn" data-cat="عناصر"><span class="dot dot-purple"></span>عناصر <span class="filter-count" id="fc-عناصر">26</span></button>
+        <button class="filter-btn active" type="button" data-cat="all" aria-pressed="true">الكل <span class="filter-count" id="fc-all">36</span></button>
+        <button class="filter-btn" type="button" data-cat="اساسيات" aria-pressed="false"><span class="dot dot-blue"></span>أساسات <span class="filter-count" id="fc-اساسيات">6</span></button>
+        <button class="filter-btn" type="button" data-cat="قوالب" aria-pressed="false"><span class="dot dot-green"></span>قوالب <span class="filter-count" id="fc-قوالب">4</span></button>
+        <button class="filter-btn" type="button" data-cat="عناصر" aria-pressed="false"><span class="dot dot-purple"></span>عناصر <span class="filter-count" id="fc-عناصر">26</span></button>
       </div>
-      <div class="view-toggle">
-        <button class="view-btn active" id="viewGrid" title="شبكة" aria-label="عرض كشبكة">
+      <div class="view-toggle" role="group" aria-label="طريقة عرض المعايير">
+        <button class="view-btn active" id="viewGrid" type="button" title="شبكة" aria-label="عرض كشبكة" aria-pressed="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </button>
-        <button class="view-btn" id="viewList" title="قائمة" aria-label="عرض كقائمة">
+        <button class="view-btn" id="viewList" type="button" title="قائمة" aria-label="عرض كقائمة" aria-pressed="false">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </button>
       </div>
@@ -643,10 +655,11 @@ body {
   </div>
 
   <div class="container">
-    <div class="results-info">عرض <strong id="resultsCount">36</strong> معيار</div>
+    <div class="results-info" id="resultsInfo" role="status" aria-live="polite" aria-atomic="true">عرض <strong id="resultsCount">36</strong> معيار</div>
   </div>
 
-  <main id="main-content" class="container">
+  <main id="main-content" class="container" tabindex="-1">
+    <h1 class="visually-hidden">إضافات امتثال لمعايير كود المنصات</h1>
     <div class="cards-grid" id="cardsGrid"></div>
     <div class="empty-state hidden" id="emptyState">
       <div class="empty-icon">
@@ -654,7 +667,7 @@ body {
       </div>
       <p class="empty-title">لا توجد نتائج</p>
       <p class="empty-sub">جرّب كلمة بحث مختلفة أو اختر فئة أخرى</p>
-      <button class="btn-reset" onclick="resetAll()">إعادة تعيين</button>
+      <button class="btn-reset" type="button" onclick="resetAll()">إعادة تعيين</button>
     </div>
   </main>  
   
@@ -847,13 +860,13 @@ let EXTENSIONS = [];
 
       return `
         <article class="ext-card" style="animation-delay:${delay}ms"
-          tabindex="0" role="article" aria-label="${escapeAttr(ext.title)}"
+          role="article" aria-labelledby="ext-title-${escapeAttr(ext.id)}"
           data-num="${escapeAttr(ext.num)}" data-cat="${escapeAttr(ext.cat)}">
           <div class="card-header">
             <div class="card-icon-wrap ${cfg.iconClass}">${icon}</div>
             <div class="card-meta">
               <div class="card-num">معيار #${escapeHTML(ext.num)}</div>
-              <div class="card-title">${escapeHTML(ext.title)}</div>
+              <div class="card-title" id="ext-title-${escapeAttr(ext.id)}">${escapeHTML(ext.title)}</div>
               <p class="card-desc-inline">${escapeHTML(ext.desc)}</p>
             </div>
             <span class="cat-badge ${cfg.badgeClass}">${cfg.label}</span>
@@ -914,9 +927,11 @@ let EXTENSIONS = [];
     fab.addEventListener('click', function() {
       const scrolled = window.scrollY || document.documentElement.scrollTop;
       if (scrolled > 200) {
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        window.scrollTo({ top: 0, behavior }); // Scroll to top
       } else {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); // Scroll to bottom
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior }); // Scroll to bottom
       }
     });
   }
@@ -937,8 +952,12 @@ let EXTENSIONS = [];
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       activeFilter = btn.dataset.cat;
       renderCards();
     });
@@ -948,12 +967,16 @@ let EXTENSIONS = [];
     viewMode = 'grid';
     viewGrid.classList.add('active');
     viewList.classList.remove('active');
+    viewGrid.setAttribute('aria-pressed', 'true');
+    viewList.setAttribute('aria-pressed', 'false');
     renderCards();
   });
   viewList.addEventListener('click', () => {
     viewMode = 'list';
     viewList.classList.add('active');
     viewGrid.classList.remove('active');
+    viewList.setAttribute('aria-pressed', 'true');
+    viewGrid.setAttribute('aria-pressed', 'false');
     renderCards();
   });
 
@@ -962,8 +985,13 @@ let EXTENSIONS = [];
     searchQuery  = '';
     searchInput.value = '';
     clearSearch.classList.add('hidden');
-    filterBtns.forEach(b => b.classList.remove('active'));
-    document.querySelector('[data-cat="all"]').classList.add('active');
+    filterBtns.forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    const allFilter = document.querySelector('[data-cat="all"]');
+    allFilter.classList.add('active');
+    allFilter.setAttribute('aria-pressed', 'true');
     renderCards();
   };
 

@@ -26,7 +26,7 @@ function injectEmtithalComponents() {
     activeId = 'audit';
   }
 
-  const activeClass = (id) => activeId === id ? 'class="active"' : '';
+  const activeClass = (id) => activeId === id ? 'class="active" aria-current="page"' : '';
 
   // --- Inject Header ---
   const headerContainer = document.getElementById('emtithal-header');
@@ -70,7 +70,7 @@ function injectEmtithalComponents() {
               <a href="imtithal-dashboard.html" ${activeClass('dashboard')}>لوحة التحكم</a>
               <a href="reports_page.html" ${activeClass('reports')}>البلاغات</a>
               <a href="audit_reports.html" ${activeClass('audit')}>التقارير الآلية</a>
-              <a href="#" id="mobile-sign-out-btn" style="color: var(--danger-600);">تسجيل الخروج</a>
+              <button class="emtithal-mobile-sign-out" id="mobile-sign-out-btn" type="button">تسجيل الخروج</button>
             </nav>
           </div>
         </div>
@@ -134,7 +134,7 @@ function initMobileMenu() {
       emtithalMenuToggle.setAttribute('aria-expanded', String(isOpen));
       document.body.classList.toggle('menu-open', isOpen);
     });
-    emtithalMobilePanel.querySelectorAll('a').forEach((link) => {
+    emtithalMobilePanel.querySelectorAll('a, button').forEach((link) => {
       link.addEventListener('click', () => {
         emtithalMobilePanel.classList.remove('open');
         emtithalMenuToggle.setAttribute('aria-expanded', 'false');

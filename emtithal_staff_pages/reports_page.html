@@ -436,7 +436,8 @@
 
     .report-id {
       direction: ltr;
-      text-align: right;
+      unicode-bidi: isolate;
+      text-align: left;
       font-family: "Roboto Mono", monospace;
       font-size: 12px;
       color: var(--brand-600);
@@ -470,6 +471,7 @@
 
     .page-cell {
       direction: ltr;
+      unicode-bidi: isolate;
       text-align: left;
       color: var(--brand-600);
       font-family: "Roboto Mono", monospace;
@@ -505,6 +507,8 @@
       white-space: nowrap;
       color: var(--neutral-500);
       font-size: 12px;
+      direction: ltr;
+      unicode-bidi: isolate;
     }
 
     .empty-state td {
@@ -614,7 +618,8 @@
       font-family: "Roboto Mono", monospace;
       font-size: 12px;
       direction: ltr;
-      text-align: right;
+      unicode-bidi: isolate;
+      text-align: left;
     }
 
     .modal-close {
@@ -677,6 +682,7 @@
 
     .detail-value.mono {
       direction: ltr;
+      unicode-bidi: isolate;
       text-align: left;
       color: var(--brand-600);
       font-family: "Roboto Mono", monospace;
@@ -986,11 +992,35 @@
       line-height: 20px;
       font-weight: 600;
       text-align: right;
+      direction: rtl;
     }
 
     .cell-value {
       grid-column: 1;
       min-width: 0;
+      text-align: right;
+    }
+
+    /* LTR cell values: report ID, URL, date — keep left-aligned in mobile cards */
+    .cell-value.report-id,
+    .cell-value.page-cell {
+      text-align: left;
+      direction: ltr;
+      unicode-bidi: isolate;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .cell-value .date-cell,
+    td.date-cell .cell-value {
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    /* Extension badge — keep RTL but allow content to flow */
+    .extension-badge.cell-value {
+      direction: rtl;
       text-align: right;
     }
 
@@ -1001,17 +1031,6 @@
 
     .empty-state td::before {
       content: none;
-    }
-
-    .report-id,
-    .page-cell {
-      max-width: 100%;
-      overflow-wrap: anywhere;
-      white-space: normal;
-      text-align: left;
-      direction: ltr;
-      unicode-bidi: plaintext;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
     @media (min-width: 760px) {
@@ -1093,9 +1112,24 @@
       th:nth-child(8),
       td:nth-child(8) { width: 8%; min-width: 0; }
 
-      .report-id,
+      /* LTR content in desktop table: left-align but keep in RTL cell */
+      .report-id {
+        direction: ltr;
+        unicode-bidi: isolate;
+        text-align: left;
+      }
+
       .page-cell {
-        text-align: right;
+        direction: ltr;
+        unicode-bidi: isolate;
+        text-align: left;
+        word-break: break-all;
+      }
+
+      .date-cell {
+        direction: ltr;
+        unicode-bidi: isolate;
+        text-align: left;
       }
 
       .report-id,
@@ -1110,6 +1144,7 @@
       .notes-cell,
       .extension-badge {
         overflow-wrap: anywhere;
+        direction: rtl;
       }
     }
   

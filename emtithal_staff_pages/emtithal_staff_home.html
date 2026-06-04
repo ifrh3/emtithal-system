@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/emtithal_components.css">
+  <link rel="stylesheet" href="assets/emtithal_components.css?v=20260604-staff-home">
   <style>
     :root {
       --pc-brand-50:#F3FCF6;
@@ -111,7 +111,7 @@
       align-items:center;
       justify-content:center;
       gap:8px;
-      min-height:40px;
+      min-height:44px;
       padding:8px 14px;
       border-radius:var(--radius-sm);
       border:1px solid transparent;
@@ -137,8 +137,8 @@
     }
     .btn-secondary:hover { background:var(--pc-neutral-50); }
     .btn-small {
-      min-height: 32px;
-      padding: 6px 12px;
+      min-height: 44px;
+      padding: 8px 12px;
       font-size: 12px;
     }
     /* .user-chip is handled by emtithal_components.css (.emtithal-user-chip) */
@@ -204,7 +204,7 @@
     .hero-title {
       font-size:clamp(42px,5.5vw,72px);
       line-height:1.14;
-      letter-spacing:-.035em;
+      letter-spacing:0;
       font-weight:700;
       max-width:760px;
     }
@@ -344,7 +344,7 @@
       font-size:clamp(24px,3vw,34px);
       line-height:1.35;
       font-weight:700;
-      letter-spacing:-.02em;
+      letter-spacing:0;
     }
     .section-desc {
       margin-top:8px;
@@ -640,7 +640,7 @@
     }
     .input {
       width:100%;
-      min-height:42px;
+      min-height:44px;
       padding:9px 42px 9px 12px;
       border:1px solid var(--pc-neutral-300);
       border-radius:var(--radius-sm);
@@ -660,7 +660,7 @@
       flex-wrap:wrap;
     }
     .chip {
-      min-height:34px;
+      min-height:44px;
       display:inline-flex;
       align-items:center;
       gap:7px;
@@ -1024,7 +1024,7 @@
     .hero-title {
       font-size:clamp(36px,5vw,60px);
       line-height:1.2;
-      letter-spacing:-.02em;
+      letter-spacing:0;
       max-width:780px;
     }
     .hero-title span,
@@ -1047,6 +1047,20 @@
 
     @media (max-width:860px) {
       .hero-inner { padding-block:56px; }
+    }
+
+    main:focus { outline:none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior:auto; }
+      *,
+      *::before,
+      *::after {
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
+      }
     }
 
   
@@ -1075,7 +1089,7 @@
 
   <div id="emtithal-header"></div>
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
     <section class="hero staff-hero" aria-labelledby="hero-title">
       <div class="container hero-inner">
         <div class="hero-content">
@@ -1099,7 +1113,7 @@
         </div>
 
         <div class="private-note" role="note">
-          <svg aria-hidden="true"><use href="imtithal-dashboard.html"/></svg>
+          <svg aria-hidden="true"><use href="#i-lock"/></svg>
           <span>تنبيه: هذه الصفحة مخصصة للعاملين على المشروع فقط، ولا تعرض سوى صفحة البلاغات وصفحة التحكم.</span>
         </div>
 
@@ -1140,7 +1154,7 @@
   </main>
   
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/emtithal_components.js"></script>
+<script src="assets/emtithal_components.js?v=20260604-staff-home"></script>
 <script>
   async function checkSession() {
     const db = window.db;
