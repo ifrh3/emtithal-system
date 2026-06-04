@@ -1331,7 +1331,17 @@
   <script src="assets/emtithal_components.js"></script>
   <script>
     // ── Supabase ──────────────────────────────────────────────
-    const db = window.db;
+    let db = window.db;
+    async function ensurePageDb() {
+      if (db) return db;
+      if (window.ensureEmtithalStaffDb) {
+        db = await window.ensureEmtithalStaffDb();
+      } else {
+        db = window.db;
+      }
+      if (!db) throw new Error('Supabase client is not initialized.');
+      return db;
+    }
   </script>
   <script>
     const icons = {
@@ -1373,6 +1383,14 @@
       if (session.expires_at && Date.now() / 1000 > session.expires_at) {
         localStorage.removeItem('sb_session');
         window.location.href = '../home/emtithal_public_home.html';
+        return;
+      }
+
+      try {
+        await ensurePageDb();
+      } catch (error) {
+        console.error('Reports database initialization failed:', error);
+        showToast('تعذّر الاتصال بقاعدة البيانات، حدّث الصفحة وحاول مرة ثانية.');
         return;
       }
 
@@ -1424,6 +1442,7 @@
 
     let selectedId = null;
     let toastTimer = null;
+    let lastFocusedElement = null;
 
     const $ = (selector) => document.querySelector(selector);
 
@@ -1544,18 +1563,24 @@
       $('#modal-page').textContent = item.page;
       $('#modal-notes').textContent = item.userNotes;
       $('#modal-status-select').value = item.status;
+      lastFocusedElement = document.activeElement;
       $('#complaint-modal').classList.add('open');
+      window.requestAnimationFrame(() => $('#modal-status-select')?.focus());
     }
 
     function closeModal() {
       $('#complaint-modal').classList.remove('open');
       selectedId = null;
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
     }
 
     async function saveStatus() {
       if (!selectedId) return;
 
       const newStatus = $('#modal-status-select').value;
+      await ensurePageDb();
 
       const { error } = await db
         .from('complaints')

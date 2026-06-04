@@ -7,8 +7,21 @@
 const SUPABASE_URL = 'https://wsexgnphxcuceyqquhzv.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzZXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA';
 
-if (window.supabase) {
+function ensureEmtithalStaffDb() {
+  if (window.db) return window.db;
+  if (!window.supabase?.createClient) {
+    throw new Error('Supabase SDK is not available.');
+  }
   window.db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  return window.db;
+}
+
+window.ensureEmtithalStaffDb = ensureEmtithalStaffDb;
+
+try {
+  ensureEmtithalStaffDb();
+} catch (error) {
+  console.warn('Supabase client initialization failed:', error.message);
 }
 
 // Global selector helper

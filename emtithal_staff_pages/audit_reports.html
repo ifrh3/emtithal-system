@@ -28,14 +28,17 @@
       --danger-100: #FECDCA;
       --danger-500: #D92D20;
       --danger-600: #B42318;
+      --danger-700: #912018;
 
       --warning-50: #FFFAEB;
       --warning-100: #FEF0C7;
       --warning-500: #F79009;
+      --warning-700: #B54708;
 
       --success-50: #F3FCF6;
       --success-100: #DCFAE6;
       --success-500: #12B76A;
+      --success-700: #14573A;
 
       --neutral-0: #FFFFFF;
       --neutral-25: #FCFCFD;
@@ -229,6 +232,17 @@
 
     .mono { font-family: 'Roboto Mono', monospace; }
 
+    .cell-value {
+      min-width: 0;
+    }
+
+    .ltr-cell {
+      direction: ltr;
+      unicode-bidi: isolate;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
     .empty-state {
       text-align: center;
       padding: 64px 20px;
@@ -246,6 +260,126 @@
       width: 48px;
       height: 48px;
       color: var(--neutral-300);
+    }
+
+    @media (max-width: 759px) {
+      .main-container {
+        gap: 28px;
+        padding-inline: 12px;
+        padding-top: 24px;
+      }
+
+      .filters-bar {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .search-box {
+        min-width: 0;
+      }
+
+      .filters-bar .btn {
+        width: 100%;
+      }
+
+      .card-table {
+        overflow: visible;
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .table-scroll {
+        overflow: visible;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      table {
+        min-width: 0;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: grid;
+        gap: 12px;
+      }
+
+      tbody tr.report-row {
+        display: grid;
+        padding: 14px;
+        border: 1px solid var(--neutral-200);
+        border-radius: 12px;
+        background: var(--neutral-0);
+        box-shadow: var(--shadow-sm);
+      }
+
+      tbody tr.report-row:hover {
+        background: var(--neutral-0);
+      }
+
+      tbody tr.report-row:focus-visible {
+        outline: 3px solid var(--brand-500);
+        outline-offset: 2px;
+      }
+
+      tbody tr.empty-state {
+        display: block;
+      }
+
+      tbody td {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 112px;
+        align-items: start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--neutral-100);
+        overflow-wrap: anywhere;
+        text-align: start;
+      }
+
+      tbody td:last-child {
+        border-bottom: 0;
+      }
+
+      tbody td::before {
+        content: attr(data-label);
+        grid-column: 2;
+        justify-self: end;
+        color: var(--neutral-500);
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      tbody td[colspan]::before {
+        content: none;
+      }
+
+      .cell-value {
+        grid-column: 1;
+      }
+
+      .modal-backdrop {
+        align-items: flex-end;
+        padding: 12px;
+      }
+
+      .modal {
+        max-height: calc(100vh - 24px);
+        border-radius: 14px;
+      }
     }
 
     /* Modals */
@@ -489,9 +623,9 @@
         <div class="filters-bar">
           <div class="search-box">
             <span class="icon-search" data-icon="search"></span>
-            <input type="text" id="searchInput" placeholder="ابحث بالرابط أو المعيار..." />
+            <input type="search" id="searchInput" placeholder="ابحث بالرابط أو المعيار..." aria-label="بحث في التقارير الآلية" />
           </div>
-          <button class="btn btn-secondary" onclick="loadReports()">
+          <button class="btn btn-secondary" id="refreshReportsBtn" type="button">
             <span data-icon="activity"></span> تحديث البيانات
           </button>
         </div>

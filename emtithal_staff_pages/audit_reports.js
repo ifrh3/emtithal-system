@@ -1,9 +1,20 @@
-const db = window.db;
+let db = window.db;
 let allReports = [];
 let selectedReport = null;
 let toastTimer = null;
 
 const $ = (selector) => document.querySelector(selector);
+
+async function ensurePageDb() {
+  if (db) return db;
+  if (window.ensureEmtithalStaffDb) {
+    db = await window.ensureEmtithalStaffDb();
+  } else {
+    db = window.db;
+  }
+  if (!db) throw new Error('Supabase client is not initialized.');
+  return db;
+}
 
 function getReportCriterionNumber(raw) {
   return String(raw?.number || raw?.criterionNumber || raw?.criterion || '').trim();
@@ -57,6 +68,14 @@ async function loadReports() {
   if (session.expires_at && Date.now() / 1000 > session.expires_at) {
     localStorage.removeItem('sb_session');
     window.location.href = '../home/emtithal_public_home.html';
+    return;
+  }
+
+  try {
+    await ensurePageDb();
+  } catch (error) {
+    console.error('Audit reports database initialization failed:', error);
+    showToast('تعذّر الاتصال بقاعدة البيانات، حدّث الصفحة وحاول مرة ثانية.');
     return;
   }
 
@@ -142,20 +161,25 @@ function renderTable() {
     return;
   }
 
-  tbody.innerHTML = filtered.map(item => `
-    <tr class="report-row" onclick="window.open('../home/report_page.html?id=${encodeURIComponent(String(item.id))}', '_blank')">
-      <td style="white-space: nowrap;"><span class="mono" dir="ltr">#${escapeHTML(String(item.id).split('-')[0])}</span></td>
-      <td><span class="mono" dir="ltr">${escapeHTML(item.url)}</span></td>
-      <td>${escapeHTML(item.apiName)}</td>
-      <td class="mono" style="white-space: nowrap;">${escapeHTML(item.date)}</td>
-      <td>
-        <div style="font-weight:600">معيار ${escapeHTML(item.criterionNum)}</div>
-        <div style="font-size:12px;color:var(--neutral-500)">${escapeHTML(item.criterionName)}</div>
+  tbody.innerHTML = filtered.map(item => {
+    const reportUrl = `../home/report_page.html?id=${encodeURIComponent(String(item.id))}`;
+    return `
+    <tr class="report-row" tabindex="0" role="button" data-report-url="${escapeHTML(reportUrl)}" aria-label="فتح تقرير ${escapeHTML(String(item.id).split('-')[0])}">
+      <td data-label="رقم التقرير"><div class="cell-value ltr-cell"><span class="mono">#${escapeHTML(String(item.id).split('-')[0])}</span></div></td>
+      <td data-label="رابط المنصة"><div class="cell-value ltr-cell"><span class="mono">${escapeHTML(item.url)}</span></div></td>
+      <td data-label="مفتاح الجهة"><div class="cell-value">${escapeHTML(item.apiName)}</div></td>
+      <td data-label="تاريخ الفحص"><div class="cell-value ltr-cell mono">${escapeHTML(item.date)}</div></td>
+      <td data-label="المعيار">
+        <div class="cell-value">
+          <div style="font-weight:600">معيار ${escapeHTML(item.criterionNum)}</div>
+          <div style="font-size:12px;color:var(--neutral-500)">${escapeHTML(item.criterionName)}</div>
+        </div>
       </td>
-      <td><span class="score-badge ${getScoreClass(item.score)}">${escapeHTML(item.score)}%</span></td>
-      <td>${getStatusBadge(item.status)}</td>
+      <td data-label="نسبة الامتثال"><div class="cell-value"><span class="score-badge ${getScoreClass(item.score)}">${escapeHTML(item.score)}%</span></div></td>
+      <td data-label="الحالة"><div class="cell-value">${getStatusBadge(item.status)}</div></td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
   
   paintIcons(tbody);
 }
@@ -235,7 +259,31 @@ document.addEventListener('click', (e) => {
   }
 });
 
+function openReportFromRow(row) {
+  const url = row?.getAttribute('data-report-url');
+  if (url) window.open(url, '_blank');
+}
+
+document.addEventListener('click', (event) => {
+  const row = event.target.closest('[data-report-url]');
+  if (row) openReportFromRow(row);
+});
+
+document.addEventListener('keydown', (event) => {
+  const row = event.target.closest('[data-report-url]');
+  if (row && (event.key === 'Enter' || event.key === ' ')) {
+    event.preventDefault();
+    openReportFromRow(row);
+    return;
+  }
+
+  if (event.key === 'Escape') {
+    $('#report-modal')?.classList.remove('open');
+  }
+});
+
 $('#searchInput').addEventListener('input', renderTable);
+$('#refreshReportsBtn')?.addEventListener('click', loadReports);
 
 function showToast(message) {
   const toast = $('#toast');

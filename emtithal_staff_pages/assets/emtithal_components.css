@@ -189,6 +189,12 @@ body {
   flex: 0 0 auto;
 }
 
+.emtithal-user-chip span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .emtithal-user-select-wrap {
   display: flex;
   align-items: center;
@@ -404,7 +410,7 @@ body {
     position: static;
     transform: none;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(156px, 1fr));
     align-items: stretch;
     gap: 8px;
   }
@@ -444,6 +450,7 @@ body {
 
   .emtithal-nav-inner {
     min-height: 64px;
+    gap: 8px;
   }
 
   .emtithal-brand-logo {
@@ -468,6 +475,7 @@ body {
     min-height: 44px;
     padding-inline: 10px;
     font-size: 12px;
+    max-width: 132px;
   }
 
   .emtithal-container {
@@ -481,6 +489,21 @@ body {
   .emtithal-footer-bottom {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .emtithal-brand-logo {
+    max-width: 128px;
+  }
+
+  .emtithal-nav-actions .emtithal-user-chip {
+    max-width: 44px;
+    padding-inline: 8px;
+  }
+
+  .emtithal-nav-actions .emtithal-user-chip span {
+    display: none;
   }
 }
 

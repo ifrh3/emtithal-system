@@ -301,6 +301,176 @@
 
     .no-permission { font-size: 12px; color: var(--neutral-400); }
 
+    .cell-value {
+      min-width: 0;
+    }
+
+    .ltr-cell {
+      direction: ltr;
+      unicode-bidi: isolate;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 759px) {
+      .main-container {
+        gap: 32px;
+        padding-inline: 12px;
+        padding-top: 24px;
+      }
+
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        min-width: 0;
+        border-radius: 12px;
+      }
+
+      .section-title-row {
+        align-items: stretch;
+      }
+
+      .section-title-row .btn {
+        width: 100%;
+        min-height: 44px;
+      }
+
+      .card-table {
+        overflow: visible;
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .table-scroll {
+        overflow: visible;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      table {
+        min-width: 0;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: grid;
+        gap: 12px;
+      }
+
+      tbody tr {
+        display: grid;
+        padding: 14px;
+        border: 1px solid var(--neutral-200);
+        border-radius: 12px;
+        background: var(--neutral-0);
+        box-shadow: var(--shadow-sm);
+      }
+
+      tbody tr.empty-row {
+        padding: 0;
+      }
+
+      td {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 112px;
+        align-items: start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--neutral-100);
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: start;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 1px solid var(--neutral-100);
+      }
+
+      td:last-child {
+        border-bottom: 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        grid-column: 2;
+        justify-self: end;
+        color: var(--neutral-500);
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      td[colspan]::before {
+        content: none;
+      }
+
+      .cell-value {
+        grid-column: 1;
+      }
+
+      .employee-cell {
+        align-items: flex-start;
+      }
+
+      .key-box {
+        max-width: 100%;
+        padding: 8px 10px;
+      }
+
+      .key-inner {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .key-inner code {
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+
+      .usage-cell {
+        min-width: 0;
+      }
+
+      .actions-cell {
+        text-align: initial;
+      }
+
+      .actions-wrap {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .btn-icon-only,
+      .inline-icon-btn {
+        min-width: 44px;
+        min-height: 44px;
+      }
+
+      .modal-backdrop {
+        align-items: flex-end;
+        padding: 12px;
+      }
+
+      .modal {
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+        border-radius: 14px;
+      }
+    }
+
     /* ─── Modals ─── */
     .modal-backdrop {
       position: fixed;
@@ -680,7 +850,7 @@
     };
 
     /* ─── Supabase ─── */
-    const db = window.db;
+    let db = window.db;
 
     /* ─── State ─── */
     let staff        = [];
@@ -690,6 +860,18 @@
     let visibleKeys  = {};
     let copiedKey    = null;
     let pendingDeleteEmployeeId = null;
+    let lastFocusedElement = null;
+
+    async function ensurePageDb() {
+      if (db) return db;
+      if (window.ensureEmtithalStaffDb) {
+        db = await window.ensureEmtithalStaffDb();
+      } else {
+        db = window.db;
+      }
+      if (!db) throw new Error('Supabase client is not initialized.');
+      return db;
+    }
 
     async function loadDashboard() {
       // قراءة الجلسة من localStorage
@@ -712,6 +894,14 @@
       if (session.expires_at && Date.now() / 1000 > session.expires_at) {
         localStorage.removeItem('sb_session');
         window.location.href = '../home/emtithal_public_home.html';
+        return;
+      }
+
+      try {
+        await ensurePageDb();
+      } catch (error) {
+        console.error('Dashboard database initialization failed:', error);
+        alert('تعذر الاتصال بقاعدة البيانات. الرجاء تحديث الصفحة والمحاولة مرة أخرى.');
         return;
       }
 
@@ -885,16 +1075,18 @@
 
         return `
           <tr>
-            <td>
+            <td data-label="الاسم">
+              <div class="cell-value">
                 <div class="employee-cell">
-                <div class="avatar">${escapeHTML(String(emp.name || '').charAt(0))}</div>
-                <div class="employee-name">${escapeHTML(emp.name)}</div>
+                  <div class="avatar">${escapeHTML(String(emp.name || '').charAt(0))}</div>
+                  <div class="employee-name">${escapeHTML(emp.name)}</div>
+                </div>
               </div>
             </td>
-            <td class="email-cell">${escapeHTML(emp.email)}</td>
-            <td>${badge(emp.role)}</td>
-            <td class="actions-cell">
-              <div class="actions-wrap">
+            <td class="email-cell" data-label="البريد الإلكتروني"><div class="cell-value ltr-cell">${escapeHTML(emp.email)}</div></td>
+            <td data-label="الصلاحية"><div class="cell-value">${badge(emp.role)}</div></td>
+            <td class="actions-cell" data-label="إجراءات">
+              <div class="cell-value actions-wrap">
                 ${canAct ? actions.join("") : '<span class="no-permission">لا توجد صلاحية</span>'}
               </div>
             </td>
@@ -932,36 +1124,40 @@
 
         return `
           <tr>
-            <td><div class="system-name">${escapeHTML(ext.name)}</div></td>
-            <td class="key-cell">
-              <div class="key-box">
-                <div class="key-inner">
-                  <code>${escapeHTML(maskKey(ext.key, ext.id))}</code>
-                  <div class="icon-actions">
-                    <button class="inline-icon-btn" type="button"
-                       data-toggle-key="${escapeAttr(ext.id)}" aria-label="إظهار أو إخفاء المفتاح">
-                      ${icon(visibleKeys[ext.id] ? "eye-off" : "eye")}
-                    </button>
-                    <button class="inline-icon-btn ${copiedKey === ext.id ? "copied" : ""}" type="button"
-                       data-copy-key="${escapeAttr(ext.id)}" aria-label="نسخ المفتاح">
-                      ${icon(copiedKey === ext.id ? "check" : "copy")}
-                    </button>
+            <td data-label="اسم النظام"><div class="cell-value system-name">${escapeHTML(ext.name)}</div></td>
+            <td class="key-cell" data-label="المفتاح السري">
+              <div class="cell-value">
+                <div class="key-box">
+                  <div class="key-inner">
+                    <code>${escapeHTML(maskKey(ext.key, ext.id))}</code>
+                    <div class="icon-actions">
+                      <button class="inline-icon-btn" type="button"
+                         data-toggle-key="${escapeAttr(ext.id)}" aria-label="إظهار أو إخفاء المفتاح">
+                        ${icon(visibleKeys[ext.id] ? "eye-off" : "eye")}
+                      </button>
+                      <button class="inline-icon-btn ${copiedKey === ext.id ? "copied" : ""}" type="button"
+                         data-copy-key="${escapeAttr(ext.id)}" aria-label="نسخ المفتاح">
+                        ${icon(copiedKey === ext.id ? "check" : "copy")}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </td>
-            <td class="usage-cell">
-              <div class="usage-meta">
-                <span>${fmtNum(ext.requests)}</span>
-                <span class="usage-quota">من ${fmtNum(ext.quota)}</span>
-              </div>
-              <div class="progress">
-                <span class="${pct > 85 ? "warning" : ""}" style="width:${pct}%"></span>
+            <td class="usage-cell" data-label="الاستخدام الشهري">
+              <div class="cell-value">
+                <div class="usage-meta">
+                  <span>${fmtNum(ext.requests)}</span>
+                  <span class="usage-quota">من ${fmtNum(ext.quota)}</span>
+                </div>
+                <div class="progress">
+                  <span class="${pct > 85 ? "warning" : ""}" style="width:${pct}%"></span>
+                </div>
               </div>
             </td>
-            <td>${badge(ext.status)}</td>
-            <td class="actions-cell">
-              <div class="actions-wrap">${actions.join("")}</div>
+            <td data-label="الحالة"><div class="cell-value">${badge(ext.status)}</div></td>
+            <td class="actions-cell" data-label="إجراءات">
+              <div class="cell-value actions-wrap">${actions.join("")}</div>
             </td>
           </tr>`;
       }).join("");
@@ -971,7 +1167,7 @@
       const tb = document.getElementById("activity-logs-table");
       if (!tb) return;
       if (!activityLogs.length) {
-        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--neutral-500)">لا توجد أنشطة مسجلة حتى الآن</td></tr>`;
+        tb.innerHTML = `<tr class="empty-row"><td colspan="5" style="text-align:center; padding:30px; color:var(--neutral-500)">لا توجد أنشطة مسجلة حتى الآن</td></tr>`;
         return;
       }
 
@@ -989,11 +1185,11 @@
         if (emp) userName = emp.name;
 
         return `<tr>
-          <td style="direction: ltr; text-align: right; font-size: 13px; color: var(--neutral-600);">${escapeHTML(dateStr)}</td>
-          <td><div style="font-size:13px; font-weight:600;">${escapeHTML(userName)}</div><div style="font-size:10px; color:var(--neutral-400);">${log.user_id ? escapeHTML(String(log.user_id).split('-')[0]+'...') : 'N/A'}</div></td>
-          <td>${actionBadge}</td>
-          <td><code>${escapeHTML(log.table_name)}</code></td>
-          <td style="font-size:12px; color:var(--neutral-500);">${escapeHTML(log.record_id || '-')}</td>
+          <td data-label="التاريخ والوقت"><div class="cell-value ltr-cell" style="font-size: 13px; color: var(--neutral-600);">${escapeHTML(dateStr)}</div></td>
+          <td data-label="المستخدم"><div class="cell-value"><div style="font-size:13px; font-weight:600;">${escapeHTML(userName)}</div><div style="font-size:10px; color:var(--neutral-400);">${log.user_id ? escapeHTML(String(log.user_id).split('-')[0]+'...') : 'N/A'}</div></div></td>
+          <td data-label="الإجراء"><div class="cell-value">${actionBadge}</div></td>
+          <td data-label="الجدول"><div class="cell-value"><code>${escapeHTML(log.table_name)}</code></div></td>
+          <td data-label="معرف السجل"><div class="cell-value ltr-cell" style="font-size:12px; color:var(--neutral-500);">${escapeHTML(log.record_id || '-')}</div></td>
         </tr>`;
       }).join("");
     }
@@ -1008,8 +1204,23 @@
     }
 
     /* ─── Modal helpers ─── */
-    function openModal(id)  { const m = document.getElementById(id); if (m) m.classList.add("open"); }
-    function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove("open"); }
+    function openModal(id)  {
+      const m = document.getElementById(id);
+      if (!m) return;
+      lastFocusedElement = document.activeElement;
+      m.classList.add("open");
+      const focusTarget = m.querySelector('input, select, button, [tabindex]:not([tabindex="-1"])');
+      window.requestAnimationFrame(() => focusTarget?.focus());
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (!m) return;
+      m.classList.remove("open");
+      if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+        lastFocusedElement.focus();
+      }
+    }
 
     /* ─── Key utils ─── */
     function randomKeyPart(len = 24) {
@@ -1193,9 +1404,10 @@
       const submitBtn = e.target.querySelector("button[type=submit]");
       submitBtn.disabled = true;
       submitBtn.textContent = "جاري الإضافة...";
+      await ensurePageDb();
 
       // إنشاء حساب Auth باستخدام عميل Supabase فرعي لتجنب تسجيل خروج الآدمن الحالي
-      const signUpClient = supabase.createClient(
+      const signUpClient = window.supabase.createClient(
         'https://wsexgnphxcuceyqquhzv.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzZXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA',
         {
