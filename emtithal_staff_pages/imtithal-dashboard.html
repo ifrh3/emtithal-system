@@ -384,7 +384,7 @@
 
       td {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 112px;
+        grid-template-columns: 112px minmax(0, 1fr);
         align-items: start;
         gap: 10px;
         padding: 10px 0;
@@ -404,8 +404,8 @@
 
       td::before {
         content: attr(data-label);
-        grid-column: 2;
-        justify-self: end;
+        grid-column: 1;
+        justify-self: start;
         color: var(--neutral-500);
         font-size: 12px;
         line-height: 20px;
@@ -418,7 +418,7 @@
       }
 
       .cell-value {
-        grid-column: 1;
+        grid-column: 2;
       }
 
       .employee-cell {
@@ -1347,8 +1347,7 @@
         paintIcons();
         return;
       }
-
-      /* confirm delete employee */
+      /* confirm delete employee */
       if (e.target.id === "confirm-delete-employee-btn" || e.target.closest("#confirm-delete-employee-btn")) {
         if (pendingDeleteEmployeeId !== null) {
           const { error } = await db.from("profiles").delete().eq("id", pendingDeleteEmployeeId);
@@ -1365,14 +1364,6 @@
         return;
       }
 
-      /* sign out button */
-      if (e.target.id === "sign-out-btn" || e.target.closest("#sign-out-btn")) {
-        localStorage.removeItem('sb_session');
-        await db.auth.signOut();
-        window.location.href = '../home/emtithal_public_home.html';
-        return;
-      }
-      
       /* clear logs button */
       if (e.target.id === "clear-logs-btn" || e.target.closest("#clear-logs-btn")) {
         if (!confirm("هل أنت متأكد من مسح جميع سجلات الأنشطة بالكامل؟ هذا الإجراء لا يمكن التراجع عنه.")) return;

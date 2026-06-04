@@ -970,7 +970,7 @@
 
     td {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 104px;
+      grid-template-columns: 104px minmax(0, 1fr);
       gap: 10px;
       padding: 10px 0;
       border-bottom: 1px solid var(--neutral-100);
@@ -985,8 +985,8 @@
 
     td::before {
       content: attr(data-label);
-      grid-column: 2;
-      justify-self: end;
+      grid-column: 1;
+      justify-self: start;
       color: var(--neutral-500);
       font-size: 12px;
       line-height: 20px;
