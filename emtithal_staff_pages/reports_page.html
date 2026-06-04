@@ -1431,7 +1431,7 @@
         category:  row.category   || '—',
         standard:  row.standard || '',
         page:      row.url || '',
-        date:      row.created_at ? row.created_at.slice(0, 10) : '—',
+        date:      row.created_at ? new Date(row.created_at).toLocaleDateString('en-GB') : '—',
         extension: row.extension || '',
         userNotes: row.violation || '',
         status:    row.status || 'جديد'
