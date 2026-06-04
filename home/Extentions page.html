@@ -994,7 +994,7 @@ let EXTENSIONS = [];
       const extId = Number(ext.id);
       const extNum = Number(ext.num);
       const refUrl = safeExternalUrl(ext.link);
-      const canDownload = [4, 11].includes(extNum); // Only enabled for extensions that have ZIP files
+      const canDownload = [3, 5, 6, 10, 20, 21, 23].includes(extNum); // Only enabled for extensions that have ZIP files
       // The normal renderer now handles both 4 and 11
 
       return `
