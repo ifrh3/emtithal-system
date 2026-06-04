@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-public-pages">
+  <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-supabase-cache">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="assets/emtithal_public_components.js?v=20260604-public-pages" defer></script>
+  <script src="assets/emtithal_public_components.js?v=20260604-supabase-cache" defer></script>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -785,10 +785,54 @@ let EXTENSIONS = [];
 (function () {
   'use strict';
 
+  const EXTENSIONS_SUPABASE_URL = 'https://wsexgnphxcuceyqquhzv.supabase.co';
+  const EXTENSIONS_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXhnbnBoeGN1Y2V5cXF1aHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTU3NTMsImV4cCI6MjA5NDc5MTc1M30.0u9VgV4sPMs-PSdsBkc0cgW4yc-9wTXQkbbaKmfJ3QA';
+  const EXTENSIONS_SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function loadExtensionsSupabaseSdk() {
+    if (window.supabase?.createClient) return Promise.resolve(window.supabase);
+    if (window.__emtithalSupabaseLoad) return window.__emtithalSupabaseLoad;
+
+    window.__emtithalSupabaseLoad = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = EXTENSIONS_SUPABASE_CDN;
+      script.async = true;
+      script.onload = () => window.supabase?.createClient ? resolve(window.supabase) : reject(new Error('Supabase SDK loaded without createClient.'));
+      script.onerror = () => reject(new Error('Supabase SDK failed to load.'));
+      document.head.appendChild(script);
+    });
+
+    return window.__emtithalSupabaseLoad;
+  }
+
+  async function ensureExtensionsDb() {
+    if (window.db) return window.db;
+
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (window.ensureEmtithalSupabaseClient) return window.ensureEmtithalSupabaseClient();
+      if (window.db) return window.db;
+      if (window.supabase?.createClient) {
+        window.db = window.supabase.createClient(EXTENSIONS_SUPABASE_URL, EXTENSIONS_SUPABASE_ANON);
+        return window.db;
+      }
+      await wait(100);
+    }
+
+    await loadExtensionsSupabaseSdk();
+    if (!window.supabase?.createClient) throw new Error('Supabase client library is unavailable.');
+    window.db = window.supabase.createClient(EXTENSIONS_SUPABASE_URL, EXTENSIONS_SUPABASE_ANON);
+    return window.db;
+  }
+
         // Call increment_extension_download RPC
         window.incrementDownload = async function(id, url) {
           try {
-            await window.db.rpc('increment_extension_download', { p_id: id });
+            const db = await ensureExtensionsDb();
+            await db.rpc('increment_extension_download', { p_id: id });
             
             // Increment UI instantly
             const span = document.getElementById('dl-count-' + id);
@@ -1089,15 +1133,11 @@ let EXTENSIONS = [];
 
   // Fetch Extensions from Supabase DB
   async function init() {
-    if (window.ensureEmtithalSupabaseClient) {
-      try {
-        await window.ensureEmtithalSupabaseClient();
-      } catch (error) {
-        console.warn('Supabase initialization failed:', error.message);
-      }
-    }
-    if (!window.db) {
-      console.error('Supabase client not initialized');
+    let db;
+    try {
+      db = await ensureExtensionsDb();
+    } catch (error) {
+      console.error('Supabase client not initialized:', error);
       emptyState.innerHTML = '<p style="color:var(--pc-danger-500);text-align:center;">خطأ في الاتصال بقاعدة البيانات. الرجاء التأكد من ملفات الإعدادات.</p>';
       emptyState.classList.remove('hidden');
       return;
@@ -1107,7 +1147,7 @@ let EXTENSIONS = [];
       // Show loading
       grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--pc-neutral-500);">جاري تحميل الإضافات من قاعدة البيانات...</div>';
       
-      const { data, error } = await window.db.from('extensions').select('*').order('num', { ascending: true });
+      const { data, error } = await db.from('extensions').select('*').order('num', { ascending: true });
       
       if (error) throw error;
       
@@ -1138,7 +1178,7 @@ let EXTENSIONS = [];
     }
   }
 
-  setTimeout(init, 100); // Allow Supabase to init first
+  init();
 
 })();
   </script>
