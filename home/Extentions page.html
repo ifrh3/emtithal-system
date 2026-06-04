@@ -852,6 +852,9 @@ let EXTENSIONS = [];
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
+
+          // Open guide image in a new tab
+          window.open('assets/extension-guide.png', '_blank');
         };
         
         let activeFilter = 'all';
@@ -991,7 +994,7 @@ let EXTENSIONS = [];
       const extId = Number(ext.id);
       const extNum = Number(ext.num);
       const refUrl = safeExternalUrl(ext.link);
-      const canDownload = false; // Disabled for Chrome Web Store release
+      const canDownload = true; // Enabled download
       // The normal renderer now handles both 4 and 11
 
       return `
