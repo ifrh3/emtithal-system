@@ -76,8 +76,20 @@ body {
 
 a { color: inherit; }
 button, input { font: inherit; }
-.container { width: min(100% - 48px, 1280px); margin-inline: auto; }
+.container { width: min(100% - 40px, 1280px); margin-inline: auto; }
 .hidden { display: none !important; }
+.visually-hidden {
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0 0 0 0) !important;
+  clip-path:inset(50%) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
 
 body {
   display: flex;
@@ -88,25 +100,55 @@ body {
   margin-top: auto;
 }
 
+.page-intro {
+  background:var(--pc-neutral-25);
+  padding-block:28px 18px;
+}
+.page-intro-inner {
+  display:grid;
+  gap:8px;
+}
+.page-kicker {
+  color:var(--pc-brand-700);
+  font-size:14px;
+  line-height:22px;
+  font-weight:700;
+}
+.page-title {
+  max-width:840px;
+  color:var(--pc-neutral-950);
+  font-size:clamp(28px, 7vw, 44px);
+  line-height:1.35;
+  font-weight:700;
+  letter-spacing:0;
+}
+.page-desc {
+  max-width:760px;
+  color:var(--pc-neutral-600);
+  font-size:15px;
+  line-height:28px;
+}
+
 .controls-bar {
   background: rgba(255,255,255,.96);
   border-bottom: 1px solid var(--pc-neutral-200);
-  padding-block: 16px;
-  position: sticky;
-  top: 72px;
+  border-top: 1px solid var(--pc-neutral-100);
+  padding-block: 14px 16px;
+  position: static;
+  top: auto;
   z-index: 90;
   backdrop-filter: blur(10px);
 }
 .controls-inner {
-  display:flex;
-  align-items:center;
-  gap:16px;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:1fr;
+  align-items:stretch;
+  gap:12px;
 }
 .search-wrap {
   position:relative;
-  flex:1 1 320px;
-  min-width:260px;
+  width:100%;
+  min-width:0;
 }
 .search-icon {
   position:absolute;
@@ -152,11 +194,19 @@ body {
 }
 .search-clear:hover { background:var(--pc-neutral-100); color:var(--pc-neutral-900); }
 
-.filter-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.filter-group {
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(132px, 1fr));
+  align-items:stretch;
+  gap:8px;
+}
 .filter-btn {
+  width:100%;
   min-height:48px; /* HCI Touch Target minimum */
   display:inline-flex;
   align-items:center;
+  justify-content:center;
   gap:7px;
   padding:7px 16px;
   border:1px solid var(--pc-neutral-300);
@@ -201,7 +251,8 @@ body {
   border-radius:var(--radius-sm);
   overflow:hidden;
   background:var(--pc-neutral-0);
-  margin-right:auto;
+  justify-self:start;
+  margin-right:0;
   height:48px; /* HCI Touch Target minimum */
 }
 .view-btn {
@@ -224,15 +275,15 @@ body {
   color:var(--pc-neutral-600);
   font-size:14px;
   line-height:20px;
-  padding:20px 0 12px;
+  padding:18px 0 12px;
 }
 .results-info strong { color:var(--pc-neutral-950); font-weight:700; }
 
 .cards-grid {
   display:grid;
   grid-template-columns: 1fr; /* Mobile First Base */
-  gap:16px;
-  padding-bottom:72px;
+  gap:18px;
+  padding-bottom:88px;
 }
 .cards-grid.list-view { grid-template-columns:1fr; }
 .ext-card {
@@ -244,7 +295,7 @@ body {
   background:var(--pc-neutral-0);
   border:1px solid var(--pc-neutral-300);
   border-radius:var(--radius-md);
-  padding:16px;
+  padding:18px;
   box-shadow:var(--shadow-sm);
   overflow:hidden;
   transition:transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
@@ -267,7 +318,13 @@ body {
 .ext-card:focus-visible { outline:none; box-shadow:var(--ring-focus), var(--shadow-sm); }
 @keyframes fadeUp { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
 
-.card-header { display:flex; align-items:flex-start; gap:12px; min-width:0; }
+.card-header {
+  display:grid;
+  grid-template-columns:44px minmax(0, 1fr);
+  align-items:flex-start;
+  gap:10px 12px;
+  min-width:0;
+}
 .card-icon-wrap {
   width:44px;
   height:44px;
@@ -284,14 +341,20 @@ body {
 .icon-purple { background:var(--cat-components); color:var(--cat-components-fg); }
 .icon-amber { background:var(--pc-warning-50); color:var(--pc-warning-700); }
 .card-meta { flex:1; min-width:0; }
+.card-header > .cat-badge {
+  grid-column:2;
+  justify-self:start;
+  order:0;
+}
 .card-num { color:var(--pc-neutral-500); font-size:12px; line-height:18px; margin-bottom:2px; }
-.card-title { color:var(--pc-neutral-950); font-size:16px; line-height:24px; font-weight:700; }
+.card-title { color:var(--pc-neutral-950); font-size:16px; line-height:24px; font-weight:700; overflow-wrap:anywhere; }
 .card-desc-inline { display:none; color:var(--pc-neutral-600); font-size:13px; line-height:20px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .card-body { flex:1; }
 .card-desc {
   color:var(--pc-neutral-600);
   font-size:14px;
   line-height:24px;
+  overflow-wrap:anywhere;
   display:-webkit-box;
   -webkit-line-clamp:3;
   -webkit-box-orient:vertical;
@@ -525,14 +588,18 @@ body {
 .footer-link:hover { text-decoration:underline; }
 
 /* Mobile-First Base Overrides (Applied globally by default) */
-.container, .nav-inner { width:min(100% - 32px, 1280px); }
+.container, .nav-inner { width:min(100% - 40px, 1280px); }
 .nav-inner { min-height:64px; }
-.controls-bar { top:64px; }
+.controls-bar { top:auto; }
 .controls-inner { align-items:stretch; gap:12px; }
-.search-wrap { min-width:100%; flex-basis:100%; }
-.filter-group { width:100%; overflow-x:auto; flex-wrap:nowrap; padding-bottom:2px; scrollbar-width:thin; }
-.filter-btn { flex-shrink:0; }
-.view-toggle { margin-right:0; align-self:flex-end; }
+.search-wrap { min-width:0; flex-basis:auto; }
+.filter-group {
+  width:100%;
+  overflow:visible;
+  grid-template-columns:repeat(auto-fit, minmax(132px, 1fr));
+}
+.filter-btn { min-width:0; }
+.view-toggle { margin-right:0; align-self:auto; }
 .cards-grid.list-view .ext-card { flex-direction:column; align-items:stretch; }
 .cards-grid.list-view .card-footer { justify-content:space-between; flex-wrap:wrap; }
 .modal-box { padding:24px; }
@@ -541,12 +608,13 @@ body {
 .footer-inner { align-items:flex-start; flex-direction:column; }
 .card-header { align-items:flex-start; }
 .card-footer { flex-wrap:wrap; }
-.cat-badge { order:-1; }
+.cat-badge { order:0; }
 
 /* Desktop Breakpoints */
 @media (min-width: 520px) {
   .footer-inner { align-items:center; flex-direction:row; }
-  .card-header { align-items:flex-start; }
+  .card-header { display:flex; align-items:flex-start; }
+  .card-header > .cat-badge { grid-column:auto; }
   .card-footer { flex-wrap:nowrap; }
   .cat-badge { order:0; }
 }
@@ -554,11 +622,19 @@ body {
 @media (min-width: 768px) {
   .container, .nav-inner { width:min(100% - 48px, 1280px); }
   .nav-inner { min-height:72px; }
-  .controls-bar { top:72px; }
-  .controls-inner { align-items:center; gap:16px; }
-  .search-wrap { min-width:260px; flex-basis:auto; }
-  .filter-group { width:auto; overflow-x:visible; flex-wrap:wrap; padding-bottom:0; }
-  .view-toggle { margin-right:auto; align-self:auto; }
+  .page-intro { padding-block:40px 24px; }
+  .controls-bar { position:sticky; top:72px; padding-block:16px; }
+  .controls-inner { display:flex; align-items:center; gap:16px; }
+  .search-wrap { flex:1 1 320px; min-width:260px; width:auto; }
+  .filter-group {
+    width:auto;
+    display:flex;
+    overflow-x:visible;
+    flex-wrap:wrap;
+    padding-bottom:0;
+  }
+  .filter-btn { width:auto; }
+  .view-toggle { margin-right:auto; justify-self:auto; align-self:auto; }
   .cards-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
   .cards-grid.list-view .ext-card { flex-direction:row; align-items:center; }
   .modal-box { padding:32px; }
@@ -621,16 +697,31 @@ body {
     bottom: 32px;
   }
 }
+
+@media (max-width: 639px) {
+  .scroll-fab {
+    display:none;
+  }
+}
   </style>
 </head>
 <body>
   <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
   <div id="emtithal-header"></div>
 
+  <main id="main-content" tabindex="-1">
+    <section class="page-intro" aria-labelledby="extensionsPageTitle">
+      <div class="container page-intro-inner">
+        <span class="page-kicker">مكتبة الإضافات</span>
+        <h1 class="page-title" id="extensionsPageTitle">إضافات امتثال لمعايير كود المنصات</h1>
+        <p class="page-desc">ابحث عن معيار محدد أو صف الفئات بسرعة للوصول إلى الإضافة المناسبة ومراجعة مرجعها الرسمي.</p>
+      </div>
+    </section>
+
   <div class="controls-bar" role="region" aria-label="أدوات البحث والتصفية">
     <div class="container controls-inner">
       <div class="search-wrap">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg class="search-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <label class="visually-hidden" for="searchInput">ابحث عن معيار</label>
         <input type="search" id="searchInput" class="search-input" placeholder="ابحث عن معيار..." autocomplete="off" aria-describedby="resultsInfo" />
         <button class="search-clear hidden" id="clearSearch" type="button" aria-label="مسح البحث">
@@ -648,7 +739,7 @@ body {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </button>
         <button class="view-btn" id="viewList" type="button" title="قائمة" aria-label="عرض كقائمة" aria-pressed="false">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </button>
       </div>
     </div>
@@ -658,23 +749,24 @@ body {
     <div class="results-info" id="resultsInfo" role="status" aria-live="polite" aria-atomic="true">عرض <strong id="resultsCount">36</strong> معيار</div>
   </div>
 
-  <main id="main-content" class="container" tabindex="-1">
-    <h1 class="visually-hidden">إضافات امتثال لمعايير كود المنصات</h1>
+  <section class="container extensions-results" aria-labelledby="extensionsResultsTitle">
+    <h2 class="visually-hidden" id="extensionsResultsTitle">نتائج الإضافات</h2>
     <div class="cards-grid" id="cardsGrid"></div>
     <div class="empty-state hidden" id="emptyState">
       <div class="empty-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
       <p class="empty-title">لا توجد نتائج</p>
       <p class="empty-sub">جرّب كلمة بحث مختلفة أو اختر فئة أخرى</p>
       <button class="btn-reset" type="button" onclick="resetAll()">إعادة تعيين</button>
     </div>
+  </section>
   </main>  
   
   <div id="emtithal-footer"></div>
 
   <button aria-label="التمرير إلى الأسفل" class="scroll-fab" id="extScrollFab" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" id="extScrollFabIcon">
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" id="extScrollFabIcon">
       <path d="M12 19V5M5 12l7 7 7-7" id="extScrollFabPath"></path>
     </svg>
   </button>
@@ -877,7 +969,7 @@ let EXTENSIONS = [];
           <div class="card-footer">
             <span class="cat-badge-list ${cfg.badgeClass}">${cfg.label}</span>
             ${refUrl
-              ? `<a class="card-ext-badge" href="${escapeAttr(refUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="عرض المعيار">
+              ? `<a class="card-ext-badge" href="${escapeAttr(refUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="عرض المعيار" aria-label="عرض معيار ${escapeAttr(ext.num)}: ${escapeAttr(ext.title)}">
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> عرض المعيار
                   </a>`
               : `<span class="card-no-link">—</span>`

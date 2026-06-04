@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-public-pages">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/emtithal_public_components.js?v=20260604-report-menu-fixed" defer></script>
+<script src="assets/emtithal_public_components.js?v=20260604-public-pages" defer></script>
 <style>
 /* =====================================================================
    DESIGN TOKENS — Platforms Code (PC) 1.0
@@ -90,6 +90,7 @@ main:focus{outline:none;}
 
 /* ===== Layout ===== */
 .page{max-width:1440px;margin:0 auto;}
+.container{width:min(100% - 40px,1280px);margin-inline:auto;}
 .pad-x{padding-inline:32px;}
 .col{display:flex;flex-direction:column;gap:12px;}
 .row{display:flex;align-items:center;gap:12px;}
@@ -145,8 +146,8 @@ main:focus{outline:none;}
 
 /* ===== Hero ===== */
 .hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);border:1px solid var(--pc-border-subtle);border-radius:var(--pc-radius-md);background:var(--pc-surface-raised);box-shadow:var(--pc-shadow-sm);overflow:hidden;}
-.hero-l{padding:28px 32px;display:flex;flex-direction:column;gap:20px;justify-content:space-between;}
-.hero-r{padding:28px 32px;background:var(--pc-surface-raised);border-inline-start:1px solid var(--pc-border-subtle);display:flex;flex-direction:column;justify-content:center;gap:22px;}
+.hero-l{min-width:0;max-width:100%;padding:28px 32px;display:flex;flex-direction:column;gap:20px;justify-content:space-between;}
+.hero-r{min-width:0;max-width:100%;padding:28px 32px;background:var(--pc-surface-raised);border-inline-start:1px solid var(--pc-border-subtle);display:flex;flex-direction:column;justify-content:center;gap:22px;}
 .result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
 .result-title{display:flex;flex-direction:column;align-items:flex-start;text-align:right;}
 .result-title .eyebrow{font-size:var(--pc-text-sm);font-weight:500;color:var(--pc-text-muted);letter-spacing:0;text-transform:none;}
@@ -168,12 +169,12 @@ main:focus{outline:none;}
 .result-donut-text-main{font-family:var(--pc-font-display);font-weight:700;fill:var(--pc-text-strong);}
 .result-donut-text-sub{fill:var(--pc-text-muted);font-size:5px;}
 .entity-logo{width:64px;height:64px;border-radius:var(--pc-radius-md);background:linear-gradient(135deg,var(--pc-brand-600),var(--pc-indigo-600));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--pc-font-display);font-weight:700;font-size:20px;letter-spacing:0;flex-shrink:0;}
-.kv{display:flex;flex-direction:column;gap:4px;}
+.kv{min-width:0;max-width:100%;display:flex;flex-direction:column;gap:4px;}
 .kv .k{font-size:var(--pc-text-sm);color:var(--pc-text-subtle);font-weight:500;}
 .kv .v{font-size:var(--pc-text-md);color:var(--pc-text-default);font-weight:500;}
 .kv .v a{display:inline-flex;align-items:center;min-height:44px;}
-.platform-url-value{display:flex!important;align-items:flex-start!important;gap:6px;min-width:0;max-width:100%;direction:ltr;unicode-bidi:plaintext;}
-.platform-url-value a{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word;line-height:1.6;}
+.platform-url-value{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:flex-start!important;gap:6px;width:100%;min-width:0;max-width:100%;direction:ltr;unicode-bidi:plaintext;}
+.platform-url-value a{display:block!important;width:100%;min-width:0;max-width:100%;min-height:44px;overflow-wrap:anywhere;word-break:break-word;white-space:normal;text-align:left;line-height:1.6;}
 .platform-url-value svg{flex-shrink:0;margin-top:12px;}
 
 /* ===== Summary cards ===== */
@@ -344,7 +345,7 @@ main:focus{outline:none;}
 .stats { grid-template-columns: 1fr 1fr; }
 .hero { grid-template-columns: 1fr; }
 .charts { grid-template-columns: 1fr; }
-.hero-meta-grid { grid-template-columns: 1fr; }
+.hero-meta-grid { grid-template-columns: 1fr; min-width:0; max-width:100%; }
 .hero-l { padding: 20px; }
 .hero-r { padding: 20px; border-inline-start: 0; border-top: 1px solid var(--pc-border-subtle); }
 .donut-wrap { flex-direction: column; }
