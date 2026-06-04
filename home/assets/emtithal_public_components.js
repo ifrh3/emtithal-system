@@ -218,10 +218,12 @@ window.showToast = showToast;
 function highlightActiveLinks() {
   const currentPath = window.location.pathname.toLowerCase();
   const currentHref = window.location.href.toLowerCase();
+  const forcedActiveNav = document.getElementById('emtithal-header')?.dataset.activeNav?.toLowerCase() || '';
   const navLinks = document.querySelectorAll('[data-nav-link]');
 
   navLinks.forEach(link => {
     const attrVal = link.getAttribute('data-nav-link').toLowerCase();
+    const isForcedMatch = forcedActiveNav && attrVal === forcedActiveNav;
     
     // Exact path matches or URL containing page filename
     const isExactMatch = currentPath.endsWith(attrVal) || currentHref.endsWith(attrVal);
@@ -234,7 +236,7 @@ function highlightActiveLinks() {
     // Fallback for homepage
     const isHome = attrVal.includes('emtithal_public_home.html');
     const isPathHome = currentPath === '/' || currentPath.endsWith('/') || currentPath === '' || currentPath.endsWith('index.html');
-    if (isExactMatch || isDecodedMatch || (isHome && isPathHome)) {
+    if (isForcedMatch || isExactMatch || isDecodedMatch || (isHome && isPathHome)) {
       link.classList.add('active');
       link.setAttribute('aria-current', 'page');
     } else {

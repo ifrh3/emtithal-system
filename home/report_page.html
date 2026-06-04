@@ -7,9 +7,10 @@
 <title>تقرير الامتثال — إمتثال × Platforms Code</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/emtithal_public_components.css?v=20260604-public-pages">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/emtithal_public_components.js?v=20260604-report-menu" defer></script>
+<script src="assets/emtithal_public_components.js?v=20260604-report-menu-fixed" defer></script>
 <style>
 /* =====================================================================
    DESIGN TOKENS — Platforms Code (PC) 1.0
@@ -79,8 +80,6 @@
   --cat-templates:#E49EDD;--cat-templates-soft:#F6D8F2;--cat-templates-ink:#6F2266;
   --cat-components:#94DCF8;--cat-components-soft:#CDEEFB;--cat-components-ink:#0E4E68;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
 
 /* ===== Reset ===== */
 html{font-family:var(--pc-font-body);color:var(--pc-text-default);background:var(--pc-surface-app);-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
@@ -257,15 +256,22 @@ main:focus{outline:none;}
   min-width: 960px;
 }
 
-.table-head{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:12px 20px;background:var(--pc-surface-sunken);border-bottom:1px solid var(--pc-border-default);font-size:var(--pc-text-sm);font-weight:600;color:var(--pc-text-muted);text-transform:none;letter-spacing:0;}
+.table-head{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px minmax(0,200px) 96px;padding:12px 20px;background:var(--pc-surface-sunken);border-bottom:1px solid var(--pc-border-default);font-size:var(--pc-text-sm);font-weight:600;color:var(--pc-text-muted);text-transform:none;letter-spacing:0;}
+.table-head>*,
+.table-cells>div{min-width:0;}
 .table-row{border-bottom:1px solid var(--pc-border-subtle);transition:background var(--pc-duration-fast) var(--pc-ease);}
-.table-cells{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px 200px 96px;padding:16px 20px;align-items:center;min-height:72px;}
+.table-cells{display:grid;grid-template-columns:56px 96px 156px minmax(0,1fr) 200px minmax(0,200px) 96px;padding:16px 20px;align-items:center;min-height:72px;}
 .table-row.row-even .table-cells{background:var(--pc-neutral-25);}
 .table-row.row-expanded .table-cells{background:var(--pc-brand-50);}
 .crit-num{font-variant-numeric:tabular-nums;font-size:var(--pc-text-md);font-weight:700;color:var(--pc-text-default);}
 .crit-title{font-size:var(--pc-text-md);font-weight:500;color:var(--pc-text-default);line-height:1.4;}
 .crit-subtitle{font-size:var(--pc-text-sm);color:var(--pc-text-subtle);margin-top:2px;unicode-bidi:plaintext;}
-.crit-page{font-family:var(--pc-font-mono);font-size:var(--pc-text-sm);color:var(--pc-text-default);direction:ltr;unicode-bidi:plaintext;}
+.crit-page-cell{min-width:0;max-width:100%;overflow:hidden;}
+.crit-page{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;width:100%;max-width:100%;min-width:0;overflow:hidden;font-family:var(--pc-font-mono);font-size:var(--pc-text-sm);color:var(--pc-text-link);direction:ltr;unicode-bidi:plaintext;text-decoration:none;}
+.crit-page:hover .crit-page-text{text-decoration:underline;}
+.crit-page.is-empty{display:block;color:var(--pc-text-subtle);direction:rtl;}
+.crit-page svg{width:14px;height:14px;flex-shrink:0;color:var(--pc-text-subtle);}
+.crit-page-text{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ext-avatar{width:24px;height:24px;border-radius:var(--pc-radius-pill);background:var(--pc-indigo-50);color:var(--pc-indigo-700);border:1px solid var(--pc-indigo-200);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
 .actions-cell{text-align:end;}
 
@@ -491,7 +497,7 @@ main:focus{outline:none;}
 </head>
 <body>
   <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
-  <div id="emtithal-header"></div>
+  <div id="emtithal-header" data-active-nav="emtithal_public_home.html"></div>
 <!-- SVG sprite -->
 <svg aria-hidden="true" height="0" style="position:absolute" width="0">
 <defs>
@@ -1096,6 +1102,50 @@ function pageHref(page) {
   return safeExternalUrl(page);
 }
 
+function compactPageUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '—';
+
+  const href = safeExternalUrl(raw);
+  if (!href) return raw;
+
+  try {
+    const parsed = new URL(href);
+    const pathParts = parsed.pathname.split('/').filter(Boolean);
+    const shownPath = pathParts.length
+      ? `/${pathParts.slice(0, 3).join('/')}${pathParts.length > 3 ? '/...' : ''}`
+      : '';
+    return `${parsed.hostname}${shownPath}`;
+  } catch {
+    return raw;
+  }
+}
+
+function renderTablePageCell(c) {
+  const pages = Array.isArray(c.pages) ? c.pages : [];
+  const rawPage = String(c.page || '').trim();
+
+  if (pages.length > 1) {
+    return `<span class="crit-page is-empty" title="${escapeAttr(rawPage)}"><span class="crit-page-text">${escapeHTML(pages.length)} صفحات</span></span>`;
+  }
+
+  if (!rawPage) {
+    return '<span class="crit-page is-empty"><span class="crit-page-text">—</span></span>';
+  }
+
+  const href = pageHref(rawPage);
+  const label = compactPageUrl(rawPage);
+  if (!href) {
+    return `<span class="crit-page is-empty" title="${escapeAttr(rawPage)}"><span class="crit-page-text">${escapeHTML(label)}</span></span>`;
+  }
+
+  return `
+    <a class="crit-page" href="${escapeAttr(href)}" target="_blank" rel="noreferrer" title="${escapeAttr(rawPage)}" aria-label="فتح الصفحة المفحوصة">
+      <span class="crit-page-text">${escapeHTML(label)}</span>
+      <svg aria-hidden="true"><use href="#i-external"/></svg>
+    </a>`;
+}
+
 function extensionDownloadUrl(ext) {
   return 'Extentions page.html';
 }
@@ -1208,7 +1258,7 @@ function buildRow(c, idx, zebra) {
   const criterionNum = Number(c.n);
   const displayNum = Number.isFinite(criterionNum) ? String(criterionNum).padStart(2, '0') : escapeHTML(c.n);
   const safeN = escapeAttr(c.n);
-  const pageDisplay = c.pageLabel || c.page || '—';
+  const pageCell = renderTablePageCell(c);
   const scoreLabel = Number.isFinite(Number(c.score)) ? `<span class="page-score">${clampPercent(c.score)}%</span>` : '';
   return `
   <div class="table-row${zebra ? ' row-even' : ''}" role="row" data-n="${safeN}" data-pr="${escapeAttr(c.pr)}" data-cat="${escapeAttr(c.cat)}" data-st="${escapeAttr(c.st)}" data-page="${escapeAttr(c.page)}" data-ext="${escapeAttr(c.ext?.n || '')}" data-ref="${escapeAttr(c.ref)}" aria-expanded="false">
@@ -1221,7 +1271,7 @@ function buildRow(c, idx, zebra) {
         <div class="crit-subtitle">${escapeHTML(c.t_en)}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${statusPill(c.st)}${scoreLabel}</div>
-      <div class="crit-page">${escapeHTML(pageDisplay)}</div>
+      <div class="crit-page-cell">${pageCell}</div>
       <div class="actions-cell">
         <button type="button" class="btn btn-ghost btn-sm detail-btn"
           aria-expanded="false"
