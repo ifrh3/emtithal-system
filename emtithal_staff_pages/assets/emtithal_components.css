@@ -384,7 +384,7 @@ body {
 /* ==========================================================================
    Responsive Utilities
    ========================================================================== */
-@media (max-width: 1080px) {
+@media (max-width: 768px) {
   .emtithal-nav-inner {
     justify-content: space-between;
   }
