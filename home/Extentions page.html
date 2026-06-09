@@ -999,6 +999,17 @@ let EXTENSIONS = [];
       const extNum = Number(ext.num);
       const refUrl = safeExternalUrl(ext.link);
       const canDownload = [3, 5, 6, 10, 20, 21, 23].includes(extNum); // Only enabled for extensions that have ZIP files
+      
+      let downloadUrl = `../Emtithal-Criterion${extNum}-Extension.zip`;
+      let downloadText = 'تحميل الإضافة (ZIP)';
+      if (extNum === 5) {
+        downloadUrl = 'https://chromewebstore.google.com/detail/%D8%A5%D9%85%D8%AA%D8%AB%D8%A7%D9%84-%D9%81%D8%AD%D8%B5-%D9%85%D8%B9%D9%8A%D8%A7%D8%B1-%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%AC%D8%A7%D8%A8/mmaepombgaaiopbfgidjimdhkifdlkej?utm_source=item-share-cb';
+        downloadText = 'إضافة Chrome';
+      } else if (extNum === 3) {
+        downloadUrl = 'https://chromewebstore.google.com/detail/mpoadlbpjenaopkjekhekknelfahhoni?utm_source=item-share-cb';
+        downloadText = 'إضافة Chrome';
+      }
+
       // The normal renderer now handles both 4 and 11
 
       return `
@@ -1026,8 +1037,8 @@ let EXTENSIONS = [];
               : `<span class="card-no-link">—</span>`
             }
             ${canDownload ? `
-              <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${extId}, '${extNum === 5 ? 'https://chromewebstore.google.com/detail/%D8%A5%D9%85%D8%AA%D8%AB%D8%A7%D9%84-%D9%81%D8%AD%D8%B5-%D9%85%D8%B9%D9%8A%D8%A7%D8%B1-%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%AC%D8%A7%D8%A8/mmaepombgaaiopbfgidjimdhkifdlkej?utm_source=item-share-cb' : `../Emtithal-Criterion${extNum}-Extension.zip`}')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
-                ${ICONS.chromeExt} ${extNum === 5 ? 'إضافة Chrome' : 'تحميل الإضافة (ZIP)'}
+              <button class="card-ext-badge-footer" type="button" onclick="incrementDownload(${extId}, '${downloadUrl}')" title="تحميل إضافة كروم لهذا المعيار" style="text-decoration:none;">
+                ${ICONS.chromeExt} ${downloadText}
               </button>
             ` : `
               <div class="card-ext-badge-footer" title="إضافة كروم قريباً لهذا المعيار" style="opacity: 0.6; cursor: not-allowed;">
