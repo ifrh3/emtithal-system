@@ -389,36 +389,94 @@
       line-height: var(--pc-leading-sm);
     }
 
-    /* Rank Cards */
-    .rank-grid {
+    /* Value proposition cards */
+    .feature-grid {
       display: grid;
-      grid-template-columns: 1fr; /* Mobile First */
-      gap: var(--pc-space-6);
+      grid-template-columns: 1fr;
+      gap: var(--pc-space-4);
     }
-    @media (min-width: 768px) {
-      .rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--pc-space-4); }
+    .feature-card {
+      min-height: 224px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--pc-space-4);
+      padding: var(--pc-space-6);
+      background: var(--pc-surface-raised);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      box-shadow: var(--pc-shadow-xs);
+      transition: transform var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease);
     }
-    .rank-list { display: grid; gap: 0; padding: var(--pc-space-2); }
-    .rank-item {
-      width: 100%;
+    .feature-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--pc-neutral-300);
+      box-shadow: var(--pc-shadow-sm);
+    }
+    .feature-marker {
+      width: 44px;
+      height: 44px;
       display: grid;
-      grid-template-columns: 42px minmax(0,1fr) auto;
-      align-items: center;
+      place-items: center;
+      border-radius: var(--pc-radius-md);
+      background: var(--pc-brand-50);
+      color: var(--pc-brand-700);
+      border: 1px solid var(--pc-brand-100);
+      font-family: var(--pc-font-mono);
+      font-size: var(--pc-text-sm);
+      font-weight: var(--pc-weight-bold);
+      direction: ltr;
+    }
+    .feature-marker svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .feature-card h3 {
+      color: var(--pc-text-strong);
+      font-size: var(--pc-text-lg);
+      line-height: var(--pc-leading-lg);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .feature-card p {
+      color: var(--pc-text-muted);
+      font-size: var(--pc-text-md);
+      line-height: 26px;
+    }
+
+    /* Workflow */
+    .workflow-subtitle {
+      margin-top: var(--pc-space-2);
+      color: var(--pc-text-default);
+      font-size: var(--pc-text-lg);
+      line-height: var(--pc-leading-lg);
+      font-weight: var(--pc-weight-semibold);
+    }
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--pc-space-4);
+      counter-reset: workflow-step;
+    }
+    .workflow-step {
+      position: relative;
+      min-height: 244px;
+      display: flex;
+      flex-direction: column;
       gap: var(--pc-space-3);
-      min-height: 64px;
-      padding: 10px 12px;
-      border: 0;
-      border-radius: var(--pc-radius-sm);
-      background: transparent;
-      color: inherit;
-      text-align: right;
-      transition: background var(--pc-duration-fast) var(--pc-ease), transform var(--pc-duration-fast) var(--pc-ease);
+      padding: var(--pc-space-5);
+      background: var(--pc-surface-raised);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      box-shadow: var(--pc-shadow-xs);
+      counter-increment: workflow-step;
     }
-    .rank-item:hover { background: var(--pc-surface-sunken); }
-    .rank-item:focus-visible { outline: none; box-shadow: var(--pc-ring-focus); }
-    .rank-number {
-      width: 36px;
-      height: 36px;
+    .workflow-number {
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
       border-radius: var(--pc-radius-pill);
@@ -426,20 +484,21 @@
       color: var(--pc-indigo-700);
       border: 1px solid var(--pc-indigo-100);
       font-family: var(--pc-font-mono);
-      font-size: 13px;
+      font-size: var(--pc-text-sm);
       font-weight: var(--pc-weight-bold);
       direction: ltr;
     }
-    .rank-name {
+    .workflow-step h3 {
       color: var(--pc-text-strong);
-      font-size: 15px;
-      line-height: 24px;
+      font-size: var(--pc-text-base);
+      line-height: var(--pc-leading-base);
       font-weight: var(--pc-weight-semibold);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
-    .rank-meta { color: var(--pc-text-subtle); font-size: var(--pc-text-sm); line-height: var(--pc-leading-sm); }
+    .workflow-step p {
+      color: var(--pc-text-muted);
+      font-size: var(--pc-text-md);
+      line-height: 25px;
+    }
 
     /* Extensions Grid */
     .extension-grid {
@@ -512,242 +571,123 @@
     }
     .download-count svg { width: 16px; height: 16px; color: var(--pc-indigo-500); }
 
-    /* Platform directory */
-    .platform-card { overflow: hidden; }
-    .platform-tools {
-      display: flex;
-      align-items: flex-start;
-      flex-direction: column;
-      gap: var(--pc-space-4);
-      padding: var(--pc-space-5);
-      border-bottom: 1px solid var(--pc-border-subtle);
-      background: var(--pc-surface-raised);
+    /* Dual-row government entity logo carousel */
+    .logo-carousel {
+      position: relative;
+      overflow: hidden;
+      padding-block: var(--pc-space-2);
     }
-    .search-box { position: relative; width: 100%; max-width: 560px; }
-    .search-box svg {
+    .logo-carousel::before,
+    .logo-carousel::after {
+      content: "";
       position: absolute;
-      top: 50%;
-      right: 12px;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      color: var(--pc-text-subtle);
+      z-index: 3;
+      top: 0;
+      bottom: 0;
+      width: clamp(32px, 7vw, 96px);
       pointer-events: none;
     }
-    .input {
-      width: 100%;
-      min-height: 48px;
-      padding: 10px 44px 10px 14px;
-      border: 1px solid var(--pc-border-default);
+    .logo-carousel::before {
+      right: 0;
+      background: linear-gradient(270deg, var(--pc-surface-app) 10%, rgba(252,252,253,0));
+    }
+    .logo-carousel::after {
+      left: 0;
+      background: linear-gradient(90deg, var(--pc-surface-app) 10%, rgba(252,252,253,0));
+    }
+    .logo-carousel-controls {
+      display: none;
+      align-items: center;
+      gap: var(--pc-space-2);
+    }
+    .logo-carousel-button {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--pc-border-subtle);
       border-radius: var(--pc-radius-sm);
       background: var(--pc-surface-raised);
-      color: var(--pc-text-default);
-      outline: none;
-      font-size: var(--pc-text-md);
-      line-height: var(--pc-leading-md);
-      transition: border-color var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease), background var(--pc-duration-fast) var(--pc-ease);
+      color: var(--pc-text-muted);
+      box-shadow: var(--pc-shadow-xs);
+      transition: color var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease), background var(--pc-duration-fast) var(--pc-ease);
     }
-    .input::placeholder { color: var(--pc-text-disabled); }
-    .input:hover { border-color: var(--pc-neutral-400); }
-    .input:focus { border-color: var(--pc-border-brand); box-shadow: var(--pc-ring-focus); }
-    .chips {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      display: flex;
-      align-items: stretch;
-      gap: var(--pc-space-2);
-      flex-wrap: wrap;
-    }
-    .chip {
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border: 1px solid transparent;
-      border-radius: var(--pc-radius-pill);
-      background: var(--pc-surface-muted);
-      color: var(--pc-text-default);
-      font-size: 13px;
-      line-height: var(--pc-leading-sm);
-      font-weight: var(--pc-weight-medium);
-      transition: background var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease), color var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease);
-      white-space: nowrap;
-    }
-    .chip:hover { background: var(--pc-neutral-200); }
-    .chip.active {
-      background: var(--pc-brand-50);
+    .logo-carousel-button:hover {
       color: var(--pc-brand-700);
       border-color: var(--pc-brand-500);
+      background: var(--pc-brand-50);
     }
-    .chip:focus-visible { outline: none; box-shadow: var(--pc-ring-focus); }
-    .chip-check { display: none; width: 14px; height: 14px; flex: 0 0 auto; }
-    .chip.active .chip-check { display: block; }
-    .table-scroll { overflow-x: auto; }
-    .platform-cards {
-      display: grid;
+    .logo-carousel-button:focus-visible {
+      outline: none;
+      box-shadow: var(--pc-ring-focus);
+    }
+    .logo-carousel-button svg { width: 18px; height: 18px; }
+    .logo-carousel-row {
+      position: relative;
+      overflow: hidden;
+      direction: ltr;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+    }
+    .logo-carousel-row + .logo-carousel-row { margin-top: var(--pc-space-4); }
+    .logo-carousel-row.is-dragging { cursor: grabbing; }
+    .logo-carousel-track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+    }
+    .logo-carousel-set {
+      display: flex;
       gap: var(--pc-space-4);
-      padding: var(--pc-space-4);
-      background: var(--pc-surface-sunken);
+      padding-inline-end: var(--pc-space-4);
     }
-    .platform-mobile-card {
-      display: grid;
-      gap: var(--pc-space-4);
-      padding: var(--pc-space-4);
-      border: 1px solid var(--pc-border-subtle);
-      border-radius: var(--pc-radius-md);
-      background: var(--pc-surface-raised);
-      box-shadow: var(--pc-shadow-xs);
-    }
-    .platform-mobile-head {
+    .logo-card {
+      width: clamp(168px, 54vw, 210px);
+      height: 132px;
+      flex: 0 0 auto;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: var(--pc-space-3);
-      min-width: 0;
+      flex-direction: column;
+      padding: var(--pc-space-4);
+      direction: rtl;
+      text-align: center;
+      background: var(--pc-surface-raised);
+      border: 1px solid var(--pc-border-subtle);
+      border-radius: var(--pc-radius-md);
+      box-shadow: var(--pc-shadow-xs);
+      transition: transform var(--pc-duration-fast) var(--pc-ease), box-shadow var(--pc-duration-fast) var(--pc-ease), border-color var(--pc-duration-fast) var(--pc-ease);
     }
-    .platform-mobile-title {
-      min-width: 0;
-      display: grid;
-      gap: 2px;
+    .logo-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--pc-neutral-300);
+      box-shadow: var(--pc-shadow-md);
     }
-    .platform-mobile-title strong {
+    .logo-card img {
+      width: 72px;
+      height: 54px;
+      display: block;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .logo-card span {
+      max-width: 100%;
       color: var(--pc-text-strong);
-      font-size: var(--pc-text-base);
-      line-height: var(--pc-leading-base);
+      font-size: var(--pc-text-sm);
+      line-height: var(--pc-leading-sm);
       font-weight: var(--pc-weight-semibold);
       overflow-wrap: anywhere;
     }
-    .platform-mobile-title span {
-      color: var(--pc-text-muted);
-      font-size: var(--pc-text-sm);
-      line-height: var(--pc-leading-sm);
-    }
-    .platform-mobile-score {
-      display: grid;
-      gap: var(--pc-space-2);
-    }
-    .platform-mobile-score-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--pc-space-3);
-    }
-    .platform-mobile-score-row > span:first-child {
-      color: var(--pc-text-muted);
-      font-size: var(--pc-text-sm);
-      line-height: var(--pc-leading-sm);
-      font-weight: var(--pc-weight-semibold);
-    }
-    .platform-mobile-card .btn {
-      width: 100%;
-      justify-content: center;
-    }
-    .platform-show-more {
-      width: calc(100% - var(--pc-space-8));
-      margin: 0 var(--pc-space-4) var(--pc-space-4);
-      min-height: 48px;
-      border: 1px solid var(--pc-border-subtle);
-      border-radius: var(--pc-radius-sm);
-      background: var(--pc-surface-raised);
-      color: var(--pc-brand-700);
-      font-weight: var(--pc-weight-semibold);
-    }
-    .platform-show-more:hover {
-      background: var(--pc-brand-50);
-      border-color: var(--pc-brand-500);
-    }
-    .platform-cards[hidden],
-    .table-scroll[hidden],
-    .platform-show-more[hidden] {
-      display: none !important;
-    }
-    table {
-      width: 100%;
-      min-width: 800px;
-      border-collapse: collapse;
-      text-align: right;
-      font-size: 13px;
-    }
-    thead {
-      background: var(--pc-surface-sunken);
-      color: var(--pc-text-muted);
-      border-bottom: 1px solid var(--pc-border-subtle);
-    }
-    th, td {
-      padding: 12px 14px;
-      vertical-align: middle;
-      border-bottom: 1px solid var(--pc-surface-muted);
-    }
-    th {
-      text-align: right;
-      font-weight: var(--pc-weight-semibold);
-      font-size: var(--pc-text-sm);
-      line-height: var(--pc-leading-sm);
-      white-space: nowrap;
-    }
-    tbody tr:last-child td { border-bottom: 0; }
-    tbody tr:hover { background: rgba(249,250,251,.85); }
-    .platform-cell { display: flex; align-items: center; gap: var(--pc-space-3); min-width: 200px; }
-    .platform-avatar {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border-radius: var(--pc-radius-pill);
-      background: var(--pc-indigo-50);
-      color: var(--pc-indigo-700);
-      border: 1px solid var(--pc-indigo-100);
-      font-weight: var(--pc-weight-semibold);
-      font-size: 13px;
-      flex: 0 0 auto;
-    }
-    .platform-name { color: var(--pc-text-strong); font-weight: var(--pc-weight-semibold); line-height: 22px; }
-    .agency-text { color: var(--pc-text-muted); line-height: 22px; }
-    .score-cell {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 180px;
-      direction: ltr;
-      justify-content: flex-end;
-    }
-    .progress {
-      width: 104px;
-      height: 8px;
-      overflow: hidden;
-      border-radius: var(--pc-radius-pill);
-      background: var(--pc-surface-muted);
-      direction: ltr;
-    }
-    .progress span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: var(--pc-brand-500);
-    }
-    .progress.warning span { background: var(--pc-warning-500); }
-    .report-action { text-align: left; white-space: nowrap; }
-    .empty-state { display: none; padding: var(--pc-space-14) var(--pc-space-5); text-align: center; color: var(--pc-text-muted); }
-    .empty-state.show { display: block; }
-    .empty-state strong { display: block; margin-bottom: var(--pc-space-1); color: var(--pc-text-strong); font-size: var(--pc-text-lg); line-height: var(--pc-leading-lg); }
-    .show-more-row { cursor: pointer; }
-    .show-more-row td {
-      background: var(--pc-surface-sunken);
-      border-bottom: 0;
-      border-top: 1px solid var(--pc-border-subtle);
+    .logo-carousel-empty {
+      padding: var(--pc-space-10);
       text-align: center;
-      padding: var(--pc-space-5);
-      color: var(--pc-brand-700);
-      font-size: var(--pc-text-md);
-      line-height: var(--pc-leading-md);
-      font-weight: var(--pc-weight-semibold);
-      transition: background var(--pc-duration-fast) var(--pc-ease), color var(--pc-duration-fast) var(--pc-ease);
+      color: var(--pc-text-muted);
+      border: 1px dashed var(--pc-border-default);
+      border-radius: var(--pc-radius-md);
+      background: var(--pc-surface-sunken);
     }
-    .show-more-row:hover td { background: var(--pc-brand-50); color: var(--pc-brand-700); }
-    .show-more-inner { display: inline-flex; align-items: center; gap: var(--pc-space-2); }
-    .show-more-inner svg { width: 16px; height: 16px; }
 
     /* Responsive scaling (Mobile-First) */
     @media (min-width: 640px) {
@@ -761,8 +701,10 @@
       .download-row { align-items: center; flex-direction: row; }
       .download-row .btn { width: auto; }
       .main { padding-block: var(--pc-space-14) var(--pc-space-20); gap: 80px; }
-      .chips { gap: 8px; }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .workflow-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .extension-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .logo-card { width: 210px; }
     }
 
     @media (min-width: 860px) {
@@ -774,32 +716,17 @@
       .hero-title { font-size: var(--pc-text-5xl); line-height: 1.1; }
       .hero-lead { font-size: var(--pc-text-lg); line-height: var(--pc-leading-lg); }
       .section-head { align-items: flex-end; flex-direction: row; justify-content: space-between; margin-bottom: var(--pc-space-8); }
-      .rank-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .platform-cards { display: none; }
-      .table-scroll { display: block; }
+      .feature-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .logo-carousel-controls { display: flex; }
+      .logo-card { width: 232px; }
     }
 
     @media (min-width: 1080px) {
+      .workflow-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
       .extension-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
 
     @media (max-width: 859px) {
-      .platform-tools { padding: var(--pc-space-4); }
-      .table-scroll { display: none; }
-      .platform-card { overflow: visible; }
-      .search-box { max-width: none; }
-      .chips {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: var(--pc-space-1);
-        scroll-padding-inline: var(--pc-space-2);
-        scroll-snap-type: inline proximity;
-        -webkit-overflow-scrolling: touch;
-      }
-      .chip {
-        flex: 0 0 auto;
-        scroll-snap-align: start;
-      }
       .extension-card { min-height: auto; }
       .download-row {
         align-items: stretch;
@@ -831,11 +758,11 @@
         <div class="hero-content">
           <span class="eyebrow">منصة إمتثال لتقييم كود المنصات</span>
           <h1 class="hero-title" id="hero-title">
-            نظام التصميم الموحد
-            <span>كود المنصات</span>
+            راقب امتثال منصتك الحكومية
+            <span>في دقائق</span>
           </h1>
           <p class="hero-lead">
-            كود المنصات هو المرجع الوطني الشامل لضمان توحيد تجربة المستخدم في جميع القنوات الرقمية الحكومية. يهدف إلى رفع جودة الخدمات وتعزيز الثقة من خلال معايير بصرية ووظيفية مدروسة تواكب طموحات المملكة الرقمية.
+            إمتثال منصة ذكية تساعد الجهات الحكومية على الكشف التلقائي عن مخالفات كود المنصات، وإنتاج تقارير امتثال احترافية، ومراقبة الامتثال الرقمي باستمرار وفق معايير هيئة الحكومة الرقمية.
           </p>
           <div class="hero-actions">
             <a class="btn btn-secondary" href="https://design.dga.gov.sa/" target="_blank" rel="noopener noreferrer">
@@ -848,34 +775,86 @@
     </section>
 
     <div class="container main">
-      <section aria-labelledby="ranking-title">
+      <section aria-labelledby="why-emtithal-title">
         <div class="section-head">
           <div>
-            <span class="section-kicker">مؤشرات الامتثال</span>
-            <h2 class="section-title" id="ranking-title">ترتيب المنصات حسب الامتثال</h2>
-            <p class="section-desc">أعلى وأقل المنصات امتثالًا لمعايير كود المنصات — اضغط على أي منصة للانتقال مباشرة إلى تقريرها.</p>
+            <h2 class="section-title" id="why-emtithal-title">لماذا امتثال؟</h2>
           </div>
         </div>
-        <div class="rank-grid">
-          <article class="card">
-            <header class="card-header">
-              <div>
-                <h3 class="card-title">أعلى 5 منصات امتثالًا</h3>
-                <p class="card-subtitle">المنصات الأعلى في نتائج الفحص.</p>
-              </div>
-              <span class="badge success">أداء مرتفع</span>
-            </header>
-            <div class="rank-list" id="topRankings"></div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-marker" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6.5"></circle>
+                <path d="M16 16l4 4M8.5 11l1.7 1.7 3.5-3.8"></path>
+              </svg>
+            </span>
+            <h3>الفحص التلقائي للامتثال</h3>
+            <p>تحليل صفحات المنصة تلقائيًا ومقارنتها مع معايير كود المنصات السعودية دون الحاجة إلى مراجعة يدوية.</p>
           </article>
-          <article class="card">
-            <header class="card-header">
-              <div>
-                <h3 class="card-title">أقل 5 منصات امتثالًا</h3>
-                <p class="card-subtitle">منصات تحتاج إلى تحسينات أولوية.</p>
-              </div>
-              <span class="badge warning">تحتاج متابعة</span>
-            </header>
-            <div class="rank-list" id="lowRankings"></div>
+          <article class="feature-card">
+            <span class="feature-marker" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3h7l4 4v14H7V3zM14 3v4h4M10 12h5M10 16h5"></path>
+              </svg>
+            </span>
+            <h3>تقارير امتثال واضحة</h3>
+            <p>إنشاء تقارير منظمة توضح المعايير المطبقة وغير المطبقة مع نتائج قابلة للمتابعة والتحسين.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-marker" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3l7 3v5c0 4.7-2.9 8.2-7 10-4.1-1.8-7-5.3-7-10V6l7-3zM12 8v5M12 16h.01"></path>
+              </svg>
+            </span>
+            <h3>اكتشاف المخالفات بدقة</h3>
+            <p>تحديد مواقع مشكلات الامتثال داخل الصفحة لمساعدة الفرق على فهم الأخطاء ومعالجتها بشكل أسرع.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-marker" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 18l5-5 4 3 7-8M16 8h4v4"></path>
+              </svg>
+            </span>
+            <h3>مراقبة وتحسين مستمر</h3>
+            <p>متابعة مستوى الامتثال وتتبع التحسينات لدعم قرارات التطوير والحفاظ على جودة المنصة الرقمية.</p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="workflow-title">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="workflow-title">آلية العمل</h2>
+            <p class="workflow-subtitle">خمس خطوات لتحليل امتثال منصتك الرقمية</p>
+            <p class="section-desc">رحلة مبسطة تبدأ من فحص المنصة الحكومية وتنتهي بتقرير امتثال واضح يساعدك على اتخاذ قرارات التحسين بثقة.</p>
+          </div>
+        </div>
+        <div class="workflow-grid">
+          <article class="workflow-step">
+            <span class="workflow-number" aria-hidden="true">1</span>
+            <h3>افتح المنصة الحكومية</h3>
+            <p>قم بفتح الصفحة الرقمية المراد تقييم مستوى امتثالها وفق معايير كود المنصات السعودية.</p>
+          </article>
+          <article class="workflow-step">
+            <span class="workflow-number" aria-hidden="true">2</span>
+            <h3>ابدأ الفحص التلقائي</h3>
+            <p>تشغّل إضافة إمتثال عملية المسح الذكي لعناصر الواجهة، وتقوم بتحليل مكونات الصفحة ومقارنتها بمعايير كود المنصات.</p>
+          </article>
+          <article class="workflow-step">
+            <span class="workflow-number" aria-hidden="true">3</span>
+            <h3>تحقّق من مستوى الامتثال</h3>
+            <p>يقوم النظام بتحديد العناصر المطابقة وغير المطابقة وتصنيف النتائج حسب حالة التطبيق لكل معيار.</p>
+          </article>
+          <article class="workflow-step">
+            <span class="workflow-number" aria-hidden="true">4</span>
+            <h3>أرسل نتائج الفحص</h3>
+            <p>يتم تجميع نتائج التحليل وإرسالها إلى النظام المركزي لمعالجتها وإنشاء سجل امتثال منظم ومتزامن.</p>
+          </article>
+          <article class="workflow-step">
+            <span class="workflow-number" aria-hidden="true">5</span>
+            <h3>استعرض تقرير الامتثال</h3>
+            <p>احصل على لوحة متابعة وتقارير تفاعلية توضح نسبة الامتثال، المشكلات المكتشفة، ومواقع التحسين المطلوبة.</p>
           </article>
         </div>
       </section>
@@ -898,47 +877,30 @@
       <section id="platforms" aria-labelledby="platforms-title">
         <div class="section-head">
           <div>
-            <span class="section-kicker">المنصات الحكومية</span>
-            <h2 class="section-title" id="platforms-title">دليل المنصات والجهات الحكومية الشامل</h2>
-            <p class="section-desc">ابحث أو صفّح المنصات حسب تصنيف الجهة، ثم انتقل مباشرة إلى تقرير الامتثال لأي منصة.</p>
+            <h2 class="section-title" id="platforms-title">جهات تبنت كود المنصات</h2>
+          </div>
+          <div class="logo-carousel-controls" aria-label="التحكم في عرض شعارات الجهات">
+            <button class="logo-carousel-button" id="logoCarouselPrev" type="button" aria-label="عرض الشعارات السابقة">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="logo-carousel-button" id="logoCarouselNext" type="button" aria-label="عرض الشعارات التالية">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
 
-        <article class="card platform-card">
-          <div class="platform-tools">
-            <div class="search-box">
-              <svg aria-hidden="true"><use href="#i-search"/></svg>
-              <label class="visually-hidden" for="platformSearch">ابحث عن منصة محددة</label>
-              <input class="input" type="search" id="platformSearch" placeholder="ابحث عن منصة محددة..." autocomplete="off">
-            </div>
-            <div class="chips" id="categoryChips" role="group" aria-label="فلاتر تصنيف المنصات" aria-describedby="categoryFiltersHint"></div>
-            <p class="visually-hidden" id="categoryFiltersHint">يمكن تمرير فلاتر التصنيف أفقيا على الشاشات الصغيرة.</p>
+        <div class="logo-carousel" id="governmentLogoCarousel" aria-label="شعارات الجهات الحكومية التي تبنت كود المنصات">
+          <div class="logo-carousel-row" data-direction="-1" aria-label="الصف الأول من شعارات الجهات">
+            <div class="logo-carousel-track"></div>
           </div>
-
-          <div class="table-scroll" id="platformTableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>اسم المنصة</th>
-                  <th>الجهة التابعة</th>
-                  <th>نسبة الامتثال</th>
-                  <th class="report-action">التقرير</th>
-                </tr>
-              </thead>
-              <tbody id="platformRows"></tbody>
-            </table>
+          <div class="logo-carousel-row" data-direction="1" aria-label="الصف الثاني من شعارات الجهات">
+            <div class="logo-carousel-track"></div>
           </div>
-
-          <div class="platform-cards" id="platformCards" aria-live="polite"></div>
-          <button class="platform-show-more" id="platformShowMore" type="button" hidden>
-            عرض المزيد من المنصات
-          </button>
-
-          <div class="empty-state" id="emptyState">
-            <strong>لا توجد منصات مطابقة</strong>
-            <span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>
-          </div>
-        </article>
+        </div>
       </section>
     </div>
   </main>
@@ -946,26 +908,6 @@
   <div id="emtithal-footer"></div>
 
   <script>
-    let topPlatforms = [];
-    let lowPlatforms = [];
-    let platforms = [];
-    let activeFilters = new Set(['الكل']);
-    let visiblePlatformLimit = 6;
-
-    const platformDirectory = {
-      'uqu.edu.sa': { name: 'جامعة أم القرى', agency: 'الجامعات والمؤسسات التعليمية' },
-      'moh.gov.sa': { name: 'وزارة الصحة', agency: 'الوزارات' },
-      'absher.sa': { name: 'منصة أبشر', agency: 'القطاعات العسكرية والأمنية' },
-      'moe.gov.sa': { name: 'وزارة التعليم', agency: 'الوزارات' },
-      'hrsd.gov.sa': { name: 'وزارة الموارد البشرية', agency: 'الوزارات' },
-      'my.gov.sa': { name: 'المنصة الوطنية الموحدة', agency: 'الهيئات والمنظمات الحكومية' },
-      'zatca.gov.sa': { name: 'هيئة الزكاة والضريبة والجمارك', agency: 'الهيئات والمنظمات الحكومية' },
-      'etimad.sa': { name: 'منصة اعتماد', agency: 'الوزارات' },
-      'qiwa.sa': { name: 'منصة قوى', agency: 'الوزارات' },
-      'dga.gov.sa': { name: 'هيئة الحكومة الرقمية', agency: 'الهيئات والمنظمات الحكومية' },
-      'saudiexports.gov.sa': { name: 'هيئة تنمية الصادرات', agency: 'الهيئات والمنظمات الحكومية' }
-    };
-
     const extensions = [
       {
         id: 4,
@@ -993,17 +935,22 @@
       }
     ];
 
-    const categoryLabels = [
-      'الكل',
-      'الوزارات',
-      'إمارات المناطق',
-      'الهيئات والمنظمات الحكومية',
-      'الجامعات والمؤسسات التعليمية',
-      'المؤسسات العامة والصناديق',
-      'الأمانات والبلديات',
-      'القطاعات العسكرية والأمنية',
-      'الصناديق والمساهمات الحكومية'
-    ];
+    // Confirmed entities already maintained in the project platform directory.
+    // Logo presentation remains data-driven and independent from the carousel component.
+    const governmentEntities = [
+      { name: 'جامعة أم القرى', domain: 'uqu.edu.sa' },
+      { name: 'وزارة الصحة', domain: 'moh.gov.sa' },
+      { name: 'وزارة التعليم', domain: 'moe.gov.sa' },
+      { name: 'وزارة الموارد البشرية', domain: 'hrsd.gov.sa' },
+      { name: 'هيئة الزكاة والضريبة والجمارك', domain: 'zatca.gov.sa' },
+      { name: 'هيئة الحكومة الرقمية', domain: 'dga.gov.sa' },
+      { name: 'هيئة تنمية الصادرات', domain: 'saudiexports.gov.sa' }
+    ].map((entity) => ({
+      ...entity,
+      logoUrl: `https://www.google.com/s2/favicons?domain=${encodeURIComponent(entity.domain)}&sz=128`
+    }));
+
+    const carouselControllers = [];
 
     function iconUse(id) {
       return `<svg aria-hidden="true"><use href="#${id}"></use></svg>`;
@@ -1022,64 +969,25 @@
       return escapeHTML(value);
     }
 
-    function clampPercent(value) {
-      const n = Number(value);
-      if (!Number.isFinite(n)) return 0;
-      return Math.max(0, Math.min(100, Math.round(n)));
-    }
-
-    function reportHref(id) {
-      return `report_page.html?id=${encodeURIComponent(String(id ?? ''))}`;
-    }
-
-    function safeHost(value) {
-      const raw = String(value ?? '').trim();
-      if (!raw) return '';
-      try {
-        const parsed = new URL(raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`);
-        return ['http:', 'https:'].includes(parsed.protocol) ? parsed.hostname : '';
-      } catch {
-        return '';
-      }
-    }
-
-    function scoreBadge(score) {
-      if (score >= 90) return 'success';
-      if (score >= 70) return 'warning';
-      return 'danger';
-    }
-
-    function renderRankList(targetId, list) {
-      const target = document.getElementById(targetId);
-      target.innerHTML = list.map((item, i) => `
-        <button class="rank-item" type="button" data-name="${escapeAttr(item.name)}"
-          onclick="window.location.href='${reportHref(item.report_id)}'">
-          <span class="rank-number">${i + 1}</span>
-          <span>
-            <span class="rank-name">${escapeHTML(item.name)}</span>
-            <span class="rank-meta">نسبة الامتثال حسب الفحص</span>
-          </span>
-          <span class="badge ${scoreBadge(item.score)}">${clampPercent(item.score)}%</span>
-        </button>
-      `).join('');
-    }
-
     function renderExtensions() {
-      document.getElementById('extensionsGrid').innerHTML = extensions.map(ext => `
+      const grid = document.getElementById('extensionsGrid');
+      if (!grid) return;
+
+      grid.innerHTML = extensions.map((extension) => `
         <article class="extension-card">
           <div class="extension-top">
-            <span class="badge ${ext.categoryClass}">${ext.category}</span>
+            <span class="badge ${extension.categoryClass}">${escapeHTML(extension.category)}</span>
           </div>
           <div>
-            <h3>${escapeHTML(ext.title)}</h3>
-            <p>${escapeHTML(ext.desc)}</p>
+            <h3>${escapeHTML(extension.title)}</h3>
+            <p>${escapeHTML(extension.desc)}</p>
           </div>
           <div class="download-row">
-            <span class="download-count" id="home-dl-count-${ext.id}" data-count="${ext.downloads}">
+            <span class="download-count" id="home-dl-count-${extension.id}" data-count="${extension.downloads}">
               ${iconUse('i-download')}
-              ${ext.downloads} تنزيل
+              ${extension.downloads} تنزيل
             </span>
-            <a class="btn btn-dark" href="Extentions%20page.html" aria-label="عرض تفاصيل ${escapeAttr(ext.title)}">
+            <a class="btn btn-dark" href="Extentions%20page.html" aria-label="عرض تفاصيل ${escapeAttr(extension.title)}">
               عرض تفاصيل الإضافة
               ${iconUse('i-arrow-left')}
             </a>
@@ -1088,307 +996,257 @@
       `).join('');
     }
 
-    window.incrementHomeDownload = async function(id, url) {
+    window.incrementHomeDownload = async function incrementHomeDownload(id, url) {
       try {
-        if(window.db) {
+        if (window.db) {
           await window.db.rpc('increment_extension_download', { p_id: id });
         }
-        const span = document.getElementById('home-dl-count-' + id);
-        if (span) {
-          const current = parseInt(span.dataset.count) || 0;
-          span.dataset.count = current + 1;
-          span.innerHTML = `${iconUse('i-download')} ${current + 1} تنزيل`;
+        const countElement = document.getElementById(`home-dl-count-${id}`);
+        if (countElement) {
+          const current = Number.parseInt(countElement.dataset.count, 10) || 0;
+          countElement.dataset.count = String(current + 1);
+          countElement.innerHTML = `${iconUse('i-download')} ${current + 1} تنزيل`;
         }
-      } catch (err) {
-        console.error('Failed to increment download:', err);
+      } catch (error) {
+        console.error('Failed to increment download:', error);
       }
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = url.split('/').pop();
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = url.split('/').pop();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     };
 
-    function renderCategoryChips() {
-      const container = document.getElementById('categoryChips');
-      container.innerHTML = categoryLabels.map(label => {
-        const isActive = activeFilters.has(label);
-        return `
-          <button class="chip ${isActive ? 'active' : ''}"
-            type="button" data-category="${label}" aria-pressed="${isActive}">
-            <svg class="chip-check" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M2.5 7l3.5 3.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            ${label}
-          </button>
-        `;
-      }).join('');
+    async function loadExtensionDownloads() {
+      try {
+        if (window.ensureEmtithalSupabaseClient) {
+          await window.ensureEmtithalSupabaseClient();
+        }
+        if (!window.db) return;
 
-      container.querySelectorAll('.chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          const cat = chip.dataset.category;
-          if (cat === 'الكل') {
-            activeFilters = new Set(['الكل']);
-          } else {
-            activeFilters.delete('الكل');
-            if (activeFilters.has(cat)) {
-              activeFilters.delete(cat);
-              if (activeFilters.size === 0) activeFilters = new Set(['الكل']);
-            } else {
-              activeFilters.add(cat);
-            }
+        const { data, error } = await window.db
+          .from('extensions')
+          .select('num, downloads')
+          .in('num', extensions.map((extension) => extension.id));
+
+        if (error) throw error;
+        if (!Array.isArray(data)) return;
+
+        extensions.forEach((extension) => {
+          const databaseExtension = data.find((item) => Number(item.num) === extension.id);
+          if (databaseExtension?.downloads !== null && databaseExtension?.downloads !== undefined) {
+            extension.downloads = String(databaseExtension.downloads);
           }
-          visiblePlatformLimit = 6;
-          renderCategoryChips();
-          renderPlatformRows();
         });
-      });
+        renderExtensions();
+      } catch (error) {
+        console.warn('Could not load extension download counts:', error.message);
+      }
     }
 
-    function filteredPlatforms() {
-      const query = document.getElementById('platformSearch').value.trim().toLowerCase();
-      return platforms.filter(p => {
-        const searchableText = [p.name, p.agency, p.short, p.url, p.host].join(' ').toLowerCase();
-        const matchQuery = !query || searchableText.includes(query);
-        const matchCat = activeFilters.has('الكل') || activeFilters.has(p.agency);
-        return matchQuery && matchCat;
-      });
-    }
-
-    function platformTableRowMarkup(p) {
-      const score = clampPercent(p.score);
+    function logoCardMarkup(entity, isDuplicate = false) {
       return `
-        <tr>
-          <td>
-            <div class="platform-cell">
-              <span class="platform-avatar">${escapeHTML(p.short)}</span>
-              <span class="platform-name">${escapeHTML(p.name)}</span>
-            </div>
-          </td>
-          <td><span class="agency-text">${escapeHTML(p.agency)}</span></td>
-          <td>
-            <div class="score-cell">
-              <span class="badge ${scoreBadge(score)}">${score}%</span>
-              <span class="progress ${score < 80 ? 'warning' : ''}" aria-hidden="true">
-                <span style="width:${score}%"></span>
-              </span>
-            </div>
-          </td>
-          <td class="report-action">
-            <a class="btn btn-secondary" href="${reportHref(p.report_id)}">
-              عرض تقرير المنصة
-              ${iconUse('i-arrow-left')}
-            </a>
-          </td>
-        </tr>
-      `;
-    }
-
-    function platformMobileCardMarkup(p) {
-      const score = clampPercent(p.score);
-      return `
-        <article class="platform-mobile-card">
-          <div class="platform-mobile-head">
-            <span class="platform-avatar">${escapeHTML(p.short)}</span>
-            <span class="platform-mobile-title">
-              <strong>${escapeHTML(p.name)}</strong>
-              <span>${escapeHTML(p.agency)}</span>
-            </span>
-          </div>
-          <div class="platform-mobile-score">
-            <div class="platform-mobile-score-row">
-              <span>نسبة الامتثال</span>
-              <span class="badge ${scoreBadge(score)}">${score}%</span>
-            </div>
-            <span class="progress ${score < 80 ? 'warning' : ''}" aria-hidden="true">
-              <span style="width:${score}%"></span>
-            </span>
-          </div>
-          <a class="btn btn-secondary" href="${reportHref(p.report_id)}">
-            عرض تقرير المنصة
-            ${iconUse('i-arrow-left')}
-          </a>
+        <article class="logo-card"${isDuplicate ? ' aria-hidden="true"' : ''}>
+          <img
+            src="${escapeAttr(entity.logoUrl)}"
+            alt="${isDuplicate ? '' : `شعار ${escapeAttr(entity.name)}`}"
+            width="72"
+            height="54"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          >
+          <span>${escapeHTML(entity.name)}</span>
         </article>
       `;
     }
 
-    function renderPlatformRows() {
-      const list = filteredPlatforms();
-      const visible = list.slice(0, visiblePlatformLimit);
-      const hasMore = visible.length < list.length;
-      const tbody = document.getElementById('platformRows');
-      const cards = document.getElementById('platformCards');
-      const wrap = document.getElementById('platformTableWrap');
-      const empty = document.getElementById('emptyState');
-      const showMore = document.getElementById('platformShowMore');
-
-      if (tbody) tbody.innerHTML = visible.map(platformTableRowMarkup).join('');
-      if (cards) {
-        cards.innerHTML = visible.map(platformMobileCardMarkup).join('');
-        cards.hidden = list.length === 0;
-      }
-      if (wrap) wrap.hidden = list.length === 0;
-      if (showMore) {
-        showMore.hidden = !hasMore;
-        showMore.textContent = hasMore ? `عرض المزيد من المنصات (${list.length - visible.length})` : 'عرض المزيد من المنصات';
-        showMore.onclick = () => {
-          visiblePlatformLimit += 6;
-          renderPlatformRows();
-        };
-      }
-
-      if (!empty) return;
-      if (window._platformError) {
-        empty.innerHTML = `<strong>خطأ في جلب البيانات</strong><span style="color:var(--pc-danger-600);direction:ltr;display:inline-block;">${escapeHTML(window._platformError)}</span>`;
-        empty.classList.add('show');
-        return;
-      }
-
-      empty.innerHTML = `<strong>لا توجد منصات مطابقة</strong><span>لا توجد منصات مطابقة للبحث أو التصفية الحالية.</span>`;
-      empty.classList.toggle('show', list.length === 0);
+    function logoSetMarkup(entities, isDuplicate = false) {
+      return `
+        <div class="logo-carousel-set"${isDuplicate ? ' aria-hidden="true"' : ''}>
+          ${entities.map((entity) => logoCardMarkup(entity, isDuplicate)).join('')}
+        </div>
+      `;
     }
 
-    async function loadPlatformsData() {
-      const empty = document.getElementById('emptyState');
-      if (window.ensureEmtithalSupabaseClient) {
-        try {
-          await window.ensureEmtithalSupabaseClient();
-        } catch (error) {
-          console.warn('Supabase initialization failed:', error.message);
-        }
-      }
-      if (!window.db) {
-        window._platformError = 'Supabase client not initialized (window.db is undefined).';
-        renderPlatformRows();
-        return;
-      }
-      try {
-        const { data, error } = await window.db
-          .from('reports_summary')
-          .select('id, score, platform_url, report_date, raw_report_data')
-          .order('report_date', { ascending: false });
-          
-        if (error) throw error;
+    function removeFailedLogo(event) {
+      const card = event.target.closest('.logo-card');
+      if (card) card.remove();
+    }
 
-        if (!data || data.length === 0) {
-          window._platformError = 'لا توجد أي تقارير مسجلة في قاعدة البيانات.';
-          renderPlatformRows();
-          return;
-        }
+    function renderLogoCarousel() {
+      const carousel = document.getElementById('governmentLogoCarousel');
+      if (!carousel || governmentEntities.length === 0) return;
 
-        // Helper: extract criterion number from raw_report_data (same logic as report_page)
-        function getCriterionNum(raw) {
-          return String(raw?.number || raw?.criterionNumber || raw?.criterion || '').trim();
-        }
+      const rows = carousel.querySelectorAll('.logo-carousel-row');
+      const secondRowEntities = [
+        ...governmentEntities.slice(3),
+        ...governmentEntities.slice(0, 3)
+      ];
 
-        // Helper: average an array of numbers
-        function avg(nums) {
-          const valid = nums.map(Number).filter(Number.isFinite);
-          if (!valid.length) return 0;
-          return Math.round(valid.reduce((s, n) => s + n, 0) / valid.length);
-        }
-
-        // 1. Group all reports by platform name
-        const byPlatform = {};
-        for (const rpt of data) {
-          const url = rpt.platform_url || '';
-          if (!url) continue;
-          let platName = 'منصة غير معروفة';
-          let agencyType = 'الجهات الحكومية';
-          let matched = false;
-          for (const [domain, info] of Object.entries(platformDirectory)) {
-            if (url.includes(domain)) {
-              platName = info.name;
-              agencyType = info.agency;
-              matched = true;
-              break;
-            }
-          }
-          if (!matched) {
-            try {
-              const parsedUrl = new URL(url.startsWith('http') ? url : 'https://' + url);
-              platName = parsedUrl.hostname.replace('www.', '');
-            } catch(e) {}
-          }
-          if (!byPlatform[platName]) {
-            const shortInitials = platName.replace('منصة', '').replace('جامعة', '').trim().substring(0, 2);
-            let logoHtml = `<div class="logo-box">${shortInitials}</div>`;
-            if (url) {
-              try {
-                const domain = safeHost(url);
-                if (!domain) throw new Error('Invalid platform URL');
-                logoHtml = `<div class="logo-box" style="background:transparent;border:none;"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:12px;"></div>`;
-              } catch(e) {}
-            }
-            byPlatform[platName] = {
-              name: platName, agency: agencyType, short: shortInitials, logoHtml: logoHtml,
-              url: url, host: safeHost(url), report_id: rpt.id, report_date: rpt.report_date, reports: []
-            };
-          }
-          byPlatform[platName].reports.push(rpt);
-        }
-
-        // 2. For each platform: group by criterion -> avg per criterion -> avg across criteria
-        //    This matches report_page.html's summarizeReportGroups + updateSummaryStats logic
-        platforms = Object.values(byPlatform).map(plat => {
-          const criterionGroups = {};
-          for (const rpt of plat.reports) {
-            const raw = rpt.raw_report_data || {};
-            const key = getCriterionNum(raw) || rpt.id;
-            if (!criterionGroups[key]) criterionGroups[key] = [];
-            criterionGroups[key].push(clampPercent(rpt.score));
-          }
-          const criterionAvgs = Object.values(criterionGroups).map(scores => avg(scores));
-          plat.score = avg(criterionAvgs);
-          return plat;
+      rows.forEach((row, index) => {
+        const entities = index === 0 ? governmentEntities : secondRowEntities;
+        const track = row.querySelector('.logo-carousel-track');
+        track.innerHTML = `${logoSetMarkup(entities)}${logoSetMarkup(entities, true)}`;
+        track.querySelectorAll('img').forEach((image) => {
+          image.addEventListener('error', removeFailedLogo, { once: true });
         });
+      });
+    }
 
-        // Calculate Rankings
-        const sorted = [...platforms].sort((a,b) => b.score - a.score);
-        topPlatforms = sorted.slice(0, 5);
-        lowPlatforms = sorted.slice(-5).reverse();
+    function setupLogoCarouselRow(row) {
+      const track = row.querySelector('.logo-carousel-track');
+      const firstSet = track?.querySelector('.logo-carousel-set');
+      if (!track || !firstSet) return null;
 
-        // Render UI
-        window._platformError = null;
-        renderRankList('topRankings', topPlatforms);
-        renderRankList('lowRankings', lowPlatforms);
-        renderPlatformRows();
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const direction = Number(row.dataset.direction) || -1;
+      const speed = 22;
+      let setWidth = firstSet.getBoundingClientRect().width;
+      let offset = direction > 0 ? -setWidth : 0;
+      let previousTimestamp = null;
+      let hoverPaused = false;
+      let focusPaused = false;
+      let dragging = false;
+      let dragStartX = 0;
+      let dragStartOffset = 0;
+      let resumeAt = 0;
+      let viewportPaused = false;
 
-        // Fetch dynamic downloads
-        try {
-          const { data: extData, error: extErr } = await window.db.from('extensions').select('num, downloads').in('num', [4, 11, 23]);
-          if (!extErr && extData) {
-            extensions.forEach(ext => {
-              const dbExt = extData.find(d => Number(d.num) === Number(ext.id));
-              if (dbExt && dbExt.downloads !== null && dbExt.downloads !== undefined) {
-                ext.downloads = dbExt.downloads;
-              }
-            });
-            renderExtensions();
-          }
-        } catch (e) {
-          console.error('Could not fetch downloads:', e);
-        }
-
-      } catch (err) {
-        console.error('Error fetching platforms:', err);
-        window._platformError = err.message || JSON.stringify(err);
-        renderPlatformRows();
+      function normalizeOffset() {
+        if (!setWidth) return;
+        while (offset <= -setWidth) offset += setWidth;
+        while (offset > 0) offset -= setWidth;
       }
+
+      function paint() {
+        track.style.transform = `translate3d(${offset}px, 0, 0)`;
+      }
+
+      function isPaused(timestamp) {
+        return reducedMotionQuery.matches || hoverPaused || focusPaused || dragging || viewportPaused || document.hidden || timestamp < resumeAt;
+      }
+
+      function animate(timestamp) {
+        if (previousTimestamp === null) previousTimestamp = timestamp;
+        const elapsedSeconds = Math.min((timestamp - previousTimestamp) / 1000, 0.05);
+        previousTimestamp = timestamp;
+
+        if (!isPaused(timestamp) && setWidth > 0) {
+          offset += direction * speed * elapsedSeconds;
+          normalizeOffset();
+          paint();
+        }
+        window.requestAnimationFrame(animate);
+      }
+
+      function beginDrag(event) {
+        dragging = true;
+        dragStartX = event.clientX;
+        dragStartOffset = offset;
+        row.classList.add('is-dragging');
+        row.setPointerCapture?.(event.pointerId);
+      }
+
+      function updateDrag(event) {
+        if (!dragging) return;
+        const distance = event.clientX - dragStartX;
+        if (Math.abs(distance) > 4) event.preventDefault();
+        offset = dragStartOffset + distance;
+        normalizeOffset();
+        paint();
+      }
+
+      function endDrag(event) {
+        if (!dragging) return;
+        dragging = false;
+        row.classList.remove('is-dragging');
+        resumeAt = performance.now() + 900;
+        if (row.hasPointerCapture?.(event.pointerId)) {
+          row.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      row.addEventListener('mouseenter', () => { hoverPaused = true; });
+      row.addEventListener('mouseleave', () => { hoverPaused = false; });
+      row.addEventListener('focusin', () => { focusPaused = true; });
+      row.addEventListener('focusout', () => { focusPaused = false; });
+      row.addEventListener('pointerdown', beginDrag);
+      row.addEventListener('pointermove', updateDrag);
+      row.addEventListener('pointerup', endDrag);
+      row.addEventListener('pointercancel', endDrag);
+
+      function recalculateDimensions() {
+        const previousWidth = setWidth;
+        setWidth = firstSet.getBoundingClientRect().width;
+        if (previousWidth > 0 && setWidth > 0) {
+          offset = (offset / previousWidth) * setWidth;
+          normalizeOffset();
+          paint();
+        }
+      }
+
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(recalculateDimensions);
+        resizeObserver.observe(firstSet);
+      } else {
+        window.addEventListener('resize', recalculateDimensions, { passive: true });
+      }
+
+      if ('IntersectionObserver' in window) {
+        const intersectionObserver = new IntersectionObserver((entries) => {
+          viewportPaused = !entries[0]?.isIntersecting;
+          previousTimestamp = null;
+        }, { rootMargin: '120px 0px' });
+        intersectionObserver.observe(row);
+      }
+
+      reducedMotionQuery.addEventListener?.('change', () => {
+        previousTimestamp = null;
+        paint();
+      });
+
+      paint();
+      window.requestAnimationFrame(animate);
+
+      return {
+        nudge(distance) {
+          offset += distance;
+          normalizeOffset();
+          paint();
+          resumeAt = performance.now() + 1400;
+        },
+        cardStep() {
+          const firstCard = firstSet.querySelector('.logo-card');
+          if (!firstCard) return 220;
+          const cardWidth = firstCard.getBoundingClientRect().width;
+          const setStyle = getComputedStyle(firstSet);
+          const gap = Number.parseFloat(setStyle.columnGap || setStyle.gap) || 16;
+          return cardWidth + gap;
+        }
+      };
+    }
+
+    function initializeLogoCarousel() {
+      renderLogoCarousel();
+      document.querySelectorAll('.logo-carousel-row').forEach((row) => {
+        const controller = setupLogoCarouselRow(row);
+        if (controller) carouselControllers.push(controller);
+      });
+
+      document.getElementById('logoCarouselPrev')?.addEventListener('click', () => {
+        carouselControllers.forEach((controller) => controller.nudge(controller.cardStep()));
+      });
+      document.getElementById('logoCarouselNext')?.addEventListener('click', () => {
+        carouselControllers.forEach((controller) => controller.nudge(-controller.cardStep()));
+      });
     }
 
     renderExtensions();
-    renderCategoryChips();
-    
-    document.getElementById('platformSearch').addEventListener('input', () => {
-      visiblePlatformLimit = 6;
-      renderPlatformRows();
-    });
-    
-    // Fetch dynamic data immediately
-    setTimeout(loadPlatformsData, 100);
-
+    initializeLogoCarousel();
+    loadExtensionDownloads();
   </script>
 </body>
 </html>
